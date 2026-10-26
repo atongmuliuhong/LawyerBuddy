@@ -1,0 +1,6 @@
+{
+  "name": "lawyer-skills",
+  "version": "1.0.0",
+  "description": "Builtin legal practice skills for LawyerBuddy — covering litigation, contracts, corporate, and expert role-play.",
+  "skills": "skills"
+}
