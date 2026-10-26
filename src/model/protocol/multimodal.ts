@@ -6,7 +6,7 @@ import type {
 } from "./canonical.js";
 import { messageContent } from "./clone.js";
 
-export const SUPPORTED_INPUT_MODALITIES = ["text", "image", "pdf", "audio"] as const;
+export const SUPPORTED_INPUT_MODALITIES = ["text", "image", "pdf", "audio", "video"] as const;
 
 export type InputModality = (typeof SUPPORTED_INPUT_MODALITIES)[number];
 

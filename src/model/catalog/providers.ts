@@ -667,13 +667,64 @@ export const PROVIDER_CATALOG: ProviderCatalog = {
   // ── MiniMax ────────────────────────────────────────────────────────────
 
   minimax: {
-    displayName: "MiniMax",
+    displayName: "MiniMax (中国)",
+    protocol: "openai",
+    defaultUrl: "https://api.minimaxi.com/v1",
+    apiKeyEnvVar: "MINIMAX_API_KEY",
+    models: {
+      "MiniMax-M2.1": {
+        displayName: "MiniMax M2.1",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: false,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 1000000,
+          maxOutputTokens: 16384,
+        },
+        multimodal: {
+          input: ["text", "image"],
+          maxImagesPerRequest: 20,
+          supportedImageMimeTypes: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+          imageDetail: "auto",
+        },
+        aliases: ["minimax-m2.1"],
+      },
+      "MiniMax-M1": {
+        displayName: "MiniMax M1",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: true,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 1000000,
+          maxOutputTokens: 16384,
+        },
+        multimodal: {
+          input: ["text", "image"],
+          maxImagesPerRequest: 20,
+          supportedImageMimeTypes: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+          imageDetail: "auto",
+        },
+        aliases: ["minimax-m1"],
+      },
+    },
+  },
+
+  "minimax-global": {
+    displayName: "MiniMax (Global)",
     protocol: "openai",
     defaultUrl: "https://api.minimax.io/v1",
     apiKeyEnvVar: "MINIMAX_API_KEY",
     models: {
-      "MiniMax-M2.5": {
-        displayName: "MiniMax M2.5",
+      "MiniMax-M2.1": {
+        displayName: "MiniMax M2.1",
         capabilities: {
           supportsToolUse: true,
           supportsStreaming: true,
@@ -691,15 +742,15 @@ export const PROVIDER_CATALOG: ProviderCatalog = {
           supportedImageMimeTypes: ["image/jpeg", "image/png", "image/gif", "image/webp"],
           imageDetail: "auto",
         },
-        aliases: ["minimax-m2.5"],
+        aliases: ["minimax-m2.1"],
       },
-      "MiniMax-M2.7-highspeed": {
-        displayName: "MiniMax M2.7 Highspeed",
+      "MiniMax-M1": {
+        displayName: "MiniMax M1",
         capabilities: {
           supportsToolUse: true,
           supportsStreaming: true,
           supportsParallelToolCalls: true,
-          supportsThinking: false,
+          supportsThinking: true,
           supportsJsonSchema: true,
           supportsSystemPrompt: true,
           supportsPromptCache: false,
@@ -712,7 +763,7 @@ export const PROVIDER_CATALOG: ProviderCatalog = {
           supportedImageMimeTypes: ["image/jpeg", "image/png", "image/gif", "image/webp"],
           imageDetail: "auto",
         },
-        aliases: [],
+        aliases: ["minimax-m1"],
       },
     },
   },
@@ -808,6 +859,57 @@ export const PROVIDER_CATALOG: ProviderCatalog = {
           imageDetail: "auto",
         },
         aliases: ["moonshotai/kimi-k3"],
+      },
+      "kimi-k2.5": {
+        displayName: "Kimi K2.5",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: true,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 262144,
+          maxOutputTokens: 8192,
+        },
+        multimodal: {
+          input: ["text", "image"],
+          maxImagesPerRequest: 20,
+          supportedImageMimeTypes: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+          imageDetail: "auto",
+        },
+        aliases: ["moonshotai/kimi-k2.5"],
+      },
+    },
+  },
+
+  "moonshot-global": {
+    displayName: "Moonshot AI (Kimi Global)",
+    protocol: "openai",
+    defaultUrl: "https://api.moonshot.ai/v1",
+    apiKeyEnvVar: "MOONSHOT_API_KEY",
+    models: {
+      "kimi-k2.5": {
+        displayName: "Kimi K2.5",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: true,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 262144,
+          maxOutputTokens: 8192,
+        },
+        multimodal: {
+          input: ["text", "image"],
+          maxImagesPerRequest: 20,
+          supportedImageMimeTypes: ["image/jpeg", "image/png", "image/gif", "image/webp"],
+          imageDetail: "auto",
+        },
+        aliases: ["moonshotai/kimi-k2.5"],
       },
     },
   },
@@ -1139,6 +1241,297 @@ export const PROVIDER_CATALOG: ProviderCatalog = {
     defaultUrl: "https://openrouter.ai/api/v1",
     apiKeyEnvVar: "OPENROUTER_API_KEY",
     models: {},
+  },
+
+  // ── Aggregator providers (LawBuddy 逆向迁移) ────────────────────────────
+
+  siliconflow: {
+    displayName: "SiliconFlow",
+    protocol: "openai",
+    defaultUrl: "https://api.siliconflow.cn/v1",
+    apiKeyEnvVar: "SILICONFLOW_API_KEY",
+    models: {
+      "Pro/deepseek-ai/DeepSeek-V3": {
+        displayName: "DeepSeek V3",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: false,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 1048576,
+          maxOutputTokens: 16384,
+        },
+        multimodal: { input: ["text"] },
+        aliases: ["siliconflow-deepseek-v3"],
+      },
+      "Pro/deepseek-ai/DeepSeek-R1": {
+        displayName: "DeepSeek R1",
+        capabilities: {
+          supportsToolUse: false,
+          supportsStreaming: true,
+          supportsParallelToolCalls: false,
+          supportsThinking: true,
+          supportsJsonSchema: false,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 1048576,
+          maxOutputTokens: 16384,
+        },
+        multimodal: { input: ["text"] },
+        aliases: ["siliconflow-deepseek-r1"],
+      },
+    },
+  },
+
+  yi: {
+    displayName: "01.AI (Yi)",
+    protocol: "openai",
+    defaultUrl: "https://api.lingyiwanwu.com/v1",
+    apiKeyEnvVar: "YI_API_KEY",
+    models: {
+      "yi-lightning": {
+        displayName: "Yi Lightning",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: false,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 200000,
+          maxOutputTokens: 16384,
+        },
+        multimodal: { input: ["text", "image"] },
+        aliases: ["yi-lightning-01ai"],
+      },
+    },
+  },
+
+  stepfun: {
+    displayName: "StepFun (阶跃星辰)",
+    protocol: "openai",
+    defaultUrl: "https://api.stepfun.com/v1",
+    apiKeyEnvVar: "STEPFUN_API_KEY",
+    models: {
+      "step-2": {
+        displayName: "Step-2 (Trillion)",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: true,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 32768,
+          maxOutputTokens: 16384,
+        },
+        multimodal: { input: ["text", "video"] },
+        aliases: ["step-2-trillion"],
+      },
+    },
+  },
+
+  groq: {
+    displayName: "Groq",
+    protocol: "openai",
+    defaultUrl: "https://api.groq.com/openai/v1",
+    apiKeyEnvVar: "GROQ_API_KEY",
+    models: {
+      "llama-4-maverick-17b-128e-instruct": {
+        displayName: "Llama 4 Maverick",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: false,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 128000,
+          maxOutputTokens: 8192,
+        },
+        multimodal: { input: ["text"] },
+        aliases: ["meta-llama/llama-4-maverick-17b-128e-instruct"],
+      },
+    },
+  },
+
+  mistral: {
+    displayName: "Mistral AI",
+    protocol: "openai",
+    defaultUrl: "https://api.mistral.ai/v1",
+    apiKeyEnvVar: "MISTRAL_API_KEY",
+    models: {
+      "mistral-large-2512": {
+        displayName: "Mistral Large",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: false,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 128000,
+          maxOutputTokens: 8192,
+        },
+        multimodal: { input: ["text"] },
+        aliases: ["mistral-large-latest"],
+      },
+    },
+  },
+
+  deepinfra: {
+    displayName: "DeepInfra",
+    protocol: "openai",
+    defaultUrl: "https://api.deepinfra.com/v1/openai",
+    apiKeyEnvVar: "DEEPINFRA_API_KEY",
+    models: {
+      "deepseek-ai/DeepSeek-V3": {
+        displayName: "DeepSeek V3",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: false,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 1048576,
+          maxOutputTokens: 16384,
+        },
+        multimodal: { input: ["text"] },
+        aliases: ["deepinfra-deepseek-v3"],
+      },
+      "Qwen/Qwen3-235B-A22B-Instruct-2507": {
+        displayName: "Qwen3 235B",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: false,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 128000,
+          maxOutputTokens: 8192,
+        },
+        multimodal: { input: ["text"] },
+        aliases: ["deepinfra-qwen3-235b"],
+      },
+    },
+  },
+
+  together: {
+    displayName: "Together AI",
+    protocol: "openai",
+    defaultUrl: "https://api.together.xyz/v1",
+    apiKeyEnvVar: "TOGETHER_API_KEY",
+    models: {
+      "deepseek-ai/DeepSeek-V3": {
+        displayName: "DeepSeek V3",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: false,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 1048576,
+          maxOutputTokens: 16384,
+        },
+        multimodal: { input: ["text"] },
+        aliases: ["together-deepseek-v3"],
+      },
+      "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8": {
+        displayName: "Llama 4 Maverick FP8",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: false,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 128000,
+          maxOutputTokens: 8192,
+        },
+        multimodal: { input: ["text"] },
+        aliases: ["together-llama-4-maverick"],
+      },
+    },
+  },
+
+  fireworks: {
+    displayName: "Fireworks AI",
+    protocol: "openai",
+    defaultUrl: "https://api.fireworks.ai/inference/v1",
+    apiKeyEnvVar: "FIREWORKS_API_KEY",
+    models: {
+      "accounts/fireworks/models/deepseek-v3p2": {
+        displayName: "DeepSeek V3.2",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: false,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 1048576,
+          maxOutputTokens: 16384,
+        },
+        multimodal: { input: ["text"] },
+        aliases: ["fireworks-deepseek-v3"],
+      },
+    },
+  },
+
+  xai: {
+    displayName: "xAI (Grok)",
+    protocol: "openai",
+    defaultUrl: "https://api.x.ai/v1",
+    apiKeyEnvVar: "XAI_API_KEY",
+    models: {
+      "grok-4": {
+        displayName: "Grok-4",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: true,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 131072,
+          maxOutputTokens: 65536,
+        },
+        multimodal: { input: ["text", "image"] },
+        aliases: ["grok-4"],
+      },
+      "grok-3": {
+        displayName: "Grok-3",
+        capabilities: {
+          supportsToolUse: true,
+          supportsStreaming: true,
+          supportsParallelToolCalls: true,
+          supportsThinking: false,
+          supportsJsonSchema: true,
+          supportsSystemPrompt: true,
+          supportsPromptCache: false,
+          maxContextTokens: 131072,
+          maxOutputTokens: 16384,
+        },
+        multimodal: { input: ["text", "image"] },
+        aliases: ["grok-3"],
+      },
+    },
   },
 
   ollama: {
