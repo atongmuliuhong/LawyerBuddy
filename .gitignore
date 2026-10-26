@@ -220,3 +220,17 @@ CLAUDE.md
 # Native dependencies prepared for both Web and desktop runtimes
 resources/cua-driver/
 resources/.cua-driver-download-*/
+
+# ---- Stripped LFS-tracked media assets (no local content, not needed for LawyerBuddy) ----
+# These were originally LFS pointers with no backing objects; excluded from the repo
+assets/*.mp4
+assets/*.mov
+assets/*.gif
+assets/*.png
+assets/community/
+assets/en/
+assets/result/
+assets/zh/
+ui/public/icons/
+ui/public/logo-*.png
+ui/public/favicon.png
