@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createOptimisticUserFrames } from './pilotdeck-message.js';
+import { createOptimisticUserFrames } from './lawyerbuddy-message.js';
 
 describe('sibling optimistic user frames', () => {
   it('preserves the command run id, images, and attachments', () => {

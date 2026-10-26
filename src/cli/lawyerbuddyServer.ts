@@ -11,7 +11,7 @@ import {
   type ChannelRuntimeStatusReporter,
 } from "../adapters/channel/protocol/ChannelRuntimeStatus.js";
 
-export type StartPilotDeckServerOptions = {
+export type StartLawyerBuddyServerOptions = {
   gateway: Gateway;
   port?: number;
   host?: string;
@@ -25,13 +25,13 @@ export type StartPilotDeckServerOptions = {
    */
   channels?: ChannelAdapter[];
   /**
-   * Loaded pilotdeck.yaml config — passed into channel.start() so adapters can
+   * Loaded lawyerbuddy.yaml config — passed into channel.start() so adapters can
    * read their own section (e.g. `adapters.feishu.appId/appSecret`).
    */
   config?: PilotConfig;
 };
 
-export type PilotDeckServer = GatewayServer & {
+export type LawyerBuddyServer = GatewayServer & {
   /**
    * Hot-start a channel adapter after server startup.
    * Stops any previously running instance of the same channelKey first.
@@ -44,7 +44,7 @@ export type PilotDeckServer = GatewayServer & {
   deliverCronResult(delivery: CronResultDelivery): Promise<boolean>;
 };
 
-export async function startPilotDeckServer(options: StartPilotDeckServerOptions): Promise<PilotDeckServer> {
+export async function startLawyerBuddyServer(options: StartLawyerBuddyServerOptions): Promise<LawyerBuddyServer> {
   const consoleLogger = {
     info: (msg: string) => console.log(msg),
     warn: (msg: string) => console.warn(msg),

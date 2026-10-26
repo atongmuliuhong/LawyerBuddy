@@ -1,14 +1,14 @@
 import { existsSync, realpathSync } from "node:fs";
 import { dirname, resolve, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { PilotDeckMcpServerSpec } from "../protocol/types.js";
+import type { LawyerBuddyMcpServerSpec } from "../protocol/types.js";
 
-export const PILOTDECK_PROJECT_ROOT_MARKER = "__PILOTDECK_PROJECT_ROOT__";
-export const PILOTDECK_NODE_EXECUTABLE_MARKER = "__PILOTDECK_NODE_EXECUTABLE__";
-export const PILOTDECK_FUNASR_MCP_ENTRYPOINT_MARKER = "__PILOTDECK_FUNASR_MCP_ENTRYPOINT__";
-export const PILOTDECK_FUNASR_RUNTIME_ROOT_MARKER = "__PILOTDECK_FUNASR_RUNTIME_ROOT__";
-export const PILOTDECK_FUNASR_INSTALL_COMMAND_MARKER = "__PILOTDECK_FUNASR_INSTALL_COMMAND__";
-export const PILOTDECK_PLAYWRIGHT_MCP_ENTRYPOINT_MARKER = "__PILOTDECK_PLAYWRIGHT_MCP_ENTRYPOINT__";
+export const LAWYERBUDDY_PROJECT_ROOT_MARKER = "__LAWYERBUDDY_PROJECT_ROOT__";
+export const LAWYERBUDDY_NODE_EXECUTABLE_MARKER = "__LAWYERBUDDY_NODE_EXECUTABLE__";
+export const LAWYERBUDDY_FUNASR_MCP_ENTRYPOINT_MARKER = "__LAWYERBUDDY_FUNASR_MCP_ENTRYPOINT__";
+export const LAWYERBUDDY_FUNASR_RUNTIME_ROOT_MARKER = "__LAWYERBUDDY_FUNASR_RUNTIME_ROOT__";
+export const LAWYERBUDDY_FUNASR_INSTALL_COMMAND_MARKER = "__LAWYERBUDDY_FUNASR_INSTALL_COMMAND__";
+export const LAWYERBUDDY_PLAYWRIGHT_MCP_ENTRYPOINT_MARKER = "__LAWYERBUDDY_PLAYWRIGHT_MCP_ENTRYPOINT__";
 
 const MODULE_DIR = (() => {
   try { return resolve(fileURLToPath(import.meta.url), ".."); } catch { return resolve(process.cwd()); }
@@ -24,10 +24,10 @@ function findPackageRoot(start: string): string {
   }
 }
 
-export function getPilotDeckInstallCommand(): string {
+export function getLawyerBuddyInstallCommand(): string {
   const packageRoot = findPackageRoot(MODULE_DIR);
   // Desktop packages ship Node and this installer, but deliberately omit npm.
-  const desktopRoot = process.env.PILOTDECK_RUNTIME_ROOT;
+  const desktopRoot = process.env.LAWYERBUDDY_RUNTIME_ROOT;
   // Native realpath expands Windows 8.3 names (e.g. RUNNER~1), unlike the
   // JS sync fallback. relative() also handles Windows casing differences.
   if (desktopRoot && existsSync(desktopRoot) && relative(realpathSync.native(desktopRoot), realpathSync.native(packageRoot)) === "") {
@@ -46,8 +46,8 @@ function funasrEntrypoint(): string {
 
 function playwrightMcpEntrypoint(): string {
   const candidates = [
-    process.env.PILOTDECK_RUNTIME_ROOT
-      ? resolve(process.env.PILOTDECK_RUNTIME_ROOT, "node_modules", "@playwright", "mcp", "cli.js")
+    process.env.LAWYERBUDDY_RUNTIME_ROOT
+      ? resolve(process.env.LAWYERBUDDY_RUNTIME_ROOT, "node_modules", "@playwright", "mcp", "cli.js")
       : "",
     resolve(MODULE_DIR, "../../../node_modules/@playwright/mcp/cli.js"),
     resolve(MODULE_DIR, "../../../../node_modules/@playwright/mcp/cli.js"),
@@ -58,16 +58,16 @@ function playwrightMcpEntrypoint(): string {
 
 /** Resolve placeholders used only by the built-in project-scoped FunASR MCP. */
 export function patchProjectScopedMcpSpec(
-  spec: PilotDeckMcpServerSpec,
+  spec: LawyerBuddyMcpServerSpec,
   projectRoot: string,
   pilotHome: string,
-): PilotDeckMcpServerSpec {
+): LawyerBuddyMcpServerSpec {
   if (spec.transport !== "stdio") return spec;
 
   if (spec.id === "browser-use") {
     const replaceBrowserMarkers = (value: string) => value
-      .replaceAll(PILOTDECK_NODE_EXECUTABLE_MARKER, process.execPath)
-      .replaceAll(PILOTDECK_PLAYWRIGHT_MCP_ENTRYPOINT_MARKER, playwrightMcpEntrypoint());
+      .replaceAll(LAWYERBUDDY_NODE_EXECUTABLE_MARKER, process.execPath)
+      .replaceAll(LAWYERBUDDY_PLAYWRIGHT_MCP_ENTRYPOINT_MARKER, playwrightMcpEntrypoint());
     return {
       ...spec,
       command: replaceBrowserMarkers(spec.command),
@@ -79,11 +79,11 @@ export function patchProjectScopedMcpSpec(
   if (spec.id !== "funasr") return spec;
 
   const replacements: Record<string, string> = {
-    [PILOTDECK_PROJECT_ROOT_MARKER]: resolve(projectRoot),
-    [PILOTDECK_NODE_EXECUTABLE_MARKER]: process.execPath,
-    [PILOTDECK_FUNASR_MCP_ENTRYPOINT_MARKER]: funasrEntrypoint(),
-    [PILOTDECK_FUNASR_RUNTIME_ROOT_MARKER]: join(resolve(pilotHome), "funasr"),
-    [PILOTDECK_FUNASR_INSTALL_COMMAND_MARKER]: getPilotDeckInstallCommand(),
+    [LAWYERBUDDY_PROJECT_ROOT_MARKER]: resolve(projectRoot),
+    [LAWYERBUDDY_NODE_EXECUTABLE_MARKER]: process.execPath,
+    [LAWYERBUDDY_FUNASR_MCP_ENTRYPOINT_MARKER]: funasrEntrypoint(),
+    [LAWYERBUDDY_FUNASR_RUNTIME_ROOT_MARKER]: join(resolve(pilotHome), "funasr"),
+    [LAWYERBUDDY_FUNASR_INSTALL_COMMAND_MARKER]: getLawyerBuddyInstallCommand(),
   };
   const replaceMarkers = (value: string) => Object.entries(replacements)
     .reduce((out, [marker, replacement]) => out.replaceAll(marker, replacement), value);

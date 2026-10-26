@@ -151,7 +151,7 @@ export default function ProviderCard({
   const displayName = providerDisplayName(
     providerIdDraft || providerId,
     effectiveCatalogEntry,
-    t("pilotDeckConfig.panels.models.customProvider"),
+    t("lawyerBuddyConfig.panels.models.customProvider"),
   );
   const configured = isProviderConfigured(draftProvider, effectiveCatalogEntry);
   const fieldsDisabled = !editing || saving;
@@ -198,19 +198,19 @@ export default function ProviderCard({
     const nextId = trimmedProviderId;
     // Existing configs can use legacy names; validate IDs when adding or renaming.
     if ((isNew || nextId !== providerId) && !/^[a-z0-9][a-z0-9_-]{0,63}$/i.test(nextId)) {
-      setProviderIdError(t("pilotDeckConfig.panels.models.providerIdInvalid"));
+      setProviderIdError(t("lawyerBuddyConfig.panels.models.providerIdInvalid"));
       return;
     }
     if (!effectiveUrl.trim()) {
-      setProviderIdError(t("pilotDeckConfig.panels.models.providerUrlRequired"));
+      setProviderIdError(t("lawyerBuddyConfig.panels.models.providerUrlRequired"));
       return;
     }
     if (!isProviderUrlValid(effectiveUrl)) {
-      setProviderIdError(t("pilotDeckConfig.panels.models.providerUrlInvalid"));
+      setProviderIdError(t("lawyerBuddyConfig.panels.models.providerUrlInvalid"));
       return;
     }
     if (providerRequiresApiKeyInForm && !draftProvider.apiKey?.trim()) {
-      setProviderIdError(t("pilotDeckConfig.panels.models.providerApiKeyRequired"));
+      setProviderIdError(t("lawyerBuddyConfig.panels.models.providerApiKeyRequired"));
       return;
     }
     savingRef.current = true;
@@ -224,7 +224,7 @@ export default function ProviderCard({
       });
       if (!result.ok) {
         setProviderIdError(
-          result.error || t("pilotDeckConfig.panels.models.providerIdDuplicate"),
+          result.error || t("lawyerBuddyConfig.panels.models.providerIdDuplicate"),
         );
         return;
       }
@@ -271,7 +271,7 @@ export default function ProviderCard({
 
   const saveModelSettings = async (modelId: string, values: ModelSettingsPatch) => {
     const source = editing ? draftProvider : provider;
-    if (!Object.prototype.hasOwnProperty.call(source.models || {}, modelId)) return { ok: false, error: t('pilotDeckConfig.panels.models.modelSettings.saveFailed') };
+    if (!Object.prototype.hasOwnProperty.call(source.models || {}, modelId)) return { ok: false, error: t('lawyerBuddyConfig.panels.models.modelSettings.saveFailed') };
     const current = asModelRecord(source.models?.[modelId]);
     const multimodal = asModelRecord(current.multimodal as Record<string, unknown>);
     const input = Array.isArray(multimodal.input) ? multimodal.input.filter(value => typeof value === 'string' && value !== 'image') : ['text'];
@@ -382,7 +382,7 @@ export default function ProviderCard({
   const apiKeyInputValue = isMaskedKey ? MASK : (draftProvider.apiKey ?? "");
 
   return (
-    <section className="provider-detail" aria-label={t("pilotDeckConfig.panels.models.providerAria", { name: displayName })}>
+    <section className="provider-detail" aria-label={t("lawyerBuddyConfig.panels.models.providerAria", { name: displayName })}>
       <header className="detail-header">
         <div className="detail-identity">
           <span className="detail-provider-icon">
@@ -394,8 +394,8 @@ export default function ProviderCard({
               <span className={`status-badge${configured ? "" : " pending"}`}>
                 {configured ? <CheckCircleIcon size={14} /> : <PendingIcon size={14} />}
                 {configured
-                  ? t("pilotDeckConfig.panels.models.configured")
-                  : t("pilotDeckConfig.panels.models.pending")}
+                  ? t("lawyerBuddyConfig.panels.models.configured")
+                  : t("lawyerBuddyConfig.panels.models.pending")}
               </span>
             </div>
           </div>
@@ -436,7 +436,7 @@ export default function ProviderCard({
             onClick={() => openDeleteDialog("provider")}
             disabled={saving || ownBusy}
           >
-            <TrashIcon /> {t("pilotDeckConfig.actions.remove")}
+            <TrashIcon /> {t("lawyerBuddyConfig.actions.remove")}
           </button>
         </div>
       </header>
@@ -445,12 +445,12 @@ export default function ProviderCard({
         <section className="form-section">
           <div className="section-heading">
             <span className="section-icon"><LinkIcon /></span>
-            <div><h3>{t("pilotDeckConfig.panels.models.connectionInfo")}</h3></div>
+            <div><h3>{t("lawyerBuddyConfig.panels.models.connectionInfo")}</h3></div>
           </div>
 
           {editing && (
             <label className="field">
-              <span>{t("pilotDeckConfig.panels.models.providerId")}</span>
+              <span>{t("lawyerBuddyConfig.panels.models.providerId")}</span>
               <input
                 value={providerIdDraft}
                 onChange={(event) => {
@@ -466,19 +466,19 @@ export default function ProviderCard({
           {editing && !effectiveCatalogEntry && (
             <div className="connection-grid">
               <label className="field">
-                <span>{t("pilotDeckConfig.panels.models.protocol")}</span>
+                <span>{t("lawyerBuddyConfig.panels.models.protocol")}</span>
                 <select
                   value={protocol}
                   onChange={(event) => update({ protocol: event.target.value as CatalogProviderProtocol })}
                 >
-                  <option value="openai">{t("pilotDeckConfig.panels.models.protocolOptions.openai")}</option>
-                  <option value="openai-responses">{t("pilotDeckConfig.panels.models.protocolOptions.openaiResponses")}</option>
-                  <option value="anthropic">{t("pilotDeckConfig.panels.models.protocolOptions.anthropic")}</option>
-                  <option value="google">{t("pilotDeckConfig.panels.models.protocolOptions.google")}</option>
+                  <option value="openai">{t("lawyerBuddyConfig.panels.models.protocolOptions.openai")}</option>
+                  <option value="openai-responses">{t("lawyerBuddyConfig.panels.models.protocolOptions.openaiResponses")}</option>
+                  <option value="anthropic">{t("lawyerBuddyConfig.panels.models.protocolOptions.anthropic")}</option>
+                  <option value="google">{t("lawyerBuddyConfig.panels.models.protocolOptions.google")}</option>
                 </select>
               </label>
               <label className="field">
-                <span>{t("pilotDeckConfig.panels.models.baseUrl")}</span>
+                <span>{t("lawyerBuddyConfig.panels.models.baseUrl")}</span>
                 <input
                   value={draftProvider.url ?? ""}
                   placeholder="https://api.example.com/v1"
@@ -491,16 +491,16 @@ export default function ProviderCard({
 
           <label className="field api-field">
             <span>
-              {t("pilotDeckConfig.panels.models.apiKey")}
-              {!providerRequiresApiKey ? ` (${t("pilotDeckConfig.panels.models.optional")})` : ""}
+              {t("lawyerBuddyConfig.panels.models.apiKey")}
+              {!providerRequiresApiKey ? ` (${t("lawyerBuddyConfig.panels.models.optional")})` : ""}
             </span>
             <span className="secret-input">
               <KeyIcon />
               <input
                 required={providerRequiresApiKey}
-                placeholder={t("pilotDeckConfig.panels.models.apiKeyPlaceholder")}
+                placeholder={t("lawyerBuddyConfig.panels.models.apiKeyPlaceholder")}
                 aria-invalid="false"
-                aria-label={t("pilotDeckConfig.panels.models.apiKey")}
+                aria-label={t("lawyerBuddyConfig.panels.models.apiKey")}
                 type="password"
                 value={apiKeyInputValue}
                 disabled={fieldsDisabled}
@@ -509,7 +509,7 @@ export default function ProviderCard({
             </span>
             {isMaskedKey ? (
               <small className="field-help">
-                <InfoIcon /> {t("pilotDeckConfig.panels.models.keySaved")}
+                <InfoIcon /> {t("lawyerBuddyConfig.panels.models.keySaved")}
               </small>
             ) : null}
           </label>
@@ -518,7 +518,7 @@ export default function ProviderCard({
         <section className="form-section models-section">
           <div className="section-heading with-meta">
             <span className="section-icon"><StackIcon /></span>
-            <div><h3>{t("pilotDeckConfig.panels.models.enabledModels")}</h3></div>
+            <div><h3>{t("lawyerBuddyConfig.panels.models.enabledModels")}</h3></div>
             <span className="model-count">{enabledModels.length}</span>
           </div>
 
@@ -528,13 +528,13 @@ export default function ProviderCard({
                 <button type="button" className="model-settings-trigger" disabled={saving} onClick={() => setModelSettingsId(mid)}>
                   <span className="model-name">{modelLabel(mid)}</span>
                   <span className="model-settings-summary">
-                    {modelSupportsImage(mid) && <ImageIcon size={15} aria-label={t('pilotDeckConfig.panels.models.modelSettings.imageInput')} />}
+                    {modelSupportsImage(mid) && <ImageIcon size={15} aria-label={t('lawyerBuddyConfig.panels.models.modelSettings.imageInput')} />}
                     <ChevronRight size={16} />
                   </span>
                 </button>
                 <button
                   type="button"
-                  aria-label={t("pilotDeckConfig.panels.models.removeModelAria", { name: modelLabel(mid) })}
+                  aria-label={t("lawyerBuddyConfig.panels.models.removeModelAria", { name: modelLabel(mid) })}
                   disabled={fieldsDisabled || ownBusy}
                   onClick={() => openDeleteDialog("model", mid)}
                 >
@@ -549,7 +549,7 @@ export default function ProviderCard({
           <section className="form-section candidate-models-section">
             <div className="section-heading with-meta">
               <span className="section-icon"><StackIcon /></span>
-              <div><h3>{t("pilotDeckConfig.panels.models.candidateModels")}</h3></div>
+              <div><h3>{t("lawyerBuddyConfig.panels.models.candidateModels")}</h3></div>
               <span className="model-count">{candidateModels.length}</span>
               <button
                 type="button"
@@ -558,7 +558,7 @@ export default function ProviderCard({
                 disabled={!canFetchModels || apiModelsStatus === "loading"}
               >
                 <RefreshIcon className={cn(apiModelsStatus === "loading" && "spin")} />
-                {t("pilotDeckConfig.panels.models.fetchApiModels")}
+                {t("lawyerBuddyConfig.panels.models.fetchApiModels")}
               </button>
             </div>
 
@@ -567,8 +567,8 @@ export default function ProviderCard({
               <input
                 value={modelSearch}
                 onChange={(event) => setModelSearch(event.target.value)}
-                placeholder={t("pilotDeckConfig.panels.models.searchCandidateModels")}
-                aria-label={t("pilotDeckConfig.panels.models.searchCandidateModels")}
+                placeholder={t("lawyerBuddyConfig.panels.models.searchCandidateModels")}
+                aria-label={t("lawyerBuddyConfig.panels.models.searchCandidateModels")}
               />
             </label>
 
@@ -583,15 +583,15 @@ export default function ProviderCard({
                 onClick={openCustomModelInput}
               >
                 <PlusIcon size={14} />
-                {t("pilotDeckConfig.panels.models.addModelId")}
+                {t("lawyerBuddyConfig.panels.models.addModelId")}
               </button>
               {draftCustomModelId != null ? (
                 <input
                   className="candidate-model-input"
                   type="text"
                   value={draftCustomModelId}
-                  placeholder={t("pilotDeckConfig.panels.models.customModelIdPlaceholder")}
-                  aria-label={t("pilotDeckConfig.panels.models.customModelIdPlaceholder")}
+                  placeholder={t("lawyerBuddyConfig.panels.models.customModelIdPlaceholder")}
+                  aria-label={t("lawyerBuddyConfig.panels.models.customModelIdPlaceholder")}
                   autoFocus
                   autoComplete="off"
                   spellCheck={false}
@@ -632,7 +632,7 @@ export default function ProviderCard({
         task={task}
         applyTestResult={!task || (!task.acknowledged && !handledTests.current.has(task.id))}
         testDisabled={testDisabled || !configured}
-        testError={tests.errorCode ? t(`pilotDeckConfig.panels.models.${tests.errorCode === 'TEST_BUSY' ? 'testBusy' : tests.errorCode === 'STATUS_UNAVAILABLE' ? 'testStatusUnavailable' : 'testRequestFailed'}`) : undefined}
+        testError={tests.errorCode ? t(`lawyerBuddyConfig.panels.models.${tests.errorCode === 'TEST_BUSY' ? 'testBusy' : tests.errorCode === 'STATUS_UNAVAILABLE' ? 'testStatusUnavailable' : 'testRequestFailed'}`) : undefined}
         onTest={() => void tests.start(providerId, modelSettingsId)}
         onCancelTest={() => { if (task) void tests.cancel(task.id); }}
         onSave={values => saveModelSettings(modelSettingsId, values)}

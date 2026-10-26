@@ -2,13 +2,13 @@ import fs from 'fs';
 import fsPromises from 'fs/promises';
 import path from 'path';
 import {
-  getPilotDeckConfigPath,
-  readPilotDeckConfigFile,
-  serializePilotDeckConfigResponse,
-} from './pilotdeckConfig.js';
-import { reloadPilotDeckConfig } from './pilotdeckConfigReloader.js';
+  getLawyerBuddyConfigPath,
+  readLawyerBuddyConfigFile,
+  serializeLawyerBuddyConfigResponse,
+} from './lawyerbuddyConfig.js';
+import { reloadLawyerBuddyConfig } from './lawyerbuddyConfigReloader.js';
 
-// Watches ~/.pilotdeck/pilotdeck.yaml for external edits (vim, Cursor, other IDEs)
+// Watches ~/.lawyerbuddy/lawyerbuddy.yaml for external edits (vim, Cursor, other IDEs)
 // and triggers the same reload path the UI uses on save, so *any* edit takes
 // effect live. After the UI atomically commits its own write it calls
 // suppressNextWatchEvent() before fs.watch can dispatch the resulting event,
@@ -44,7 +44,7 @@ async function handleChange(configPath) {
 
   let record;
   try {
-    record = readPilotDeckConfigFile();
+    record = readLawyerBuddyConfigFile();
   } catch (error) {
     onEventHandler?.({
       source: 'watcher',
@@ -63,13 +63,13 @@ async function handleChange(configPath) {
   if (record.parseError) {
     onEventHandler?.({
       source: 'watcher',
-      ...serializePilotDeckConfigResponse(record),
+      ...serializeLawyerBuddyConfigResponse(record),
       timestamp: new Date().toISOString(),
     });
     return;
   }
 
-  const response = serializePilotDeckConfigResponse(record);
+  const response = serializeLawyerBuddyConfigResponse(record);
 
   if (!response.validation.valid) {
     onEventHandler?.({
@@ -82,7 +82,7 @@ async function handleChange(configPath) {
 
   let reloadResult = null;
   try {
-    reloadResult = await reloadPilotDeckConfig(record.config);
+    reloadResult = await reloadLawyerBuddyConfig(record.config);
   } catch (error) {
     onEventHandler?.({
       source: 'watcher',
@@ -95,7 +95,7 @@ async function handleChange(configPath) {
 
   onEventHandler?.({
     source: 'watcher',
-    ...serializePilotDeckConfigResponse(record, reloadResult),
+    ...serializeLawyerBuddyConfigResponse(record, reloadResult),
     timestamp: new Date().toISOString(),
   });
 }
@@ -146,12 +146,12 @@ async function installWatchers(configPath) {
           void installWatchers(configPath)
             .then(() => handleChange(configPath))
             .catch((error) => {
-              console.warn('[pilotdeck-config-watcher] failed to refresh watcher:', error?.message || error);
+              console.warn('[lawyerbuddy-config-watcher] failed to refresh watcher:', error?.message || error);
             });
         }, 250);
       });
       activeWatcher.on('error', (error) => {
-        console.warn('[pilotdeck-config-watcher] watch error:', error?.message || error);
+        console.warn('[lawyerbuddy-config-watcher] watch error:', error?.message || error);
       });
       nextWatchers.push(activeWatcher);
     }
@@ -162,19 +162,19 @@ async function installWatchers(configPath) {
 
   closeWatchers();
   watchers = nextWatchers;
-  console.log(`[pilotdeck-config-watcher] watching ${paths.join(', ')}`);
+  console.log(`[lawyerbuddy-config-watcher] watching ${paths.join(', ')}`);
 }
 
-export async function startPilotDeckConfigWatcher({ onEvent } = {}) {
-  stopPilotDeckConfigWatcher();
+export async function startLawyerBuddyConfigWatcher({ onEvent } = {}) {
+  stopLawyerBuddyConfigWatcher();
   onEventHandler = typeof onEvent === 'function' ? onEvent : null;
 
-  const configPath = getPilotDeckConfigPath();
+  const configPath = getLawyerBuddyConfigPath();
   const configDir = path.dirname(configPath);
   try {
     await fsPromises.mkdir(configDir, { recursive: true });
   } catch (error) {
-    console.warn('[pilotdeck-config-watcher] failed to ensure config dir:', error?.message || error);
+    console.warn('[lawyerbuddy-config-watcher] failed to ensure config dir:', error?.message || error);
     return;
   }
 
@@ -183,11 +183,11 @@ export async function startPilotDeckConfigWatcher({ onEvent } = {}) {
   try {
     await installWatchers(configPath);
   } catch (error) {
-    console.warn('[pilotdeck-config-watcher] failed to start:', error?.message || error);
+    console.warn('[lawyerbuddy-config-watcher] failed to start:', error?.message || error);
   }
 }
 
-export function stopPilotDeckConfigWatcher() {
+export function stopLawyerBuddyConfigWatcher() {
   closeWatchers();
   if (debounceTimer) {
     clearTimeout(debounceTimer);

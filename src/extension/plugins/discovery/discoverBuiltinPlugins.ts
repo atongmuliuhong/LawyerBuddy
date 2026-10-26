@@ -1,5 +1,5 @@
-import type { PilotDeckLoadedPlugin } from "../protocol/plugin.js";
+import type { LawyerBuddyLoadedPlugin } from "../protocol/plugin.js";
 
-export function discoverBuiltinPlugins(plugins: PilotDeckLoadedPlugin[] = []): PilotDeckLoadedPlugin[] {
+export function discoverBuiltinPlugins(plugins: LawyerBuddyLoadedPlugin[] = []): LawyerBuddyLoadedPlugin[] {
   return plugins.filter((plugin) => plugin.source === "builtin");
 }

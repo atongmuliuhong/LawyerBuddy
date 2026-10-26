@@ -1,7 +1,7 @@
 {
-  "name": "PilotDeck",
-  "short_name": "PilotDeck",
-  "description": "PilotDeck — agent-driven development workspace",
+  "name": "LawyerBuddy",
+  "short_name": "LawyerBuddy",
+  "description": "LawyerBuddy — agent-driven development workspace",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

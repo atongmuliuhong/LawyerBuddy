@@ -4,24 +4,24 @@ import net from 'net';
 import os from 'os';
 import path from 'path';
 
-export const CRON_DAEMON_OWNER_KIND = 'pilotdeck-server';
-export const CRON_DAEMON_OWNER_KIND_ENV = 'PILOTDECK_CRON_DAEMON_OWNER_KIND';
-export const CRON_DAEMON_OWNER_TOKEN_ENV = 'PILOTDECK_CRON_DAEMON_OWNER_TOKEN';
-export const CRON_DAEMON_OWNER_PROCESS_PID_ENV = 'PILOTDECK_CRON_DAEMON_OWNER_PROCESS_PID';
+export const CRON_DAEMON_OWNER_KIND = 'lawyerbuddy-server';
+export const CRON_DAEMON_OWNER_KIND_ENV = 'LAWYERBUDDY_CRON_DAEMON_OWNER_KIND';
+export const CRON_DAEMON_OWNER_TOKEN_ENV = 'LAWYERBUDDY_CRON_DAEMON_OWNER_TOKEN';
+export const CRON_DAEMON_OWNER_PROCESS_PID_ENV = 'LAWYERBUDDY_CRON_DAEMON_OWNER_PROCESS_PID';
 
-function getPilotDeckConfigHomeDir() {
-  return process.env.PILOTDECK_CONFIG_DIR || process.env.PILOT_HOME || path.join(os.homedir(), '.pilotdeck');
+function getLawyerBuddyConfigHomeDir() {
+  return process.env.LAWYERBUDDY_CONFIG_DIR || process.env.PILOT_HOME || path.join(os.homedir(), '.lawyerbuddy');
 }
 
 function getCronDaemonOwnerPath() {
-  return path.join(getPilotDeckConfigHomeDir(), 'cron-daemon', 'owner.json');
+  return path.join(getLawyerBuddyConfigHomeDir(), 'cron-daemon', 'owner.json');
 }
 
 function getCronDaemonSocketPath() {
   if (process.platform === 'win32') {
-    return '\\\\.\\pipe\\pilotdeck-cron-daemon';
+    return '\\\\.\\pipe\\lawyerbuddy-cron-daemon';
   }
-  return path.join(getPilotDeckConfigHomeDir(), 'cron-daemon.sock');
+  return path.join(getLawyerBuddyConfigHomeDir(), 'cron-daemon.sock');
 }
 
 async function readCronDaemonOwner() {

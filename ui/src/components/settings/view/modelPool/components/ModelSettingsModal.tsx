@@ -23,7 +23,7 @@ type Props = {
 
 export default function ModelSettingsModal({ modelId, protocol = 'openai', initial, task, testDisabled, applyTestResult = true, testError, onTest, onCancelTest, onSave, onClose }: Props) {
   const { t } = useTranslation('settings');
-  const label = (key: string) => t(`pilotDeckConfig.panels.models.modelSettings.${key}`);
+  const label = (key: string) => t(`lawyerBuddyConfig.panels.models.modelSettings.${key}`);
   const [output, setOutput] = useState(String(initial.maxOutputTokens));
   const [context, setContext] = useState(String(initial.maxContextTokens));
   const [image, setImage] = useState(initial.supportsImage);
@@ -65,11 +65,11 @@ export default function ModelSettingsModal({ modelId, protocol = 'openai', initi
   return <ConfirmDialog title={label('title')} confirmLabel={label('save')} busy={saving} disabled={!valid || running} error={error} onCancel={onClose} onConfirm={() => void save()}>
     <p className="mb-5 break-all text-sm font-medium text-foreground">{modelId}</p>
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <label className="text-xs font-medium">{t('pilotDeckConfig.panels.models.maxOutputTokens')}
-        <input className={inputClass} aria-label={t('pilotDeckConfig.panels.models.maxOutputTokens')} inputMode="numeric" value={output} onChange={e => setOutput(e.target.value)} disabled={saving} />
+      <label className="text-xs font-medium">{t('lawyerBuddyConfig.panels.models.maxOutputTokens')}
+        <input className={inputClass} aria-label={t('lawyerBuddyConfig.panels.models.maxOutputTokens')} inputMode="numeric" value={output} onChange={e => setOutput(e.target.value)} disabled={saving} />
       </label>
-      <label className="text-xs font-medium">{t('pilotDeckConfig.panels.models.maxContextTokens')}
-        <input className={inputClass} aria-label={t('pilotDeckConfig.panels.models.maxContextTokens')} inputMode="numeric" value={context} onChange={e => setContext(e.target.value)} disabled={saving} />
+      <label className="text-xs font-medium">{t('lawyerBuddyConfig.panels.models.maxContextTokens')}
+        <input className={inputClass} aria-label={t('lawyerBuddyConfig.panels.models.maxContextTokens')} inputMode="numeric" value={context} onChange={e => setContext(e.target.value)} disabled={saving} />
       </label>
     </div>
     <div className="my-5 flex flex-wrap gap-x-5 gap-y-3 text-sm text-foreground">
@@ -104,7 +104,7 @@ export default function ModelSettingsModal({ modelId, protocol = 'openai', initi
       <div className="flex items-center justify-between gap-3">
         <button type="button" disabled={testDisabled || saving} onClick={() => { manual.current = false; onTest(); }} className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-background px-3 text-sm text-foreground hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40">
           {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plug className="h-4 w-4" />}
-          {running ? label('testing') : t('pilotDeckConfig.panels.models.testConnection')}
+          {running ? label('testing') : t('lawyerBuddyConfig.panels.models.testConnection')}
         </button>
         {running && <button type="button" disabled={task?.status === 'cancelling'} className="text-xs text-muted-foreground hover:text-foreground" onClick={onCancelTest}>{label('cancelTest')}</button>}
       </div>

@@ -2,16 +2,16 @@ import type { PermissionResult } from "../../permission/index.js";
 import { WEB_SEARCH_ENDPOINTS, type SerpApiEngine, type WebSearchProvider } from "../../pilot/config/webSearchProviders.js";
 import { additionalSearchRequest, additionalSearchResults, isAdditionalSearchProvider, redactSearchError, type AdditionalSearchProvider } from "./additionalWebSearch.js";
 import { NetworkFetchError, networkFetch } from "../../network/fetch.js";
-import { PilotDeckToolRuntimeError } from "../protocol/errors.js";
+import { LawyerBuddyToolRuntimeError } from "../protocol/errors.js";
 import type {
-  PilotDeckToolAvailabilityContext,
-  PilotDeckToolDefinition,
-  PilotDeckToolExecutionOutput,
-  PilotDeckToolRuntimeContext,
+  LawyerBuddyToolAvailabilityContext,
+  LawyerBuddyToolDefinition,
+  LawyerBuddyToolExecutionOutput,
+  LawyerBuddyToolRuntimeContext,
 } from "../protocol/types.js";
 
 /**
- * `web_search` is a local PilotDeck tool backed by exactly one configured
+ * `web_search` is a local LawyerBuddy tool backed by exactly one configured
  * provider. The model still sees one stable tool surface; provider-specific
  * request/response shapes stay behind this adapter.
  */
@@ -82,7 +82,7 @@ const DEFAULT_ORGANIC_LIMIT = 8;
 
 export function createWebSearchTool(
   options: CreateWebSearchToolOptions = {},
-): PilotDeckToolDefinition<WebSearchInput, WebSearchOutput> {
+): LawyerBuddyToolDefinition<WebSearchInput, WebSearchOutput> {
   const fetchImpl = options.fetchImpl ?? fetch;
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const organicLimit = options.organicLimit ?? DEFAULT_ORGANIC_LIMIT;
@@ -97,7 +97,7 @@ export function createWebSearchTool(
 - Use this tool when API/SDK/framework usage is unknown, version-sensitive, or likely changed since training. Search with package/service name, version, framework, and the specific method/option/error.
 
 Usage notes:
-  - Configure \`tools.webSearch.provider\` as \`glm\`, \`tavily\`, \`serper\`, \`brave\`, \`baidu\`, \`bocha\`, \`exa\`, \`serpapi\`, or \`custom\` in \`pilotdeck.yaml\`
+  - Configure \`tools.webSearch.provider\` as \`glm\`, \`tavily\`, \`serper\`, \`brave\`, \`baidu\`, \`bocha\`, \`exa\`, \`serpapi\`, or \`custom\` in \`lawyerbuddy.yaml\`
   - Requires \`tools.webSearch.apiKey\`, the provider API key environment variable, or \`CUSTOM_WEB_SEARCH_API_KEY\` unless custom auth is \`none\`
   - The optional \`gl\` parameter is forwarded only by providers that support localization
   - This tool is read-only and does not modify files`,
@@ -149,7 +149,7 @@ Usage notes:
       const apiKey = resolveApiKey(options.apiKey, provider, context);
       const custom = normalizeCustomProviderConfig(options.customProvider);
       if (!apiKey && !(provider === "custom" && custom.auth === "none")) {
-        throw new PilotDeckToolRuntimeError(
+        throw new LawyerBuddyToolRuntimeError(
           "setup_required",
           "web_search requires an API key. Please configure it in Settings → Search.",
           { tool: "web_search" },
@@ -157,7 +157,7 @@ Usage notes:
       }
       if (provider === "custom") {
         if (!options.endpoint?.trim()) {
-          throw new PilotDeckToolRuntimeError(
+          throw new LawyerBuddyToolRuntimeError(
             "setup_required",
             "web_search custom provider requires an endpoint URL. Please configure it in Settings → Search.",
             { tool: "web_search" },
@@ -227,12 +227,12 @@ Usage notes:
 
 function checkWebSearchAvailability(
   options: CreateWebSearchToolOptions,
-  context: PilotDeckToolAvailabilityContext,
+  context: LawyerBuddyToolAvailabilityContext,
 ) {
   const runtimeContext = {
     cwd: context.cwd,
     env: context.env,
-  } as PilotDeckToolRuntimeContext;
+  } as LawyerBuddyToolRuntimeContext;
   const provider = resolveProvider(options.provider, options.apiKey, runtimeContext);
   const apiKey = resolveApiKey(options.apiKey, provider, runtimeContext);
   const custom = normalizeCustomProviderConfig(options.customProvider);
@@ -258,7 +258,7 @@ function checkWebSearchAvailability(
 function resolveProvider(
   optionProvider: WebSearchProvider | undefined,
   optionApiKey: string | undefined,
-  context: PilotDeckToolRuntimeContext,
+  context: LawyerBuddyToolRuntimeContext,
 ): WebSearchProvider {
   if (optionProvider) return optionProvider;
   if (optionApiKey?.trim()) return "glm";
@@ -283,7 +283,7 @@ function resolveProvider(
 function resolveApiKey(
   optionApiKey: string | undefined,
   provider: WebSearchProvider,
-  context: PilotDeckToolRuntimeContext,
+  context: LawyerBuddyToolRuntimeContext,
 ): string | undefined {
   const fromOption = optionApiKey?.trim();
   if (fromOption) {
@@ -301,13 +301,13 @@ function resolveApiKey(
 }
 
 async function performAdditionalSearch(args: {
-  input: WebSearchInput; context: PilotDeckToolRuntimeContext; apiKey: string;
+  input: WebSearchInput; context: LawyerBuddyToolRuntimeContext; apiKey: string;
   provider: AdditionalSearchProvider; endpoint: string; searchEngine?: SerpApiEngine;
   fetchImpl: typeof fetch; timeoutMs: number; organicLimit: number;
-}): Promise<PilotDeckToolExecutionOutput<WebSearchOutput>> {
+}): Promise<LawyerBuddyToolExecutionOutput<WebSearchOutput>> {
   const { input, context, apiKey, provider, endpoint, timeoutMs, fetchImpl, organicLimit } = args;
   const query = input.query.trim();
-  if (!query) throw new PilotDeckToolRuntimeError("invalid_tool_input", "web_search requires a non-empty `query`.");
+  if (!query) throw new LawyerBuddyToolRuntimeError("invalid_tool_input", "web_search requires a non-empty `query`.");
   assertHttpEndpoint(endpoint, provider);
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -324,8 +324,8 @@ async function performAdditionalSearch(args: {
     return { content: [{ type: "text", text: formatTextSummary(output) }, { type: "json", value: output }], data: output,
       metadata: { provider, endpoint, ...(provider === "serpapi" ? { engine: args.searchEngine ?? "google" } : {}), organicCount: organic.length } };
   } catch (error) {
-    if (isLocalTimeout(error, controller.signal, context.abortSignal)) throw new PilotDeckToolRuntimeError("tool_timeout", `web_search (${provider}) timed out after ${timeoutMs}ms.`);
-    throw new PilotDeckToolRuntimeError("tool_execution_failed", `web_search (${provider}) request failed: ${redactSearchError(error, apiKey)}`);
+    if (isLocalTimeout(error, controller.signal, context.abortSignal)) throw new LawyerBuddyToolRuntimeError("tool_timeout", `web_search (${provider}) timed out after ${timeoutMs}ms.`);
+    throw new LawyerBuddyToolRuntimeError("tool_execution_failed", `web_search (${provider}) request failed: ${redactSearchError(error, apiKey)}`);
   } finally { clearTimeout(timeout); detachAbort?.(); }
 }
 
@@ -347,7 +347,7 @@ function normalizeCustomProviderConfig(
   };
 }
 
-function readEnv(context: PilotDeckToolRuntimeContext, name: string): string | undefined {
+function readEnv(context: LawyerBuddyToolRuntimeContext, name: string): string | undefined {
   const value = (context.env ?? process.env)[name]?.trim();
   return value && value.length > 0 ? value : undefined;
 }
@@ -357,7 +357,7 @@ function assertHttpEndpoint(endpoint: string, provider: WebSearchProvider): void
     const parsed = new URL(endpoint);
     if (parsed.protocol !== "http:" && parsed.protocol !== "https:") throw new Error("unsupported protocol");
   } catch {
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "setup_required",
       `web_search (${provider}) requires a valid HTTP(S) endpoint URL.`,
     );
@@ -367,7 +367,7 @@ function assertHttpEndpoint(endpoint: string, provider: WebSearchProvider): void
 type PerformStructuredProviderSearchInput = {
   provider: "serper" | "brave";
   input: WebSearchInput;
-  context: PilotDeckToolRuntimeContext;
+  context: LawyerBuddyToolRuntimeContext;
   apiKey: string;
   endpoint: string;
   fetchImpl: typeof fetch;
@@ -377,24 +377,24 @@ type PerformStructuredProviderSearchInput = {
 
 async function performSerperSearch(
   args: Omit<PerformStructuredProviderSearchInput, "provider">,
-): Promise<PilotDeckToolExecutionOutput<WebSearchOutput>> {
+): Promise<LawyerBuddyToolExecutionOutput<WebSearchOutput>> {
   return performStructuredProviderSearch({ ...args, provider: "serper" });
 }
 
 async function performBraveSearch(
   args: Omit<PerformStructuredProviderSearchInput, "provider">,
-): Promise<PilotDeckToolExecutionOutput<WebSearchOutput>> {
+): Promise<LawyerBuddyToolExecutionOutput<WebSearchOutput>> {
   return performStructuredProviderSearch({ ...args, provider: "brave" });
 }
 
 async function performStructuredProviderSearch(
   args: PerformStructuredProviderSearchInput,
-): Promise<PilotDeckToolExecutionOutput<WebSearchOutput>> {
+): Promise<LawyerBuddyToolExecutionOutput<WebSearchOutput>> {
   const { provider, input, context, apiKey, endpoint, fetchImpl, timeoutMs, organicLimit } = args;
   assertHttpEndpoint(endpoint, provider);
   const query = input.query.trim();
   if (!query) {
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "invalid_tool_input",
       "web_search requires a non-empty `query`.",
     );
@@ -434,12 +434,12 @@ async function performStructuredProviderSearch(
     });
   } catch (error) {
     if (isLocalTimeout(error, controller.signal, context.abortSignal)) {
-      throw new PilotDeckToolRuntimeError(
+      throw new LawyerBuddyToolRuntimeError(
         "tool_timeout",
         `web_search (${provider}) timed out after ${timeoutMs}ms.`,
       );
     }
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "tool_execution_failed",
       `web_search (${provider}) request failed: ${error instanceof Error ? error.message : String(error)}`,
     );
@@ -450,7 +450,7 @@ async function performStructuredProviderSearch(
 
   if (!response.ok) {
     const detail = await response.text().catch(() => response.statusText);
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "tool_execution_failed",
       `${provider} API error (${response.status}): ${truncate(detail, 500)}`,
     );
@@ -472,7 +472,7 @@ async function performStructuredProviderSearch(
 
 type PerformTavilySearchInput = {
   input: WebSearchInput;
-  context: PilotDeckToolRuntimeContext;
+  context: LawyerBuddyToolRuntimeContext;
   apiKey: string;
   endpoint: string;
   fetchImpl: typeof fetch;
@@ -482,12 +482,12 @@ type PerformTavilySearchInput = {
 
 async function performTavilySearch(
   args: PerformTavilySearchInput,
-): Promise<PilotDeckToolExecutionOutput<WebSearchOutput>> {
+): Promise<LawyerBuddyToolExecutionOutput<WebSearchOutput>> {
   const { input, context, apiKey, endpoint, fetchImpl, timeoutMs, organicLimit } = args;
   assertHttpEndpoint(endpoint, "tavily");
   const query = input.query.trim();
   if (!query) {
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "invalid_tool_input",
       "web_search requires a non-empty `query`.",
     );
@@ -523,12 +523,12 @@ async function performTavilySearch(
     });
   } catch (error) {
     if (isLocalTimeout(error, controller.signal, context.abortSignal)) {
-      throw new PilotDeckToolRuntimeError(
+      throw new LawyerBuddyToolRuntimeError(
         "tool_timeout",
         `web_search (tavily) timed out after ${timeoutMs}ms.`,
       );
     }
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "tool_execution_failed",
       `web_search (tavily) request failed: ${error instanceof Error ? error.message : String(error)}`,
     );
@@ -539,7 +539,7 @@ async function performTavilySearch(
 
   if (!response.ok) {
     const detail = await response.text().catch(() => response.statusText);
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "tool_execution_failed",
       `Tavily API error (${response.status}): ${truncate(detail, 500)}`,
     );
@@ -581,7 +581,7 @@ async function performTavilySearch(
 
 type PerformGlmSearchInput = {
   input: WebSearchInput;
-  context: PilotDeckToolRuntimeContext;
+  context: LawyerBuddyToolRuntimeContext;
   apiKey: string;
   endpoint: string;
   fetchImpl: typeof fetch;
@@ -591,7 +591,7 @@ type PerformGlmSearchInput = {
 
 async function performGlmSearch(
   args: PerformGlmSearchInput,
-): Promise<PilotDeckToolExecutionOutput<WebSearchOutput>> {
+): Promise<LawyerBuddyToolExecutionOutput<WebSearchOutput>> {
   const {
     input,
     context,
@@ -604,7 +604,7 @@ async function performGlmSearch(
   assertHttpEndpoint(endpoint, "glm");
   const query = input.query.trim();
   if (!query) {
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "invalid_tool_input",
       "web_search requires a non-empty `query`.",
     );
@@ -640,12 +640,12 @@ async function performGlmSearch(
     });
   } catch (error) {
     if (isLocalTimeout(error, controller.signal, context.abortSignal)) {
-      throw new PilotDeckToolRuntimeError(
+      throw new LawyerBuddyToolRuntimeError(
         "tool_timeout",
         `web_search timed out after ${timeoutMs}ms.`,
       );
     }
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "tool_execution_failed",
       `web_search (glm) request failed: ${error instanceof Error ? error.message : String(error)}`,
     );
@@ -656,7 +656,7 @@ async function performGlmSearch(
 
   if (!response.ok) {
     const detail = await response.text().catch(() => response.statusText);
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "tool_execution_failed",
       `GLM web search error (${response.status}): ${truncate(detail, 500)}`,
     );
@@ -664,7 +664,7 @@ async function performGlmSearch(
 
   const raw = (await response.json()) as Record<string, unknown>;
   if (typeof raw.error === "string" && raw.error.length > 0) {
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "tool_execution_failed",
       `GLM web search error: ${raw.error}`,
     );
@@ -672,7 +672,7 @@ async function performGlmSearch(
   const proxyCode = raw.code;
   if (typeof proxyCode === "number" && proxyCode !== 0) {
     const message = typeof raw.msg === "string" ? raw.msg : "search proxy error";
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "tool_execution_failed",
       `GLM web search error code=${proxyCode}: ${message}`,
     );
@@ -696,7 +696,7 @@ async function performGlmSearch(
 
 type PerformCustomSearchInput = {
   input: WebSearchInput;
-  context: PilotDeckToolRuntimeContext;
+  context: LawyerBuddyToolRuntimeContext;
   apiKey: string | undefined;
   endpoint: string;
   fetchImpl: typeof fetch;
@@ -707,11 +707,11 @@ type PerformCustomSearchInput = {
 
 async function performCustomSearch(
   args: PerformCustomSearchInput,
-): Promise<PilotDeckToolExecutionOutput<WebSearchOutput>> {
+): Promise<LawyerBuddyToolExecutionOutput<WebSearchOutput>> {
   const { input, context, apiKey, endpoint, fetchImpl, timeoutMs, organicLimit, custom } = args;
   const query = input.query.trim();
   if (!query) {
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "invalid_tool_input",
       "web_search requires a non-empty `query`.",
     );
@@ -722,7 +722,7 @@ async function performCustomSearch(
     url = new URL(endpoint);
     if (url.protocol !== "http:" && url.protocol !== "https:") throw new Error("unsupported protocol");
   } catch {
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "invalid_tool_input",
       `web_search custom provider endpoint is not a valid URL: ${endpoint}`,
     );
@@ -771,12 +771,12 @@ async function performCustomSearch(
     });
   } catch (error) {
     if (isLocalTimeout(error, controller.signal, context.abortSignal)) {
-      throw new PilotDeckToolRuntimeError(
+      throw new LawyerBuddyToolRuntimeError(
         "tool_timeout",
         `web_search (custom) timed out after ${timeoutMs}ms.`,
       );
     }
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "tool_execution_failed",
       `web_search (custom) request failed: ${error instanceof Error ? error.message : String(error)}`,
     );
@@ -787,7 +787,7 @@ async function performCustomSearch(
 
   if (!response.ok) {
     const detail = await response.text().catch(() => response.statusText);
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "tool_execution_failed",
       `Custom web search error (${response.status}): ${truncate(detail, 500)}`,
     );
@@ -795,7 +795,7 @@ async function performCustomSearch(
 
   const raw = (await response.json()) as Record<string, unknown>;
   if (typeof raw.error === "string" && raw.error.length > 0) {
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "tool_execution_failed",
       `Custom web search error: ${raw.error}`,
     );
@@ -803,7 +803,7 @@ async function performCustomSearch(
   const proxyCode = raw.code;
   if (typeof proxyCode === "number" && proxyCode !== 0) {
     const message = typeof raw.msg === "string" ? raw.msg : "search provider error";
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "tool_execution_failed",
       `Custom web search error code=${proxyCode}: ${message}`,
     );

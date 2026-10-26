@@ -14,7 +14,7 @@ import {
 } from '../../../src/model/config/providerCredentialScope.js';
 import { findModelReferences } from './modelReferences.js';
 
-// Source of truth: ~/.pilotdeck/pilotdeck.yaml. The disk format and the
+// Source of truth: ~/.lawyerbuddy/lawyerbuddy.yaml. The disk format and the
 // "internal" config object are the same V2 schema — no more adapter layer.
 //
 // Top-level shape:
@@ -33,8 +33,8 @@ import { findModelReferences } from './modelReferences.js';
 // schemas. UI server just round-trips them.
 
 const CONFIG_VERSION = 1;
-const PILOT_HOME_DIR = process.env.PILOT_HOME || path.join(os.homedir(), '.pilotdeck');
-const DEFAULT_CONFIG_PATH = path.join(PILOT_HOME_DIR, 'pilotdeck.yaml');
+const PILOT_HOME_DIR = process.env.PILOT_HOME || path.join(os.homedir(), '.lawyerbuddy');
+const DEFAULT_CONFIG_PATH = path.join(PILOT_HOME_DIR, 'lawyerbuddy.yaml');
 const MASK = '********';
 const ENV_REFERENCE_PATTERN = /^\$\{([A-Za-z_][A-Za-z0-9_]*)\}$/;
 
@@ -60,7 +60,7 @@ const DEFAULT_CONFIG_WRITE_ATTEMPTS = 3;
 
 // Serialize every read-modify-write caller against the same local YAML file.
 // The callback must read the config inside this critical section.
-export function withPilotDeckConfigWrite(operation) {
+export function withLawyerBuddyConfigWrite(operation) {
   const run = configWriteQueue.then(operation, operation);
   configWriteQueue = run.catch(() => undefined);
   return run;
@@ -103,7 +103,7 @@ function deepMerge(base, override) {
 
 // ─── Defaults ────────────────────────────────────────────────────────────────
 
-export function buildDefaultPilotDeckConfig() {
+export function buildDefaultLawyerBuddyConfig() {
   return {
     schemaVersion: CONFIG_VERSION,
     agent: {
@@ -154,9 +154,9 @@ export function buildDefaultPilotDeckConfig() {
 
 // Fill in missing sections and migrate legacy Office preview settings into the
 // current schema. The migration is idempotent.
-export function normalizePilotDeckConfig(input) {
+export function normalizeLawyerBuddyConfig(input) {
   const source = isRecord(input) ? input : {};
-  const normalized = deepMerge(buildDefaultPilotDeckConfig(), source);
+  const normalized = deepMerge(buildDefaultLawyerBuddyConfig(), source);
   // Older configured sections implied enabled. Do not let new-user defaults
   // silently switch those existing features off during a read/save cycle.
   for (const key of ['memory', 'router']) {
@@ -502,8 +502,8 @@ function validateToolsConfig(config, errors, warnings) {
   }
 }
 
-export function validatePilotDeckConfig(config) {
-  const normalized = normalizePilotDeckConfig(config);
+export function validateLawyerBuddyConfig(config) {
+  const normalized = normalizeLawyerBuddyConfig(config);
   const errors = [];
   const warnings = [];
 
@@ -637,7 +637,7 @@ export function resolveConfiguredProviderApiKey(providerId, provider, env = proc
 }
 
 export function buildRuntimeEnv(config) {
-  const normalized = normalizePilotDeckConfig(config);
+  const normalized = normalizeLawyerBuddyConfig(config);
   const main = resolveModel(normalized, normalized.agent.model, { allowMissing: true });
   const runtime = normalized.webui?.runtime ?? {};
 
@@ -646,7 +646,7 @@ export function buildRuntimeEnv(config) {
     VITE_PORT: process.env.VITE_PORT || String(runtime.vitePort ?? 5173),
     HOST: process.env.HOST || String(runtime.host ?? '0.0.0.0'),
     API_TIMEOUT_MS: String(runtime.apiTimeoutMs ?? 120000),
-    PILOTDECK_MEMORY_ENABLED: normalized.memory?.enabled ? '1' : '0',
+    LAWYERBUDDY_MEMORY_ENABLED: normalized.memory?.enabled ? '1' : '0',
   };
 
   if (runtime.databasePath) env.DATABASE_PATH = expandTilde(runtime.databasePath);
@@ -662,9 +662,9 @@ export function buildRuntimeEnv(config) {
   if (main) {
     const mainUrl = resolveConfiguredProviderUrl(main.providerId, main.provider);
     const mainApiKey = resolveConfiguredProviderApiKey(main.providerId, main.provider);
-    env.PILOTDECK_API_BASE_URL = mainUrl;
-    env.PILOTDECK_API_KEY = mainApiKey;
-    env.PILOTDECK_MODEL = main.model;
+    env.LAWYERBUDDY_API_BASE_URL = mainUrl;
+    env.LAWYERBUDDY_API_KEY = mainApiKey;
+    env.LAWYERBUDDY_MODEL = main.model;
     env.OPENAI_BASE_URL = mainUrl;
     // Standard provider credential variables are user-controlled inputs. Do
     // not replace them with the active provider's key: config reloads happen
@@ -688,9 +688,9 @@ export function buildRuntimeEnv(config) {
     10,
   );
   if (Number.isFinite(requestedMaxOutput) && requestedMaxOutput > 0) {
-    env.PILOTDECK_MAX_OUTPUT_TOKENS = String(requestedMaxOutput);
-  } else if (process.env.PILOTDECK_MAX_OUTPUT_TOKENS) {
-    env.PILOTDECK_MAX_OUTPUT_TOKENS = process.env.PILOTDECK_MAX_OUTPUT_TOKENS;
+    env.LAWYERBUDDY_MAX_OUTPUT_TOKENS = String(requestedMaxOutput);
+  } else if (process.env.LAWYERBUDDY_MAX_OUTPUT_TOKENS) {
+    env.LAWYERBUDDY_MAX_OUTPUT_TOKENS = process.env.LAWYERBUDDY_MAX_OUTPUT_TOKENS;
   }
 
   const tavilyKey = mainParams.tavilyApiKey ?? mainParams.tavily_api_key ?? process.env.TAVILY_API_KEY;
@@ -700,14 +700,14 @@ export function buildRuntimeEnv(config) {
   const memoryRef = normalizeString(normalized.memory?.model) || normalized.agent.model;
   const memory = resolveModel(normalized, memoryRef, { allowMissing: true });
   if (memory) {
-    env.PILOTDECK_MEMORY_MODEL = memory.model;
-    env.PILOTDECK_MEMORY_PROVIDER = memory.providerId;
-    env.PILOTDECK_MEMORY_BASE_URL = resolveConfiguredProviderUrl(memory.providerId, memory.provider);
-    env.PILOTDECK_MEMORY_API_KEY = resolveConfiguredProviderApiKey(
+    env.LAWYERBUDDY_MEMORY_MODEL = memory.model;
+    env.LAWYERBUDDY_MEMORY_PROVIDER = memory.providerId;
+    env.LAWYERBUDDY_MEMORY_BASE_URL = resolveConfiguredProviderUrl(memory.providerId, memory.provider);
+    env.LAWYERBUDDY_MEMORY_API_KEY = resolveConfiguredProviderApiKey(
       memory.providerId,
       memory.provider,
     );
-    env.PILOTDECK_MEMORY_API_TYPE = normalizeString(normalized.memory?.apiType)
+    env.LAWYERBUDDY_MEMORY_API_TYPE = normalizeString(normalized.memory?.apiType)
       || providerProtocolToMemoryApi(memory.provider.protocol);
   }
 
@@ -728,7 +728,7 @@ export function applyConfigToProcessEnv(config) {
 // ─── Memory service options ──────────────────────────────────────────────────
 
 export function buildMemoryLlmOptions(config) {
-  const normalized = normalizePilotDeckConfig(config);
+  const normalized = normalizeLawyerBuddyConfig(config);
   const ref = normalizeString(normalized.memory?.model) || normalized.agent.model;
   const memory = resolveModel(normalized, ref, { allowMissing: true });
   if (!memory) return undefined;
@@ -744,7 +744,7 @@ export function buildMemoryLlmOptions(config) {
 }
 
 export function buildMemoryDefaults(config) {
-  const memory = normalizePilotDeckConfig(config).memory ?? {};
+  const memory = normalizeLawyerBuddyConfig(config).memory ?? {};
   return {
     llm: buildMemoryLlmOptions(config),
     defaultIndexingSettings: {
@@ -761,21 +761,21 @@ export function buildMemoryDefaults(config) {
 
 // ─── File I/O ────────────────────────────────────────────────────────────────
 
-export function getPilotDeckConfigPath() {
-  if (process.env.PILOTDECK_CONFIG_PATH?.trim()) {
-    return process.env.PILOTDECK_CONFIG_PATH.trim();
+export function getLawyerBuddyConfigPath() {
+  if (process.env.LAWYERBUDDY_CONFIG_PATH?.trim()) {
+    return process.env.LAWYERBUDDY_CONFIG_PATH.trim();
   }
   return DEFAULT_CONFIG_PATH;
 }
 
-export function readPilotDeckConfigFile() {
-  const configPath = getPilotDeckConfigPath();
+export function readLawyerBuddyConfigFile() {
+  const configPath = getLawyerBuddyConfigPath();
   if (!fs.existsSync(configPath)) {
     return {
       exists: false,
       configPath,
       raw: '',
-      config: buildDefaultPilotDeckConfig(),
+      config: buildDefaultLawyerBuddyConfig(),
       rawYaml: {},
       parseError: null,
     };
@@ -789,12 +789,12 @@ export function readPilotDeckConfigFile() {
       exists: true,
       configPath,
       raw,
-      config: buildDefaultPilotDeckConfig(),
+      config: buildDefaultLawyerBuddyConfig(),
       rawYaml: null,
       parseError: error instanceof Error ? error.message : String(error),
     };
   }
-  const config = normalizePilotDeckConfig(parsed);
+  const config = normalizeLawyerBuddyConfig(parsed);
   return { exists: true, configPath, raw, config, rawYaml: parsed, parseError: null };
 }
 
@@ -805,7 +805,7 @@ export function configRevision(raw) {
 // Keep every config publisher on the same masked representation. The opaque
 // revision is derived from the actual disk bytes so secret-only external edits
 // still invalidate an older settings draft.
-export function serializePilotDeckConfigResponse(record, reloadResult = null) {
+export function serializeLawyerBuddyConfigResponse(record, reloadResult = null) {
   if (record.parseError) {
     return {
       exists: record.exists,
@@ -824,7 +824,7 @@ export function serializePilotDeckConfigResponse(record, reloadResult = null) {
     };
   }
 
-  const validation = validatePilotDeckConfig(record.config);
+  const validation = validateLawyerBuddyConfig(record.config);
   const maskedConfig = maskSecrets(record.config);
   const hasDiskYaml = record.rawYaml
     && typeof record.rawYaml === 'object'
@@ -847,14 +847,14 @@ export function serializePilotDeckConfigResponse(record, reloadResult = null) {
   };
 }
 
-async function readStablePilotDeckConfigFile({
+async function readStableLawyerBuddyConfigFile({
   settleMs = DEFAULT_CONFIG_SETTLE_MS,
   maxAttempts = DEFAULT_CONFIG_WRITE_ATTEMPTS,
 } = {}) {
-  let previous = readPilotDeckConfigFile();
+  let previous = readLawyerBuddyConfigFile();
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
     if (settleMs > 0) await sleep(settleMs);
-    const current = readPilotDeckConfigFile();
+    const current = readLawyerBuddyConfigFile();
     if (current.exists === previous.exists && current.raw === previous.raw) {
       if (current.parseError) {
         throw configFileError(
@@ -929,12 +929,12 @@ async function resolveConfigWritePath(configPath) {
   }
 }
 
-async function atomicWritePilotDeckYaml(raw, {
+async function atomicWriteLawyerBuddyYaml(raw, {
   expectedRevision,
   beforeWrite,
   onWriteCommitted,
 } = {}) {
-  const configPath = getPilotDeckConfigPath();
+  const configPath = getLawyerBuddyConfigPath();
   const writePath = await resolveConfigWritePath(configPath);
   const configDir = path.dirname(writePath);
   await fsPromises.mkdir(configDir, { recursive: true });
@@ -998,7 +998,7 @@ async function atomicWritePilotDeckYaml(raw, {
   }
 }
 
-export async function updatePilotDeckConfig(
+export async function updateLawyerBuddyConfig(
   mutate,
   {
     paths,
@@ -1009,12 +1009,12 @@ export async function updatePilotDeckConfig(
   } = {},
 ) {
   if (!Array.isArray(paths) || paths.length === 0) {
-    throw new TypeError('updatePilotDeckConfig requires at least one changed path');
+    throw new TypeError('updateLawyerBuddyConfig requires at least one changed path');
   }
-  return withPilotDeckConfigWrite(async () => {
+  return withLawyerBuddyConfigWrite(async () => {
     let lastConflict;
     for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
-      const disk = await readStablePilotDeckConfigFile({ settleMs, maxAttempts });
+      const disk = await readStableLawyerBuddyConfigFile({ settleMs, maxAttempts });
       const next = clone(disk.rawYaml ?? {});
       if (await mutate(next) === false) {
         return { changed: false, config: disk.config, raw: disk.raw, configPath: disk.configPath };
@@ -1041,17 +1041,17 @@ export async function updatePilotDeckConfig(
       }
 
       try {
-        await atomicWritePilotDeckYaml(raw, {
+        await atomicWriteLawyerBuddyYaml(raw, {
           expectedRevision: configRevision(disk.raw),
           beforeWrite,
           onWriteCommitted,
         });
-        const saved = readPilotDeckConfigFile();
+        const saved = readLawyerBuddyConfigFile();
         return {
           changed: true,
           configPath: saved.configPath,
           raw: saved.raw,
-          validation: validatePilotDeckConfig(saved.config),
+          validation: validateLawyerBuddyConfig(saved.config),
           config: saved.config,
         };
       } catch (error) {
@@ -1236,7 +1236,7 @@ function finalizeBootstrapPlaceholder(config) {
 // after running through validation. UI-internal === disk schema, so
 // there's no read-modify-write needed anymore (the previous translation
 // layer existed only to bridge an older internal schema).
-export async function writePilotDeckConfig(config, {
+export async function writeLawyerBuddyConfig(config, {
   previousConfig,
   expectedRevision,
   beforeWrite,
@@ -1245,7 +1245,7 @@ export async function writePilotDeckConfig(config, {
   let previous = previousConfig;
   if (!isRecord(previous)) {
     try {
-      const diskRecord = readPilotDeckConfigFile();
+      const diskRecord = readLawyerBuddyConfigFile();
       if (!diskRecord.parseError) previous = diskRecord.config;
     } catch {
       // A missing/unreadable previous config is not a migration candidate.
@@ -1267,13 +1267,13 @@ export async function writePilotDeckConfig(config, {
       delete sanitized.memory.model;
     }
   }
-  const validation = validatePilotDeckConfig(sanitized);
+  const validation = validateLawyerBuddyConfig(sanitized);
   if (!validation.valid) {
-    const error = new Error('Invalid PilotDeck config');
+    const error = new Error('Invalid LawyerBuddy config');
     error.validation = validation;
     throw error;
   }
-  const configPath = getPilotDeckConfigPath();
+  const configPath = getLawyerBuddyConfigPath();
   await fsPromises.mkdir(path.dirname(configPath), { recursive: true });
   const yamlObj = validation.config;
   if (isRecord(yamlObj.memory)) {
@@ -1283,15 +1283,15 @@ export async function writePilotDeckConfig(config, {
     }
   }
   const raw = stringifyYaml(yamlObj, { lineWidth: 0 });
-  await atomicWritePilotDeckYaml(raw, { expectedRevision, beforeWrite, onWriteCommitted });
+  await atomicWriteLawyerBuddyYaml(raw, { expectedRevision, beforeWrite, onWriteCommitted });
   return { configPath, raw, validation, config: yamlObj };
 }
 
 // Kept as a thin alias for callers that supply an already-parsed YAML
 // object (Raw YAML editor path). Behaviour is identical to
-// writePilotDeckConfig now that internal === disk.
-export async function writeRawPilotDeckYaml(yamlObj, options) {
-  return writePilotDeckConfig(yamlObj, options);
+// writeLawyerBuddyConfig now that internal === disk.
+export async function writeRawLawyerBuddyYaml(yamlObj, options) {
+  return writeLawyerBuddyConfig(yamlObj, options);
 }
 
 export function expandTilde(value) {
@@ -1302,7 +1302,7 @@ export function expandTilde(value) {
 }
 
 export function configToYaml(config) {
-  const normalized = normalizePilotDeckConfig(config);
+  const normalized = normalizeLawyerBuddyConfig(config);
   return stringifyYaml(normalized, { lineWidth: 0 });
 }
 
@@ -1314,5 +1314,5 @@ export function rawYamlToMaskedString(rawYaml) {
 }
 
 export function parseConfigYaml(raw) {
-  return normalizePilotDeckConfig(parseYaml(raw) || {});
+  return normalizeLawyerBuddyConfig(parseYaml(raw) || {});
 }

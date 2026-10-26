@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.png" alt="PilotDeck" width="680"/>
+  <img src="assets/banner.png" alt="LawyerBuddy" width="680"/>
 </p>
 
 <p align="center">
@@ -7,11 +7,11 @@
 </p>
 
 <p align="center">
-  <a href="https://pilotdeck.openbmb.cn"><img src="https://img.shields.io/badge/Website-pilotdeck.openbmb.cn-FF6B35?style=flat-square&logo=googlechrome&logoColor=white" alt="Official Website"/></a>
-  <a href="https://pilotdeck.openbmb.cn/pilotdeck.github.io/demo/p/pilotdeck-demo"><img src="https://img.shields.io/badge/Demo-Live-brightgreen?style=flat-square" alt="Live Demo"/></a>
+  <a href="https://lawyerbuddy.openbmb.cn"><img src="https://img.shields.io/badge/Website-lawyerbuddy.openbmb.cn-FF6B35?style=flat-square&logo=googlechrome&logoColor=white" alt="Official Website"/></a>
+  <a href="https://lawyerbuddy.openbmb.cn/lawyerbuddy.github.io/demo/p/lawyerbuddy-demo"><img src="https://img.shields.io/badge/Demo-Live-brightgreen?style=flat-square" alt="Live Demo"/></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-AGPL_3.0-blue.svg?style=flat-square" alt="License"/></a>
   <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/MCP-Native-6366F1?style=flat-square" alt="MCP Native"/></a>
-  <a href="https://github.com/OpenBMB/PilotDeck/stargazers"><img src="https://img.shields.io/github/stars/OpenBMB/PilotDeck?style=flat-square" alt="Stars"/></a>
+  <a href="https://github.com/OpenBMB/LawyerBuddy/stargazers"><img src="https://img.shields.io/github/stars/OpenBMB/LawyerBuddy?style=flat-square" alt="Stars"/></a>
   <br/>
   <a href="#-community"><img src="https://img.shields.io/badge/Discord-Join_Community-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"/></a>
   &nbsp;
@@ -26,21 +26,21 @@
 <p align="center">
   <b>English</b> | <a href="./README.zh.md">简体中文</a>
   <br/>
-  <a href="https://pilotdeck.openbmb.cn">Website</a> · <a href="https://pilotdeck.openbmb.cn/pilotdeck.github.io/demo/p/pilotdeck-demo">Live Demo</a> · <a href="https://pilotdeck.openbmb.cn/pilotdeck.github.io/docs/en/introduction">Tutorial</a> · <a href="#-installation--quick-start">Quick Start</a> · <a href="#-key-highlights">Highlights</a> · <a href="#use-cases">Use Cases</a> · <a href="#-community">Community</a>
+  <a href="https://lawyerbuddy.openbmb.cn">Website</a> · <a href="https://lawyerbuddy.openbmb.cn/lawyerbuddy.github.io/demo/p/lawyerbuddy-demo">Live Demo</a> · <a href="https://lawyerbuddy.openbmb.cn/lawyerbuddy.github.io/docs/en/introduction">Tutorial</a> · <a href="#-installation--quick-start">Quick Start</a> · <a href="#-key-highlights">Highlights</a> · <a href="#use-cases">Use Cases</a> · <a href="#-community">Community</a>
 </p>
 
 ---
 
 **News** 🔥
 
-- **[2026.10.15]** PilotDeck 2.0 is here! Get started with one-click installation and visual configuration, and keep long-running tasks on track, even across 2,000 interaction messages! New high-quality Word / Excel / PPT Skills deliver office-ready results with a single click. Visit [pilotdeck.openbmb.cn](https://pilotdeck.openbmb.cn) to try it out and contribute.
-- **[2026.05.28]** PilotDeck is now open source! Visit our official website at [pilotdeck.openbmb.cn](https://pilotdeck.openbmb.cn). We welcome contributions, feedback, and stars from the community.
+- **[2026.10.15]** LawyerBuddy 2.0 is here! Get started with one-click installation and visual configuration, and keep long-running tasks on track, even across 2,000 interaction messages! New high-quality Word / Excel / PPT Skills deliver office-ready results with a single click. Visit [lawyerbuddy.openbmb.cn](https://lawyerbuddy.openbmb.cn) to try it out and contribute.
+- **[2026.05.28]** LawyerBuddy is now open source! Visit our official website at [lawyerbuddy.openbmb.cn](https://lawyerbuddy.openbmb.cn). We welcome contributions, feedback, and stars from the community.
 
 ---
 
-## 💡 About PilotDeck
+## 💡 About LawyerBuddy
 
-**PilotDeck** is an open-source agent operating system designed around the concept of "WorkSpace". It is jointly developed and open-sourced by Tsinghua University [THUNLP](https://nlp.csai.tsinghua.edu.cn/), [ModelBest](https://modelbest.cn/), [OpenBMB](https://www.openbmb.cn/), and [AI9Stars](https://github.com/AI9Stars). Targeting general-purpose, multi-task scenarios, PilotDeck is built to be a true *productivity tool* for the Agent era.
+**LawyerBuddy** is an open-source agent operating system designed around the concept of "WorkSpace". It is jointly developed and open-sourced by Tsinghua University [THUNLP](https://nlp.csai.tsinghua.edu.cn/), [ModelBest](https://modelbest.cn/), [OpenBMB](https://www.openbmb.cn/), and [AI9Stars](https://github.com/AI9Stars). Targeting general-purpose, multi-task scenarios, LawyerBuddy is built to be a true *productivity tool* for the Agent era.
 
 A wave of excellent AI Agent harnesses has emerged in recent years, each with its own focus: **Claude Code / Cursor / Trae Solo** brought model reasoning deep into the programming IDE; **Claude Cowork** introduced the notion of project-level isolation to desktop-side knowledge work; **WorkBuddy** connected agents to IM ecosystems such as WeCom and Feishu so AI is one message away.
 
@@ -51,7 +51,7 @@ When we shift the lens from "one-shot programming" or "immediate Q&A" to **long-
 - Can tasks of different difficulty **automatically be matched to different models**, instead of burning the flagship model on trivial calls?
 - When you step away from the keyboard, can the work keep moving? Can the agent **proactively discover what's worth doing, report progress, and land results as files on disk**?
 
-PilotDeck is an incremental exploration around exactly these questions. It uses the WorkSpace as the fundamental unit — completely isolating files, memory and skills per project — and pairs it with three pillar capabilities: **White-box Memory**, **Smart Routing** and **Always-on**. The entire system natively supports the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) and behaves consistently across front-ends (Web / CLI / IM).
+LawyerBuddy is an incremental exploration around exactly these questions. It uses the WorkSpace as the fundamental unit — completely isolating files, memory and skills per project — and pairs it with three pillar capabilities: **White-box Memory**, **Smart Routing** and **Always-on**. The entire system natively supports the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) and behaves consistently across front-ends (Web / CLI / IM).
 
 ### ✨ Key Highlights
 
@@ -96,7 +96,7 @@ Task difficulty is auto-detected; complex calls go to flagship models (e.g. Clau
 
 **Always-on Background Execution**
 
-PilotDeck breaks the "you ask, it answers" loop: after you sign off, the agent keeps discovering candidate tasks, running long-horizon monitors, and finally lands deliverables as local files with a summary report waiting for you.
+LawyerBuddy breaks the "you ask, it answers" loop: after you sign off, the agent keeps discovering candidate tasks, running long-horizon monitors, and finally lands deliverables as local files with a summary report waiting for you.
 
 <p align="center">
   <img src="assets/awo_en.gif" width="100%" alt="Always-on execution demo"/>
@@ -176,14 +176,14 @@ The research team benchmarked 7 complex tasks (multilingual podcast push, multi-
 
 #### 3. White-box Memory — layout & tone never bleed across projects
 
-In black-box agents, mixing tasks in a shared context pool inevitably pollutes memory. PilotDeck's WorkSpace-scoped white-box memory addresses this end-to-end:
+In black-box agents, mixing tasks in a shared context pool inevitably pollutes memory. LawyerBuddy's WorkSpace-scoped white-box memory addresses this end-to-end:
 
 <table width="100%">
 <thead>
 <tr>
   <th width="14%" align="left">Dimension</th>
   <th width="41%" align="left">Current AI Agents (black-box)</th>
-  <th width="45%" align="left">PilotDeck (white-box)</th>
+  <th width="45%" align="left">LawyerBuddy (white-box)</th>
 </tr>
 </thead>
 <tbody>
@@ -219,11 +219,11 @@ In black-box agents, mixing tasks in a shared context pool inevitably pollutes m
 
 ## 🖥️ UI & Demo
 
-PilotDeck ships an out-of-the-box Web UI with full WorkSpace management, white-box memory editing, and visualization of multi-agent collaboration.
+LawyerBuddy ships an out-of-the-box Web UI with full WorkSpace management, white-box memory editing, and visualization of multi-agent collaboration.
 
 ### Use Cases
 
-> All demos below are generated entirely by edge-side models via PilotDeck's Smart Routing — no cloud-side frontier model required.
+> All demos below are generated entirely by edge-side models via LawyerBuddy's Smart Routing — no cloud-side frontier model required.
 
 #### Work Document Generation
 
@@ -298,7 +298,7 @@ We provide one-line installers for macOS / Linux and Windows PowerShell, plus a 
 ### Option A: One-line install (recommended, macOS / Linux)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/OpenBMB/PilotDeck/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/OpenBMB/LawyerBuddy/main/install.sh | bash
 ```
 
 The script checks/uses the supported Node.js 22 runtime (22.13+ and <23, required for the built-in SQLite runtime), clones the repo, installs dependencies, and builds the frontend. On Linux it can install missing system packages when `sudo` and a supported package manager are available. On macOS, make sure Xcode Command Line Tools and a Python with `distutils` are usable before running the installer. Once it finishes:
@@ -306,22 +306,22 @@ The script checks/uses the supported Node.js 22 runtime (22.13+ and <23, require
 If Node.js or npm package downloads are slow or unreliable on your network, set reachable mirrors before running the installer:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/OpenBMB/PilotDeck/main/install.sh | \
-  PILOTDECK_NODE_DIST_MIRROR=https://npmmirror.com/mirrors/node \
+curl -fsSL https://raw.githubusercontent.com/OpenBMB/LawyerBuddy/main/install.sh | \
+  LAWYERBUDDY_NODE_DIST_MIRROR=https://npmmirror.com/mirrors/node \
   NPM_CONFIG_REGISTRY=https://registry.npmmirror.com bash
 ```
 
-You can also keep the official Node.js host as the primary source and opt in to one or more trusted fallback mirrors with `PILOTDECK_NODE_DIST_FALLBACK_MIRRORS`.
+You can also keep the official Node.js host as the primary source and opt in to one or more trusted fallback mirrors with `LAWYERBUDDY_NODE_DIST_FALLBACK_MIRRORS`.
 
 ```bash
-pilotdeck            # starts the server at http://localhost:3001
-pilotdeck status     # check runtime status
+lawyerbuddy            # starts the server at http://localhost:3001
+lawyerbuddy status     # check runtime status
 ```
 
-To open PilotDeck again later on macOS / Linux, run `pilotdeck` in a terminal and open the printed URL in your browser. If your shell has not picked up the PATH update yet, open a new terminal or source your shell profile first.
+To open LawyerBuddy again later on macOS / Linux, run `lawyerbuddy` in a terminal and open the printed URL in your browser. If your shell has not picked up the PATH update yet, open a new terminal or source your shell profile first.
 
 ```bash
-pilotdeck
+lawyerbuddy
 # then open http://localhost:3001, or the URL printed by the command
 ```
 
@@ -330,12 +330,12 @@ pilotdeck
 Run PowerShell as a normal user, then execute:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -c "irm https://raw.githubusercontent.com/OpenBMB/PilotDeck/main/install.ps1 | iex"
+powershell -ExecutionPolicy Bypass -c "irm https://raw.githubusercontent.com/OpenBMB/LawyerBuddy/main/install.ps1 | iex"
 ```
 
-The PowerShell installer uses Windows-native paths under `%USERPROFILE%\.pilotdeck`, checks Node.js 22.13+ with `node:sqlite`, installs missing prerequisites with `winget` when available, builds PilotDeck, and creates a `pilotdeck.cmd` launcher in `%USERPROFILE%\.pilotdeck\bin`. Git LFS media assets are optional for the core app; if Git LFS is unavailable or times out, the installer continues without demo videos/GIFs.
+The PowerShell installer uses Windows-native paths under `%USERPROFILE%\.lawyerbuddy`, checks Node.js 22.13+ with `node:sqlite`, installs missing prerequisites with `winget` when available, builds LawyerBuddy, and creates a `lawyerbuddy.cmd` launcher in `%USERPROFILE%\.lawyerbuddy\bin`. Git LFS media assets are optional for the core app; if Git LFS is unavailable or times out, the installer continues without demo videos/GIFs.
 
-After installation, the script starts PilotDeck and prints the UI URL, usually `http://localhost:3001`. It does not automatically open a browser, so copy that URL into your browser to finish onboarding (provider + API key). You can also open it from PowerShell:
+After installation, the script starts LawyerBuddy and prints the UI URL, usually `http://localhost:3001`. It does not automatically open a browser, so copy that URL into your browser to finish onboarding (provider + API key). You can also open it from PowerShell:
 
 ```powershell
 Start-Process http://localhost:3001
@@ -344,14 +344,14 @@ Start-Process http://localhost:3001
 If this is your first install, open a new PowerShell window after the script updates your user `PATH`, then run:
 
 ```powershell
-pilotdeck            # starts the server at http://localhost:3001
-pilotdeck status     # check runtime status
+lawyerbuddy            # starts the server at http://localhost:3001
+lawyerbuddy status     # check runtime status
 ```
 
-To open PilotDeck again later, run `pilotdeck` from a new PowerShell window, then open the printed URL in your browser. If `pilotdeck` is not yet on `PATH`, run the launcher directly:
+To open LawyerBuddy again later, run `lawyerbuddy` from a new PowerShell window, then open the printed URL in your browser. If `lawyerbuddy` is not yet on `PATH`, run the launcher directly:
 
 ```powershell
-& "$HOME\.pilotdeck\bin\pilotdeck.cmd"
+& "$HOME\.lawyerbuddy\bin\lawyerbuddy.cmd"
 ```
 
 #### Windows PowerShell FAQ
@@ -389,22 +389,22 @@ GitHub may rate-limit repeated `raw.githubusercontent.com` requests from shared 
 > By default, skip large Git LFS demo media to keep the source install lightweight. If you need the demo videos/GIFs later, run `git lfs pull` after cloning.
 
 ```bash
-GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/OpenBMB/PilotDeck.git
-cd PilotDeck
+GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/OpenBMB/LawyerBuddy.git
+cd LawyerBuddy
 
 node --version          # must be v22.13.0 or newer, and below v23
 corepack enable         # enables the pinned pnpm version from package.json
-corepack pnpm install --frozen-lockfile --filter pilotdeck --filter pilotdeck-ui
+corepack pnpm install --frozen-lockfile --filter lawyerbuddy --filter lawyerbuddy-ui
 ```
 
-PilotDeck uses the committed `pnpm-lock.yaml` for reproducible source installs. The filters keep Electron packaging dependencies out of Web-only installs. Prefer the `corepack pnpm ...` command above instead of `npm install`; on macOS, this also avoids unnecessary native rebuild fallbacks when matching prebuilt packages are available.
+LawyerBuddy uses the committed `pnpm-lock.yaml` for reproducible source installs. The filters keep Electron packaging dependencies out of Web-only installs. Prefer the `corepack pnpm ...` command above instead of `npm install`; on macOS, this also avoids unnecessary native rebuild fallbacks when matching prebuilt packages are available.
 
 **2. Configure a model provider**
 
-PilotDeck reads `~/.pilotdeck/pilotdeck.yaml`. You can create it manually, **or just open the Web UI and configure providers visually in onboarding.**
+LawyerBuddy reads `~/.lawyerbuddy/lawyerbuddy.yaml`. You can create it manually, **or just open the Web UI and configure providers visually in onboarding.**
 Supported protocols include OpenAI, Anthropic, native Google Gemini, DeepSeek, Qwen, Kimi, MiniMax and other OpenAI-compatible endpoints.
 
-If the config file is missing, PilotDeck starts the Web UI without the Gateway and opens onboarding. Saving a valid provider, API key, and model writes the config and starts the Gateway automatically.
+If the config file is missing, LawyerBuddy starts the Web UI without the Gateway and opens onboarding. Saving a valid provider, API key, and model writes the config and starts the Gateway automatically.
 
 ```yaml
 schemaVersion: 1
@@ -434,7 +434,7 @@ model:
         gemini-3.1-pro-preview: {}
 ```
 
-Local Ollama models can be configured without an API key. PilotDeck uses
+Local Ollama models can be configured without an API key. LawyerBuddy uses
 Ollama's OpenAI-compatible `/v1/chat/completions` endpoint:
 
 ```bash
@@ -465,7 +465,7 @@ cd ui && npm run start   # production mode, visit http://localhost:3001
 
 ### Option C: Docker Compose
 
-If Docker is installed, you can start PilotDeck with:
+If Docker is installed, you can start LawyerBuddy with:
 
 ```bash
 docker compose up -d --build
@@ -477,7 +477,7 @@ For full Docker configuration, see [README_DOCKER.md](README_DOCKER.md).
 
 ## 🛠️ Extension Protocol
 
-PilotDeck has an open plugin architecture with a strict boundary between the open-source core and plugin customization. Extending the system is a `plugin.json` away:
+LawyerBuddy has an open plugin architecture with a strict boundary between the open-source core and plugin customization. Extending the system is a `plugin.json` away:
 
 - **MCP Servers** — first-class integration with any Model Context Protocol server.
 - **Tools & Skills** — register custom tools, or pull community skills via [ClawHub](https://www.npmjs.com/package/clawhub).
@@ -496,7 +496,7 @@ Workflow: **Fork → feature branch → PR**.
 
 ## 💬 Community
 
-- For bugs and feature requests, please open a [GitHub Issue](https://github.com/OpenBMB/PilotDeck/issues).
+- For bugs and feature requests, please open a [GitHub Issue](https://github.com/OpenBMB/LawyerBuddy/issues).
 - Join our community channels:
 
 <table width="100%">
@@ -518,7 +518,7 @@ Workflow: **Fork → feature branch → PR**.
 
 We thank Agent OS pioneers such as OpenClaw, Claude Code, Codex, Cursor, and Hermes for their explorations that helped shape this field.
 
-PilotDeck builds upon the following outstanding open-source projects:
+LawyerBuddy builds upon the following outstanding open-source projects:
 
 - [ClawXRouter](https://github.com/OpenBMB/ClawXRouter) — Intelligent model routing
 - [ClawXMemory](https://github.com/OpenBMB/ClawXMemory) — Agent memory system
@@ -538,23 +538,23 @@ PilotDeck builds upon the following outstanding open-source projects:
 
 ## 🏢 Joint Development
 
-PilotDeck is jointly developed by Tsinghua University [THUNLP](https://nlp.csai.tsinghua.edu.cn/), [ModelBest](https://modelbest.cn/), [OpenBMB](https://www.openbmb.cn/) and [AI9Stars](https://github.com/AI9Stars).
+LawyerBuddy is jointly developed by Tsinghua University [THUNLP](https://nlp.csai.tsinghua.edu.cn/), [ModelBest](https://modelbest.cn/), [OpenBMB](https://www.openbmb.cn/) and [AI9Stars](https://github.com/AI9Stars).
 
 ---
 
 ## ⭐ Support Us
 
-If PilotDeck has been helpful in your work or research, please consider giving us a Star on GitHub!
+If LawyerBuddy has been helpful in your work or research, please consider giving us a Star on GitHub!
 
 ---
 
 ## 📝 Citation
 
 ```bibtex
-@misc{pilotdeck2026,
-  author       = {PilotDeck Team},
-  title        = {PilotDeck: A WorkSpace-Centric Open-Source Agent Operating System},
-  howpublished = {\url{https://github.com/OpenBMB/PilotDeck}},
+@misc{lawyerbuddy2026,
+  author       = {LawyerBuddy Team},
+  title        = {LawyerBuddy: A WorkSpace-Centric Open-Source Agent Operating System},
+  howpublished = {\url{https://github.com/OpenBMB/LawyerBuddy}},
   year         = {2026},
   note         = {Accessed: 2026-05-29}
 }

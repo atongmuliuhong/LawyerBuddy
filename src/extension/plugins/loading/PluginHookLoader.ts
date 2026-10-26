@@ -1,11 +1,11 @@
-import type { PilotDeckHooksSettings } from "../../hooks/protocol/settings.js";
-import type { PilotDeckLoadedPlugin } from "../protocol/plugin.js";
+import type { LawyerBuddyHooksSettings } from "../../hooks/protocol/settings.js";
+import type { LawyerBuddyLoadedPlugin } from "../protocol/plugin.js";
 
-export function loadPluginHooks(plugins: PilotDeckLoadedPlugin[]): PilotDeckHooksSettings {
-  const settings: PilotDeckHooksSettings = {};
+export function loadPluginHooks(plugins: LawyerBuddyLoadedPlugin[]): LawyerBuddyHooksSettings {
+  const settings: LawyerBuddyHooksSettings = {};
   for (const plugin of plugins) {
     for (const [event, matchers] of Object.entries(plugin.hooksConfig ?? {}) as Array<
-      [keyof PilotDeckHooksSettings, NonNullable<PilotDeckHooksSettings[keyof PilotDeckHooksSettings]>]
+      [keyof LawyerBuddyHooksSettings, NonNullable<LawyerBuddyHooksSettings[keyof LawyerBuddyHooksSettings]>]
     >) {
       settings[event] = [
         ...(settings[event] ?? []),

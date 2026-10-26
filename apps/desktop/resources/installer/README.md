@@ -90,7 +90,7 @@ replacement, refusal, cancellation with a pending modal, enabled controls and
 monotonic progress across log updates. Its
 test-only decoder adds deterministic delays, then invokes the real decoder.
 They run in the Windows release workflow. The fixture has a
-unique application identity and never launches or changes the real PilotDeck app.
+unique application identity and never launches or changes the real LawyerBuddy app.
 
 Before releasing, also verify the interactive installer on Windows with a full
 production payload, including a slow disk, a different destination drive and an

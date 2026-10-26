@@ -1,21 +1,21 @@
 import { createHash } from "node:crypto";
 import { stat } from "node:fs/promises";
 import type {
-  PilotDeckToolRuntimeContext,
-  PilotDeckWriteSnapshotEntry,
+  LawyerBuddyToolRuntimeContext,
+  LawyerBuddyWriteSnapshotEntry,
 } from "../../protocol/types.js";
-import { PilotDeckToolRuntimeError } from "../../protocol/errors.js";
+import { LawyerBuddyToolRuntimeError } from "../../protocol/errors.js";
 import { readTextFile } from "./readTextFile.js";
 
 export function getWriteSnapshot(
-  context: PilotDeckToolRuntimeContext,
+  context: LawyerBuddyToolRuntimeContext,
   absolutePath: string,
-): PilotDeckWriteSnapshotEntry | undefined {
+): LawyerBuddyWriteSnapshotEntry | undefined {
   return context.writeSnapshots?.get(absolutePath);
 }
 
 export function recordWriteSnapshot(
-  context: PilotDeckToolRuntimeContext,
+  context: LawyerBuddyToolRuntimeContext,
   absolutePath: string,
   content: string,
   mtimeMs: number,
@@ -45,7 +45,7 @@ export function invalidateReadFileState(
 }
 
 export async function validateWriteSnapshotFresh(
-  context: PilotDeckToolRuntimeContext,
+  context: LawyerBuddyToolRuntimeContext,
   absolutePath: string,
 ): Promise<{ exists: boolean }> {
   const fileStat = await stat(absolutePath).catch((error: unknown) => {
@@ -60,12 +60,12 @@ export async function validateWriteSnapshotFresh(
   }
 
   if (!fileStat.isFile()) {
-    throw new PilotDeckToolRuntimeError("file_conflict", `${absolutePath} is not a regular file.`);
+    throw new LawyerBuddyToolRuntimeError("file_conflict", `${absolutePath} is not a regular file.`);
   }
 
   const snapshot = getWriteSnapshot(context, absolutePath);
   if (!snapshot) {
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "invalid_tool_input",
       "File has not been read yet. Read it first before writing to it.",
     );
@@ -85,7 +85,7 @@ export async function validateWriteSnapshotFresh(
     }
   }
 
-  throw new PilotDeckToolRuntimeError(
+  throw new LawyerBuddyToolRuntimeError(
     "invalid_tool_input",
     "File has changed since the last read. Read it again before writing to it.",
     {
@@ -97,7 +97,7 @@ export async function validateWriteSnapshotFresh(
 }
 
 export async function ensureWriteSnapshotFresh(
-  context: PilotDeckToolRuntimeContext,
+  context: LawyerBuddyToolRuntimeContext,
   absolutePath: string,
 ): Promise<{ exists: boolean; previousContent: string | null; mtimeMs: number | null }> {
   const fileStat = await stat(absolutePath).catch((error: unknown) => {
@@ -112,12 +112,12 @@ export async function ensureWriteSnapshotFresh(
   }
 
   if (!fileStat.isFile()) {
-    throw new PilotDeckToolRuntimeError("file_conflict", `${absolutePath} is not a regular file.`);
+    throw new LawyerBuddyToolRuntimeError("file_conflict", `${absolutePath} is not a regular file.`);
   }
 
   const snapshot = getWriteSnapshot(context, absolutePath);
   if (!snapshot) {
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "invalid_tool_input",
       "File has not been read yet. Read it first before writing to it.",
     );
@@ -134,7 +134,7 @@ export async function ensureWriteSnapshotFresh(
         return { exists: true, previousContent, mtimeMs: normalizedMtime };
       }
     }
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "invalid_tool_input",
       "File has changed since the last read. Read it again before writing to it.",
       {
@@ -151,7 +151,7 @@ export async function ensureWriteSnapshotFresh(
 
   const currentHash = hashText(previousContent);
   if (currentHash !== snapshot.contentHash) {
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "invalid_tool_input",
       "File has changed since the last read. Read it again before writing to it.",
       {

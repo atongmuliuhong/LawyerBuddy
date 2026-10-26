@@ -6,9 +6,9 @@ export {
 } from "./runtime/BackgroundTaskRuntime.js";
 export { TaskOutputStore, type TaskOutputStoreOptions } from "./storage/TaskOutputStore.js";
 export type {
-  PilotDeckBackgroundBashTask,
-  PilotDeckBackgroundTaskKind,
-  PilotDeckBackgroundTaskListFilter,
-  PilotDeckBackgroundTaskStatus,
-  PilotDeckTaskOutputSlice,
+  LawyerBuddyBackgroundBashTask,
+  LawyerBuddyBackgroundTaskKind,
+  LawyerBuddyBackgroundTaskListFilter,
+  LawyerBuddyBackgroundTaskStatus,
+  LawyerBuddyTaskOutputSlice,
 } from "./protocol/types.js";

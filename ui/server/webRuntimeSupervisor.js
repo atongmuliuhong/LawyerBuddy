@@ -28,8 +28,8 @@ export function resolveSupervisorConfigPath(value, baseCwd = process.cwd()) {
 export function getRuntimeCommands(mode, uiRoot = UI_ROOT) {
   const normalizedMode = normalizeSupervisorMode(mode);
   const repoRoot = path.resolve(uiRoot, '..');
-  const sourceGateway = path.join(repoRoot, 'src', 'cli', 'pilotdeck.ts');
-  const builtGateway = path.join(repoRoot, 'dist', 'src', 'cli', 'pilotdeck.js');
+  const sourceGateway = path.join(repoRoot, 'src', 'cli', 'lawyerbuddy.ts');
+  const builtGateway = path.join(repoRoot, 'dist', 'src', 'cli', 'lawyerbuddy.js');
   const packagedRuntime = existsSync(builtGateway) && !existsSync(sourceGateway);
   const commands = [
     {
@@ -92,7 +92,7 @@ export function createRuntimeSupervisor({
   exists = existsSync,
   unlink = unlinkSync,
   cwd = UI_ROOT,
-  requestFile = getRestartRequestFile({ env: { ...env, PILOTDECK_RESTART_MODE: mode } }),
+  requestFile = getRestartRequestFile({ env: { ...env, LAWYERBUDDY_RESTART_MODE: mode } }),
   platform = process.platform,
   log = console.log,
   error = console.error,
@@ -103,18 +103,18 @@ export function createRuntimeSupervisor({
   const commandSpecs = getRuntimeCommands(normalizedMode, cwd);
   const specByName = new Map(commandSpecs.map((spec) => [spec.name, spec]));
   const children = new Map();
-  const gatewayPort = Number.parseInt(env.PILOTDECK_GATEWAY_PORT || '18789', 10);
+  const gatewayPort = Number.parseInt(env.LAWYERBUDDY_GATEWAY_PORT || '18789', 10);
   const runtimeEnv = {
     ...env,
-    PILOTDECK_COMPUTER_USE_MCP_CONFIG: computerUseMcpConfigPath(env),
-    PILOTDECK_RESTART_MODE: normalizedMode,
-    PILOTDECK_RESTART_SUPERVISOR: '1',
-    PILOTDECK_RESTART_REQUEST_FILE: requestFile,
-    PILOTDECK_RUNTIME_SUPERVISED: '1',
+    LAWYERBUDDY_COMPUTER_USE_MCP_CONFIG: computerUseMcpConfigPath(env),
+    LAWYERBUDDY_RESTART_MODE: normalizedMode,
+    LAWYERBUDDY_RESTART_SUPERVISOR: '1',
+    LAWYERBUDDY_RESTART_REQUEST_FILE: requestFile,
+    LAWYERBUDDY_RUNTIME_SUPERVISED: '1',
   };
-  const configPath = resolveSupervisorConfigPath(env.PILOTDECK_CONFIG_PATH);
-  if (configPath) runtimeEnv.PILOTDECK_CONFIG_PATH = configPath;
-  else delete runtimeEnv.PILOTDECK_CONFIG_PATH;
+  const configPath = resolveSupervisorConfigPath(env.LAWYERBUDDY_CONFIG_PATH);
+  if (configPath) runtimeEnv.LAWYERBUDDY_CONFIG_PATH = configPath;
+  else delete runtimeEnv.LAWYERBUDDY_CONFIG_PATH;
   let configuration = null;
   let stopping = false;
   let handlingCriticalExit = false;
@@ -126,7 +126,7 @@ export function createRuntimeSupervisor({
     if (!server || typeof server.send !== 'function' || server.connected === false) return;
     try {
       server.send({
-        type: 'pilotdeck:gateway-state',
+        type: 'lawyerbuddy:gateway-state',
         state,
         ...(gatewayError ? { error: gatewayError } : {}),
       });
@@ -234,7 +234,7 @@ export function createRuntimeSupervisor({
   };
 
   const handleServerMessage = (message) => {
-    if (message?.type === 'pilotdeck:configuration-state' && message.configuration) {
+    if (message?.type === 'lawyerbuddy:configuration-state' && message.configuration) {
       configuration = message.configuration;
       if (configuration.state === 'ready') {
         startGateway();
@@ -244,7 +244,7 @@ export function createRuntimeSupervisor({
       }
       return;
     }
-    if (message?.type === 'pilotdeck:retry-gateway' && configuration?.state === 'ready') {
+    if (message?.type === 'lawyerbuddy:retry-gateway' && configuration?.state === 'ready') {
       startGateway();
     }
   };
@@ -334,9 +334,9 @@ export function createRuntimeSupervisor({
 export function runSupervisor(argv = process.argv.slice(2)) {
   const mode = normalizeSupervisorMode(argv[0]);
   const requestFile = getRestartRequestFile({
-    env: { ...process.env, PILOTDECK_RESTART_MODE: mode },
+    env: { ...process.env, LAWYERBUDDY_RESTART_MODE: mode },
     pid: process.pid,
-    tmpdir: () => path.join(os.tmpdir(), 'pilotdeck'),
+    tmpdir: () => path.join(os.tmpdir(), 'lawyerbuddy'),
   });
   createRuntimeSupervisor({ mode, requestFile }).run();
 }

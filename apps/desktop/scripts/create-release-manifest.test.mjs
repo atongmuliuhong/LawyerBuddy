@@ -10,25 +10,25 @@ import test from "node:test";
 const scriptsRoot = dirname(fileURLToPath(import.meta.url));
 
 test("unified release manifest links the source tag and checksummed installers", () => {
-  const assetsDir = mkdtempSync(join(tmpdir(), "pilotdeck-release-assets-"));
+  const assetsDir = mkdtempSync(join(tmpdir(), "lawyerbuddy-release-assets-"));
   try {
     for (const name of [
-      "PilotDeck-2026.903.0-mac-arm64.dmg",
-      "PilotDeck-2026.903.0-mac-x64.dmg",
-      "PilotDeck-2026.903.0-mac-arm64.zip",
-      "PilotDeck-2026.903.0-mac-x64.zip",
+      "LawyerBuddy-2026.903.0-mac-arm64.dmg",
+      "LawyerBuddy-2026.903.0-mac-x64.dmg",
+      "LawyerBuddy-2026.903.0-mac-arm64.zip",
+      "LawyerBuddy-2026.903.0-mac-x64.zip",
       "latest-arm64-mac.yml",
       "latest-x64-mac.yml",
       "latest-x64.yml",
       "latest-arm64.yml",
       "latest-linux.yml",
       "latest-linux-arm64.yml",
-      "PilotDeck-2026.903.0-win-x64-setup.exe",
-      "PilotDeck-2026.903.0-win-arm64-setup.exe",
-      "PilotDeck-2026.903.0-linux-x64.deb",
-      "PilotDeck-2026.903.0-linux-arm64.deb",
-      "PilotDeck-2026.903.0-linux-x64.rpm",
-      "PilotDeck-2026.903.0-linux-arm64.rpm",
+      "LawyerBuddy-2026.903.0-win-x64-setup.exe",
+      "LawyerBuddy-2026.903.0-win-arm64-setup.exe",
+      "LawyerBuddy-2026.903.0-linux-x64.deb",
+      "LawyerBuddy-2026.903.0-linux-arm64.deb",
+      "LawyerBuddy-2026.903.0-linux-x64.rpm",
+      "LawyerBuddy-2026.903.0-linux-arm64.rpm",
       "latest-rpm-linux.yml",
       "latest-rpm-linux-arm64.yml",
     ]) {
@@ -42,12 +42,12 @@ test("unified release manifest links the source tag and checksummed installers",
         encoding: "utf8",
         env: {
           ...process.env,
-          PILOTDECK_RELEASE_VERSION: "2026.903.0",
-          PILOTDECK_RELEASE_TAG: "v2026.09.03",
-          PILOTDECK_RELEASE_DATE: "2026-09-03",
-          PILOTDECK_RELEASE_BUILD_TIME: "2026-09-03T02:00:00+08:00",
-          PILOTDECK_COMMIT_SHA: "0123456789abcdef",
-          PILOTDECK_UPDATE_REPOSITORY: "OpenBMB/PilotDeck",
+          LAWYERBUDDY_RELEASE_VERSION: "2026.903.0",
+          LAWYERBUDDY_RELEASE_TAG: "v2026.09.03",
+          LAWYERBUDDY_RELEASE_DATE: "2026-09-03",
+          LAWYERBUDDY_RELEASE_BUILD_TIME: "2026-09-03T02:00:00+08:00",
+          LAWYERBUDDY_COMMIT_SHA: "0123456789abcdef",
+          LAWYERBUDDY_UPDATE_REPOSITORY: "OpenBMB/LawyerBuddy",
         },
       },
     );
@@ -57,7 +57,7 @@ test("unified release manifest links the source tag and checksummed installers",
     assert.equal(manifest.tag, "v2026.09.03");
     assert.equal(manifest.version, "2026.903.0");
     assert.equal(manifest.sourceSha, "0123456789abcdef");
-    assert.equal(manifest.repository, "OpenBMB/PilotDeck");
+    assert.equal(manifest.repository, "OpenBMB/LawyerBuddy");
     assert.equal(manifest.date, "2026-09-03");
     const checksums = readFileSync(resolve(assetsDir, "SHA256SUMS.txt"), "utf8");
     for (const asset of manifest.assets) {
@@ -79,18 +79,18 @@ test("unified release manifest links the source tag and checksummed installers",
         { name: "latest-arm64.yml", platform: "unknown", arch: "arm64" },
         { name: "latest-rpm-linux.yml", platform: "linux", arch: "unknown" },
         { name: "latest-rpm-linux-arm64.yml", platform: "linux", arch: "arm64" },
-        { name: "PilotDeck-2026.903.0-linux-x64.rpm", platform: "linux", arch: "x64" },
-        { name: "PilotDeck-2026.903.0-linux-arm64.rpm", platform: "linux", arch: "arm64" },
+        { name: "LawyerBuddy-2026.903.0-linux-x64.rpm", platform: "linux", arch: "x64" },
+        { name: "LawyerBuddy-2026.903.0-linux-arm64.rpm", platform: "linux", arch: "arm64" },
         { name: "latest-linux.yml", platform: "linux", arch: "unknown" },
         { name: "latest-linux-arm64.yml", platform: "linux", arch: "arm64" },
-        { name: "PilotDeck-2026.903.0-mac-arm64.zip", platform: "darwin", arch: "arm64" },
-        { name: "PilotDeck-2026.903.0-mac-x64.zip", platform: "darwin", arch: "x64" },
-        { name: "PilotDeck-2026.903.0-mac-arm64.dmg", platform: "darwin", arch: "arm64" },
-        { name: "PilotDeck-2026.903.0-mac-x64.dmg", platform: "darwin", arch: "x64" },
-        { name: "PilotDeck-2026.903.0-win-x64-setup.exe", platform: "win32", arch: "x64" },
-        { name: "PilotDeck-2026.903.0-win-arm64-setup.exe", platform: "win32", arch: "arm64" },
-        { name: "PilotDeck-2026.903.0-linux-x64.deb", platform: "linux", arch: "x64" },
-        { name: "PilotDeck-2026.903.0-linux-arm64.deb", platform: "linux", arch: "arm64" },
+        { name: "LawyerBuddy-2026.903.0-mac-arm64.zip", platform: "darwin", arch: "arm64" },
+        { name: "LawyerBuddy-2026.903.0-mac-x64.zip", platform: "darwin", arch: "x64" },
+        { name: "LawyerBuddy-2026.903.0-mac-arm64.dmg", platform: "darwin", arch: "arm64" },
+        { name: "LawyerBuddy-2026.903.0-mac-x64.dmg", platform: "darwin", arch: "x64" },
+        { name: "LawyerBuddy-2026.903.0-win-x64-setup.exe", platform: "win32", arch: "x64" },
+        { name: "LawyerBuddy-2026.903.0-win-arm64-setup.exe", platform: "win32", arch: "arm64" },
+        { name: "LawyerBuddy-2026.903.0-linux-x64.deb", platform: "linux", arch: "x64" },
+        { name: "LawyerBuddy-2026.903.0-linux-arm64.deb", platform: "linux", arch: "arm64" },
       ].sort((left, right) => left.name.localeCompare(right.name)),
     );
   } finally {

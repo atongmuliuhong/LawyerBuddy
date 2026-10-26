@@ -14,7 +14,7 @@ declare global {
     // app navigated to it; false otherwise so callers (e.g. chat slash
     // command handler) can surface a friendly "not found" message.
     switchProject?: (projectName: string) => boolean;
-    pilotdeckDesktop?: {
+    lawyerbuddyDesktop?: {
       platform?: string;
       getZoomFactor?: () => number;
       resetZoom?: () => void;

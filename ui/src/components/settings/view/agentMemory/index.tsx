@@ -1,13 +1,13 @@
 import { isOptionalFeatureEnabled } from "../../../../../../src/pilot/config/optionalFeature.js";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { usePilotDeckConfig } from "../../../../hooks/usePilotDeckConfig";
+import { useLawyerBuddyConfig } from "../../../../hooks/useLawyerBuddyConfig";
 import { findCatalogProviderById } from "../../../../shared/catalogProviders";
 import { ConfigSaveError, SettingsToggle } from "../../shared/view";
 import { queueSettingsSaveSuccess } from "../../shared/SettingsSuccessToast";
 import { patch } from "../modelPool/utils/patch";
 import { configToYamlString, safeParseYaml } from "../modelPool/utils/configYaml";
-import type { PilotDeckConfig } from "../modelPool/types";
+import type { LawyerBuddyConfig } from "../modelPool/types";
 import {
   buildModelRefOptions,
   ensureModelRefConfigured,
@@ -83,8 +83,8 @@ function MemorySection({
   config,
   onChange,
 }: {
-  config: PilotDeckConfig;
-  onChange: (next: PilotDeckConfig) => void;
+  config: LawyerBuddyConfig;
+  onChange: (next: LawyerBuddyConfig) => void;
 }) {
   const { t } = useTranslation("settings");
   const m = config.memory ?? {};
@@ -126,7 +126,7 @@ function MemorySection({
 
   const selectedModelLabel =
     selected === "inherit"
-      ? t("pilotDeckConfig.panels.memory.model.inherit")
+      ? t("lawyerBuddyConfig.panels.memory.model.inherit")
       : groupedModels
           .flatMap(([, group]) => group.options)
           .find((option) => option.value === selected)?.label ?? selected;
@@ -316,7 +316,7 @@ function MemorySection({
             >
               {units.map((option) => (
                 <option key={option} value={option}>
-                  {t(`pilotDeckConfig.panels.memory.intervalUnits.${option}`)}
+                  {t(`lawyerBuddyConfig.panels.memory.intervalUnits.${option}`)}
                 </option>
               ))}
             </select>
@@ -361,20 +361,20 @@ function MemorySection({
     <>
       <section
         className="route-card route-enable-card memory-enable-card"
-        aria-label={t("pilotDeckConfig.panels.memory.enabled.label")}
+        aria-label={t("lawyerBuddyConfig.panels.memory.enabled.label")}
       >
         <div className="route-card-heading">
           <span className="route-heading-icon">
             <MemoryEnableIcon />
           </span>
           <div>
-            <h2>{t("pilotDeckConfig.panels.memory.enabled.label")}</h2>
-            <p>{t("pilotDeckConfig.panels.memory.enabled.description")}</p>
+            <h2>{t("lawyerBuddyConfig.panels.memory.enabled.label")}</h2>
+            <p>{t("lawyerBuddyConfig.panels.memory.enabled.description")}</p>
           </div>
         </div>
         <SettingsToggle
           checked={enabled}
-          ariaLabel={t("pilotDeckConfig.panels.memory.enabled.label")}
+          ariaLabel={t("lawyerBuddyConfig.panels.memory.enabled.label")}
           onChange={handleMemoryEnabled}
           suppressNextSaveToast
         />
@@ -382,15 +382,15 @@ function MemorySection({
 
       <section
         className="memory-card memory-config-card"
-        aria-label={t("pilotDeckConfig.panels.memory.title")}
+        aria-label={t("lawyerBuddyConfig.panels.memory.title")}
       >
         <div className={`memory-config-body${enabled ? "" : " disabled"}`}>
           <div className="memory-setting-row">
             <div className="memory-setting-copy">
               <label htmlFor="memory-model">
-                {t("pilotDeckConfig.panels.memory.model.label")}
+                {t("lawyerBuddyConfig.panels.memory.model.label")}
               </label>
-              <p>{t("pilotDeckConfig.panels.memory.model.description")}</p>
+              <p>{t("lawyerBuddyConfig.panels.memory.model.description")}</p>
             </div>
             <div className="memory-select-wrap memory-model-select">
               <select
@@ -404,7 +404,7 @@ function MemorySection({
                   const nextLabel =
                     event.target.selectedOptions[0]?.text || event.target.value;
                   queueSettingsSaveSuccess(
-                    `${t("pilotDeckConfig.panels.memory.model.label")}已切换为 ${nextLabel}`,
+                    `${t("lawyerBuddyConfig.panels.memory.model.label")}已切换为 ${nextLabel}`,
                   );
                   onChange(
                     patch(
@@ -416,7 +416,7 @@ function MemorySection({
                 }}
               >
                 <option value="inherit">
-                  {t("pilotDeckConfig.panels.memory.model.inherit")}
+                  {t("lawyerBuddyConfig.panels.memory.model.inherit")}
                 </option>
                 {selected !== "inherit" &&
                 !groupedModels.some(([, group]) =>
@@ -441,9 +441,9 @@ function MemorySection({
           {renderIntervalRow({
             id: "memory-indexing-value",
             unitId: "memory-indexing-unit",
-            label: t("pilotDeckConfig.panels.memory.autoIndexInterval.label"),
+            label: t("lawyerBuddyConfig.panels.memory.autoIndexInterval.label"),
             description: t(
-              "pilotDeckConfig.panels.memory.autoIndexInterval.description",
+              "lawyerBuddyConfig.panels.memory.autoIndexInterval.description",
             ),
             editing: indexEditing,
             draftValue: indexDraftValue,
@@ -462,9 +462,9 @@ function MemorySection({
           {renderIntervalRow({
             id: "memory-dream-value",
             unitId: "memory-dream-unit",
-            label: t("pilotDeckConfig.panels.memory.autoDreamInterval.label"),
+            label: t("lawyerBuddyConfig.panels.memory.autoDreamInterval.label"),
             description: t(
-              "pilotDeckConfig.panels.memory.autoDreamInterval.description",
+              "lawyerBuddyConfig.panels.memory.autoDreamInterval.description",
             ),
             editing: dreamEditing,
             draftValue: dreamDraftValue,
@@ -490,10 +490,10 @@ export default function AgentMemorySections({
   projects,
 }: AgentMemorySectionsProps) {
   const { t } = useTranslation("settings");
-  const { raw, commitRaw, loading, error } = usePilotDeckConfig();
+  const { raw, commitRaw, loading, error } = useLawyerBuddyConfig();
   const parsedConfig = useMemo(() => safeParseYaml(raw), [raw]);
 
-  const onFormChange = (next: PilotDeckConfig) => {
+  const onFormChange = (next: LawyerBuddyConfig) => {
     try {
       void commitRaw(configToYamlString(next));
     } catch (caught) {
@@ -505,7 +505,7 @@ export default function AgentMemorySections({
     return (
       <div className="memory-page-content">
         <div className="py-6 text-xs text-muted-foreground">
-          {t("pilotDeckConfig.loading")}
+          {t("lawyerBuddyConfig.loading")}
         </div>
       </div>
     );

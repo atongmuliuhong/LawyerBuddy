@@ -10,10 +10,10 @@
 import type { CanonicalMessage } from "../../model/index.js";
 
 /** Tag used in the boilerplate that wraps the directive. */
-export const FORK_BOILERPLATE_TAG = "pilotdeck-fork";
+export const FORK_BOILERPLATE_TAG = "lawyerbuddy-fork";
 
 export const FORK_PLACEHOLDER_RESULT =
-  "<pilotdeck-fork-placeholder>Subtask handled by forked subagent — see child transcript.</pilotdeck-fork-placeholder>";
+  "<lawyerbuddy-fork-placeholder>Subtask handled by forked subagent — see child transcript.</lawyerbuddy-fork-placeholder>";
 
 export function buildForkedMessages(directive: string): CanonicalMessage[] {
   return [

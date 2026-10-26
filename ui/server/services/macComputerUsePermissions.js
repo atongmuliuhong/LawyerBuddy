@@ -19,7 +19,7 @@ export async function probeMacPermissions({ runtime, execute, env }) {
   const command = args => execute(runtime.binary, [...args, '--socket', socket], { env, timeout: 10_000, maxBuffer: 1024 * 1024 });
   try {
     if (runtime.probeSupported) {
-      const result = path.join(directory, `pilotdeck-permissions-${randomUUID()}.json`);
+      const result = path.join(directory, `lawyerbuddy-permissions-${randomUUID()}.json`);
       fs.writeFileSync(result, '', { mode: 0o600, flag: 'wx' });
       await execute('/usr/bin/open', ['-n', '-g', '-W', '-a', runtime.app, '--args', 'probe', '--result-file', result], { env, timeout: 10_000 });
       return permissionResult(JSON.parse(fs.readFileSync(result, 'utf8')), runtime.bundleId);

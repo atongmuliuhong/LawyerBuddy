@@ -10,9 +10,9 @@ import ts from "typescript";
 import { resolveDefaultCommandShell } from "../../src/runtime/commandShell.js";
 
 test("packaged FunASR installation command runs the bundled Node without npm", async () => {
-  const alias = await mkdtemp(join(tmpdir(), "PilotDeck runtime $ "));
+  const alias = await mkdtemp(join(tmpdir(), "LawyerBuddy runtime $ "));
   const root = await realpath(alias);
-  const previousRoot = process.env.PILOTDECK_RUNTIME_ROOT;
+  const previousRoot = process.env.LAWYERBUDDY_RUNTIME_ROOT;
   try {
     const moduleDir = join(root, "dist", "src", "mcp", "runtime");
     await mkdir(moduleDir, {recursive: true});
@@ -23,12 +23,12 @@ test("packaged FunASR installation command runs the bundled Node without npm", a
     const compiled = ts.transpileModule(source, {compilerOptions: {module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022}});
     const moduleFile = join(moduleDir, "projectMcpSpec.mjs");
     await writeFile(moduleFile, compiled.outputText);
-    const {getPilotDeckInstallCommand} = await import(pathToFileURL(moduleFile).href);
-    delete process.env.PILOTDECK_RUNTIME_ROOT;
-    assert.equal(getPilotDeckInstallCommand(), `npm --prefix "${root}" run install:asr`);
-    process.env.PILOTDECK_RUNTIME_ROOT = alias;
-    const command = getPilotDeckInstallCommand();
-    const desktopRoot = process.env.PILOTDECK_RUNTIME_ROOT;
+    const {getLawyerBuddyInstallCommand} = await import(pathToFileURL(moduleFile).href);
+    delete process.env.LAWYERBUDDY_RUNTIME_ROOT;
+    assert.equal(getLawyerBuddyInstallCommand(), `npm --prefix "${root}" run install:asr`);
+    process.env.LAWYERBUDDY_RUNTIME_ROOT = alias;
+    const command = getLawyerBuddyInstallCommand();
+    const desktopRoot = process.env.LAWYERBUDDY_RUNTIME_ROOT;
     assert.equal(command, `'${process.execPath}' '${join(root, "scripts", "install-asr.mjs")}'`, JSON.stringify({
       alias, root, desktopRoot, desktopExists: desktopRoot && existsSync(desktopRoot),
       desktopCanonical: desktopRoot && existsSync(desktopRoot) ? realpathSync.native(desktopRoot) : null,
@@ -36,13 +36,13 @@ test("packaged FunASR installation command runs the bundled Node without npm", a
       relative: desktopRoot && existsSync(desktopRoot) ? relative(realpathSync.native(desktopRoot), realpathSync.native(root)) : null,
     }));
     if (process.platform === "win32") {
-      process.env.PILOTDECK_RUNTIME_ROOT = alias.toLowerCase();
-      assert.equal(getPilotDeckInstallCommand(), command);
+      process.env.LAWYERBUDDY_RUNTIME_ROOT = alias.toLowerCase();
+      assert.equal(getLawyerBuddyInstallCommand(), command);
     }
     // An existing but different directory must not be treated as the bundle.
-    process.env.PILOTDECK_RUNTIME_ROOT = moduleDir;
-    assert.equal(getPilotDeckInstallCommand(), `npm --prefix "${root}" run install:asr`);
-    process.env.PILOTDECK_RUNTIME_ROOT = alias;
+    process.env.LAWYERBUDDY_RUNTIME_ROOT = moduleDir;
+    assert.equal(getLawyerBuddyInstallCommand(), `npm --prefix "${root}" run install:asr`);
+    process.env.LAWYERBUDDY_RUNTIME_ROOT = alias;
     const shell = resolveDefaultCommandShell();
     const installed = spawnSync(shell.shell, shell.args(command), {
       encoding: "utf8", windowsVerbatimArguments: shell.windowsVerbatimArguments,
@@ -50,8 +50,8 @@ test("packaged FunASR installation command runs the bundled Node without npm", a
     assert.equal(installed.status, 0, installed.stderr);
     assert.match(installed.stdout, /installer uses/);
   } finally {
-    if (previousRoot === undefined) delete process.env.PILOTDECK_RUNTIME_ROOT;
-    else process.env.PILOTDECK_RUNTIME_ROOT = previousRoot;
+    if (previousRoot === undefined) delete process.env.LAWYERBUDDY_RUNTIME_ROOT;
+    else process.env.LAWYERBUDDY_RUNTIME_ROOT = previousRoot;
     await rm(root, {recursive: true, force: true});
   }
 });

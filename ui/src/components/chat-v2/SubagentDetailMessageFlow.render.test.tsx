@@ -72,7 +72,7 @@ function renderFlow(messages: ChatMessage[], isRunning = true) {
     <FindShortcutProvider activeScope="chat">
       <SubagentDetailMessageFlow
         messages={messages}
-        provider="pilotdeck"
+        provider="lawyerbuddy"
         selectedProject={null}
         createDiff={() => []}
         showThinking
@@ -174,14 +174,14 @@ describe('SubagentDetailMessageFlow', () => {
 it('passes subagent lifecycle state to normalized tool cards and updates it without new messages', async () => {
   const i18n = await createTestI18n();
   const messages = normalizedToChatMessages([{
-    id: 'subagent-bash', sessionId: 'web:subagent-test', provider: 'pilotdeck',
+    id: 'subagent-bash', sessionId: 'web:subagent-test', provider: 'lawyerbuddy',
     kind: 'tool_use', role: 'assistant', toolId: 'subagent-bash', toolName: 'bash',
     toolInput: { command: 'pnpm build', description: 'Build app' }, timestamp: timestamp(300),
   }]);
   const pane = (isRunning: boolean, items = messages) => (
     <I18nextProvider i18n={i18n}>
       <FindShortcutProvider activeScope="chat">
-        <SubagentDetailMessageFlow messages={items} provider="pilotdeck" selectedProject={null}
+        <SubagentDetailMessageFlow messages={items} provider="lawyerbuddy" selectedProject={null}
           createDiff={() => []} isRunning={isRunning} />
       </FindShortcutProvider>
     </I18nextProvider>

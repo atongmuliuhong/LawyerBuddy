@@ -187,7 +187,7 @@ export function renderLoadingHtml(appearance: DesktopAppearance): string {
     const retry = document.getElementById("retry");
     const openLog = document.getElementById("openLog");
 
-    window.pilotdeckDesktop?.onRuntimeStatus((status) => {
+    window.lawyerbuddyDesktop?.onRuntimeStatus((status) => {
       message.textContent = translate(status.message || "Starting LawyerBuddy...");
       log.textContent = status.logPath ? translate("Log: ") + status.logPath : "";
       if (status.phase === "error") {
@@ -198,8 +198,8 @@ export function renderLoadingHtml(appearance: DesktopAppearance): string {
         detail.textContent = "";
       }
     });
-    retry.addEventListener("click", () => window.pilotdeckDesktop?.retryRuntime());
-    openLog.addEventListener("click", () => window.pilotdeckDesktop?.openRuntimeLog());
+    retry.addEventListener("click", () => window.lawyerbuddyDesktop?.retryRuntime());
+    openLog.addEventListener("click", () => window.lawyerbuddyDesktop?.openRuntimeLog());
   </script>
 </body>
 </html>`;

@@ -64,8 +64,8 @@ describe('computer use HTTP API', () => {
     expect((await request('/status', 'GET', undefined, { Origin: 'http://localhost:5173' })).code).toBe(200);
   });
   it('accepts authenticated same-origin actions behind a loopback HTTPS proxy', async () => {
-    env.PILOTDECK_DISABLE_LOCAL_AUTH = '0';
-    const headers = { Host: 'pilotdeck.example', Origin: 'https://pilotdeck.example', 'X-Forwarded-Proto': 'https' };
+    env.LAWYERBUDDY_DISABLE_LOCAL_AUTH = '0';
+    const headers = { Host: 'lawyerbuddy.example', Origin: 'https://lawyerbuddy.example', 'X-Forwarded-Proto': 'https' };
     expect((await request('/enabled', 'PUT', { enabled: true }, headers)).code).toBe(200);
     expect((await request('/refresh', 'POST', undefined, headers)).code).toBe(200);
     expect((await request('/permissions', 'POST', { permission: 'screenRecording' }, headers)).code).toBe(200);
@@ -74,32 +74,32 @@ describe('computer use HTTP API', () => {
     expect(service.requestPermission).toHaveBeenCalledExactlyOnceWith('screenRecording');
   });
   it('accepts a proxy in the configured trusted CIDR', async () => {
-    env.PILOTDECK_DISABLE_LOCAL_AUTH = 'false';
-    env.PILOTDECK_TRUST_PROXY = '127.0.0.1/32'; configureTrustedProxy(app, env);
+    env.LAWYERBUDDY_DISABLE_LOCAL_AUTH = 'false';
+    env.LAWYERBUDDY_TRUST_PROXY = '127.0.0.1/32'; configureTrustedProxy(app, env);
     expect((await request('/enabled', 'PUT', { enabled: true }, {
-      Host: 'pilotdeck.example:8443', Origin: 'https://pilotdeck.example:8443', 'X-Forwarded-Proto': 'https',
+      Host: 'lawyerbuddy.example:8443', Origin: 'https://lawyerbuddy.example:8443', 'X-Forwarded-Proto': 'https',
     })).code).toBe(200);
   });
   it.each(['0', '127.0.0.2/32'])('ignores forwarded scheme from an untrusted peer (%s)', async trust => {
-    env.PILOTDECK_DISABLE_LOCAL_AUTH = '0';
-    env.PILOTDECK_TRUST_PROXY = trust; configureTrustedProxy(app, env);
+    env.LAWYERBUDDY_DISABLE_LOCAL_AUTH = '0';
+    env.LAWYERBUDDY_TRUST_PROXY = trust; configureTrustedProxy(app, env);
     expect((await request('/enabled', 'PUT', { enabled: true }, {
-      Host: 'pilotdeck.example', Origin: 'https://pilotdeck.example',
+      Host: 'lawyerbuddy.example', Origin: 'https://lawyerbuddy.example',
       'X-Forwarded-Proto': 'https', 'X-Forwarded-For': '127.0.0.1',
     })).code).toBe(403);
     expect(service.setEnabled).not.toHaveBeenCalled();
   });
   it('still rejects foreign origins and forwarded host spoofing behind a trusted proxy', async () => {
-    env.PILOTDECK_DISABLE_LOCAL_AUTH = '0';
+    env.LAWYERBUDDY_DISABLE_LOCAL_AUTH = '0';
     expect((await request('/enabled', 'PUT', { enabled: true }, {
-      Host: 'pilotdeck.example', Origin: 'https://untrusted.example',
+      Host: 'lawyerbuddy.example', Origin: 'https://untrusted.example',
       'X-Forwarded-Proto': 'https', 'X-Forwarded-Host': 'untrusted.example',
     })).code).toBe(403);
     expect(service.setEnabled).not.toHaveBeenCalled();
   });
   it('keeps unauthenticated local instances restricted to local hosts behind a proxy', async () => {
     expect((await request('/enabled', 'PUT', { enabled: true }, {
-      Host: 'pilotdeck.example', Origin: 'https://pilotdeck.example', 'X-Forwarded-Proto': 'https',
+      Host: 'lawyerbuddy.example', Origin: 'https://lawyerbuddy.example', 'X-Forwarded-Proto': 'https',
     })).code).toBe(403);
     expect(service.setEnabled).not.toHaveBeenCalled();
   });

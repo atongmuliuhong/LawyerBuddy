@@ -1,7 +1,7 @@
 import type { CanonicalMessage, CanonicalToolSchema } from "../../model/index.js";
 
 const SUBAGENT_TAG_PATTERN =
-  /<(?:pilotdeck|ccr)-subagent-model>([\s\S]+?)<\/(?:pilotdeck|ccr)-subagent-model>/i;
+  /<(?:lawyerbuddy|ccr)-subagent-model>([\s\S]+?)<\/(?:lawyerbuddy|ccr)-subagent-model>/i;
 
 export type SubagentDetection = {
   isSubagent: boolean;

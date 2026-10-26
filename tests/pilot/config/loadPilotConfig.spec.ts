@@ -24,8 +24,8 @@ model:
 `;
 }
 
-test("loadPilotConfig reads PILOTDECK_CONFIG_PATH", () => {
-  const directory = mkdtempSync(join(tmpdir(), "pilotdeck-config-path-"));
+test("loadPilotConfig reads LAWYERBUDDY_CONFIG_PATH", () => {
+  const directory = mkdtempSync(join(tmpdir(), "lawyerbuddy-config-path-"));
   const configPath = join(directory, "custom.yaml");
   try {
     writeFileSync(configPath, `
@@ -43,7 +43,7 @@ model:
 `, "utf8");
 
     const snapshot = loadPilotConfig({
-      env: { PILOTDECK_CONFIG_PATH: configPath },
+      env: { LAWYERBUDDY_CONFIG_PATH: configPath },
     });
 
     assert.equal(snapshot.config.agent.model.id, "custom/model-a");
@@ -54,11 +54,11 @@ model:
 });
 
 test("loadPilotConfig rejects a missing config without creating one", () => {
-  const directory = mkdtempSync(join(tmpdir(), "pilotdeck-missing-config-"));
-  const configPath = join(directory, "pilotdeck.yaml");
+  const directory = mkdtempSync(join(tmpdir(), "lawyerbuddy-missing-config-"));
+  const configPath = join(directory, "lawyerbuddy.yaml");
   try {
     assert.throws(
-      () => loadPilotConfig({ env: { PILOTDECK_CONFIG_PATH: configPath } }),
+      () => loadPilotConfig({ env: { LAWYERBUDDY_CONFIG_PATH: configPath } }),
       (error: unknown) => (error as { code?: string }).code === "CONFIG_AGENT_MISSING",
     );
     assert.equal(existsSync(configPath), false);
@@ -68,7 +68,7 @@ test("loadPilotConfig rejects a missing config without creating one", () => {
 });
 
 test("PilotConfigStore watches the configured custom path", async () => {
-  const directory = mkdtempSync(join(tmpdir(), "pilotdeck-config-watch-"));
+  const directory = mkdtempSync(join(tmpdir(), "lawyerbuddy-config-watch-"));
   const configPath = join(directory, "custom.yaml");
   const pilotHome = join(directory, "home");
   let stopWatching: (() => void) | undefined;
@@ -79,7 +79,7 @@ test("PilotConfigStore watches the configured custom path", async () => {
     const store = createPilotConfigStoreSync({
       env: {
         PILOT_HOME: pilotHome,
-        PILOTDECK_CONFIG_PATH: configPath,
+        LAWYERBUDDY_CONFIG_PATH: configPath,
       },
     });
     const reloaded = new Promise<void>((resolve, reject) => {
@@ -106,8 +106,8 @@ test("PilotConfigStore watches the configured custom path", async () => {
 
 
 test("invalid unused providers are isolated from the Gateway without deleting their settings", () => {
-  const dir = mkdtempSync(join(tmpdir(), "pilotdeck-provider-isolation-"));
-  const path = join(dir, "pilotdeck.yaml");
+  const dir = mkdtempSync(join(tmpdir(), "lawyerbuddy-provider-isolation-"));
+  const path = join(dir, "lawyerbuddy.yaml");
   const raw = configYaml("model-a") + `
     broken:
       protocol: openai

@@ -15,14 +15,14 @@ function entry(type: string, sessionId: string, sequence: number, extra: Record<
 }
 
 test("lists historical sessions whose large inline image hides metadata from the lite preview", async () => {
-  const projectRoot = await mkdtemp(join(tmpdir(), "pilotdeck-session-list-project-"));
-  const pilotHome = await mkdtemp(join(tmpdir(), "pilotdeck-session-list-home-"));
+  const projectRoot = await mkdtemp(join(tmpdir(), "lawyerbuddy-session-list-project-"));
+  const pilotHome = await mkdtemp(join(tmpdir(), "lawyerbuddy-session-list-home-"));
   try {
     const chatDir = getPilotProjectChatDir(projectRoot, pilotHome);
     await mkdir(chatDir, { recursive: true });
 
     const largeSessionId = "web:s_large-image";
-    const largeTitle = "Recovered PilotDeck session title";
+    const largeTitle = "Recovered LawyerBuddy session title";
     const largeInput = entry("accepted_input", largeSessionId, 1, {
       messages: [{
         role: "user",
@@ -86,8 +86,8 @@ test("lists historical sessions whose large inline image hides metadata from the
 });
 
 test("prefers a newer oversized metadata title over an older title in the lite head", async () => {
-  const projectRoot = await mkdtemp(join(tmpdir(), "pilotdeck-session-list-project-"));
-  const pilotHome = await mkdtemp(join(tmpdir(), "pilotdeck-session-list-home-"));
+  const projectRoot = await mkdtemp(join(tmpdir(), "lawyerbuddy-session-list-project-"));
+  const pilotHome = await mkdtemp(join(tmpdir(), "lawyerbuddy-session-list-home-"));
   try {
     const chatDir = getPilotProjectChatDir(projectRoot, pilotHome);
     await mkdir(chatDir, { recursive: true });
@@ -116,8 +116,8 @@ test("prefers a newer oversized metadata title over an older title in the lite h
 });
 
 test("preserves createdAt when metadata recovery has no lite summary", async () => {
-  const projectRoot = await mkdtemp(join(tmpdir(), "pilotdeck-session-list-project-"));
-  const pilotHome = await mkdtemp(join(tmpdir(), "pilotdeck-session-list-home-"));
+  const projectRoot = await mkdtemp(join(tmpdir(), "lawyerbuddy-session-list-project-"));
+  const pilotHome = await mkdtemp(join(tmpdir(), "lawyerbuddy-session-list-home-"));
   try {
     const chatDir = getPilotProjectChatDir(projectRoot, pilotHome);
     await mkdir(chatDir, { recursive: true });
@@ -153,8 +153,8 @@ test("preserves createdAt when metadata recovery has no lite summary", async () 
 });
 
 test("does not trust a trailing metadata patch as a full title snapshot", async () => {
-  const projectRoot = await mkdtemp(join(tmpdir(), "pilotdeck-session-list-project-"));
-  const pilotHome = await mkdtemp(join(tmpdir(), "pilotdeck-session-list-home-"));
+  const projectRoot = await mkdtemp(join(tmpdir(), "lawyerbuddy-session-list-project-"));
+  const pilotHome = await mkdtemp(join(tmpdir(), "lawyerbuddy-session-list-home-"));
   try {
     const chatDir = getPilotProjectChatDir(projectRoot, pilotHome);
     await mkdir(chatDir, { recursive: true });
@@ -186,8 +186,8 @@ test("does not trust a trailing metadata patch as a full title snapshot", async 
 });
 
 test("uses firstPrompt from a titled tail snapshot for title search", async () => {
-  const projectRoot = await mkdtemp(join(tmpdir(), "pilotdeck-session-list-project-"));
-  const pilotHome = await mkdtemp(join(tmpdir(), "pilotdeck-session-list-home-"));
+  const projectRoot = await mkdtemp(join(tmpdir(), "lawyerbuddy-session-list-project-"));
+  const pilotHome = await mkdtemp(join(tmpdir(), "lawyerbuddy-session-list-home-"));
   try {
     const chatDir = getPilotProjectChatDir(projectRoot, pilotHome);
     await mkdir(chatDir, { recursive: true });
@@ -223,8 +223,8 @@ test("uses firstPrompt from a titled tail snapshot for title search", async () =
 });
 
 test("uses a prompt-only tail snapshot without requiring a generated title", async () => {
-  const projectRoot = await mkdtemp(join(tmpdir(), "pilotdeck-session-list-project-"));
-  const pilotHome = await mkdtemp(join(tmpdir(), "pilotdeck-session-list-home-"));
+  const projectRoot = await mkdtemp(join(tmpdir(), "lawyerbuddy-session-list-project-"));
+  const pilotHome = await mkdtemp(join(tmpdir(), "lawyerbuddy-session-list-home-"));
   try {
     const chatDir = getPilotProjectChatDir(projectRoot, pilotHome);
     await mkdir(chatDir, { recursive: true });

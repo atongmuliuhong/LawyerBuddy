@@ -18,28 +18,28 @@ import { getAlwaysOnRoot } from '../services/always-on-paths.js';
 
 describe('UI project storage ID resolution', () => {
     it('repairs internal ignore rules identically to the core without creating metadata during Git browse', () => {
-        const root = mkdtempSync(join(tmpdir(), 'pilotdeck-ui-ignore-'));
+        const root = mkdtempSync(join(tmpdir(), 'lawyerbuddy-ui-ignore-'));
         try {
             const uiRoot = join(root, 'ui'), coreRoot = join(root, 'core');
             mkdirSync(uiRoot); mkdirSync(coreRoot);
             ensurePilotProjectGitIgnore(uiRoot, false);
-            expect(existsSync(join(uiRoot, '.pilotdeck'))).toBe(false);
+            expect(existsSync(join(uiRoot, '.lawyerbuddy'))).toBe(false);
             for (const project of [uiRoot, coreRoot]) {
-                mkdirSync(join(project, '.pilotdeck'));
-                writeFileSync(join(project, '.pilotdeck', '.gitignore'), '# existing\n*.tmp\n!keep.txt');
+                mkdirSync(join(project, '.lawyerbuddy'));
+                writeFileSync(join(project, '.lawyerbuddy', '.gitignore'), '# existing\n*.tmp\n!keep.txt');
             }
             ensurePilotProjectGitIgnore(uiRoot, false);
             ensureCoreGitIgnore(coreRoot, false);
-            const expected = readFileSync(join(coreRoot, '.pilotdeck', '.gitignore'), 'utf8');
-            expect(readFileSync(join(uiRoot, '.pilotdeck', '.gitignore'), 'utf8')).toBe(expected);
+            const expected = readFileSync(join(coreRoot, '.lawyerbuddy', '.gitignore'), 'utf8');
+            expect(readFileSync(join(uiRoot, '.lawyerbuddy', '.gitignore'), 'utf8')).toBe(expected);
             ensurePilotProjectGitIgnore(uiRoot, false);
-            expect(readFileSync(join(uiRoot, '.pilotdeck', '.gitignore'), 'utf8')).toBe(expected);
+            expect(readFileSync(join(uiRoot, '.lawyerbuddy', '.gitignore'), 'utf8')).toBe(expected);
         } finally {
             rmSync(root, { recursive: true, force: true });
         }
     });
     it('matches the core resolver for colliding non-ASCII workspaces', () => {
-        const root = mkdtempSync(join(tmpdir(), 'pilotdeck-ui-project-id-'));
+        const root = mkdtempSync(join(tmpdir(), 'lawyerbuddy-ui-project-id-'));
         try {
             const pilotHome = join(root, 'pilot-home');
             const projectA = join(root, 'home', '内部测试');
@@ -72,7 +72,7 @@ describe('UI project storage ID resolution', () => {
     });
 
     it('matches core fallback behavior for missing and invalid markers', () => {
-        const root = mkdtempSync(join(tmpdir(), 'pilotdeck-ui-project-id-fallback-'));
+        const root = mkdtempSync(join(tmpdir(), 'lawyerbuddy-ui-project-id-fallback-'));
         try {
             const pilotHome = join(root, 'pilot-home');
             const projectRoot = join(root, 'workspace', 'ascii-project');
@@ -92,7 +92,7 @@ describe('UI project storage ID resolution', () => {
     });
 
     it('uses the resolved storage ID for the UI Always-On root', () => {
-        const root = mkdtempSync(join(tmpdir(), 'pilotdeck-ui-always-on-root-'));
+        const root = mkdtempSync(join(tmpdir(), 'lawyerbuddy-ui-always-on-root-'));
         const previousPilotHome = process.env.PILOT_HOME;
         try {
             const pilotHome = join(root, 'pilot-home');

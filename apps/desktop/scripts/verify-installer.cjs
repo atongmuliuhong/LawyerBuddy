@@ -14,7 +14,7 @@ const templates = path.join(libRoot, 'templates/nsis');
 const projectDir = path.resolve(__dirname, '..');
 const { build } = require(path.join(projectDir, 'package.json'));
 (async () => {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'pilotdeck-nsis-test-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lawyerbuddy-nsis-test-'));
   try {
     // Also exercise quoted includes when the checkout path contains spaces.
     const fixtureDir = path.join(root, 'desktop project');
@@ -40,8 +40,8 @@ const { build } = require(path.join(projectDir, 'package.json'));
     const launchSection = fs.readFileSync(path.join(templates, 'installSection.nsh'), 'utf8').split('!macro doStartApp')[1];
     assert.ok(launchSection);
     const script = "Unicode true\n" + generator.build() + `
-!define PRODUCT_NAME "PilotDeck"
-!define PRODUCT_FILENAME "PilotDeck"
+!define PRODUCT_NAME "LawyerBuddy"
+!define PRODUCT_FILENAME "LawyerBuddy"
 !define VERSION "2026.907.0"
 !define PROJECT_DIR "${fixtureDir}"
 !include "${path.resolve(fixtureDir, build.nsis.include)}"

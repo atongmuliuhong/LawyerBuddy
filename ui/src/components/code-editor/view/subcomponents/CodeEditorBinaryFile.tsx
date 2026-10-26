@@ -595,11 +595,11 @@ function useOfficeAutoRefresh(
       }
     };
 
-    window.addEventListener('pilotdeck:file-updated', handleRefreshEvent);
-    window.addEventListener('pilotdeck:files-changed', handleRefreshEvent);
+    window.addEventListener('lawyerbuddy:file-updated', handleRefreshEvent);
+    window.addEventListener('lawyerbuddy:files-changed', handleRefreshEvent);
     return () => {
-      window.removeEventListener('pilotdeck:file-updated', handleRefreshEvent);
-      window.removeEventListener('pilotdeck:files-changed', handleRefreshEvent);
+      window.removeEventListener('lawyerbuddy:file-updated', handleRefreshEvent);
+      window.removeEventListener('lawyerbuddy:files-changed', handleRefreshEvent);
     };
   }, [filePath, projectName, reload]);
 }
@@ -807,7 +807,7 @@ function ImagePreview({ projectName, file, title, message, onClose }: {
         dataUrl: capture.dataUrl,
       },
     });
-    window.dispatchEvent(new CustomEvent('pilotdeck:add-chat-reference', { detail: reference }));
+    window.dispatchEvent(new CustomEvent('lawyerbuddy:add-chat-reference', { detail: reference }));
     setReferenceMode(null);
   };
 

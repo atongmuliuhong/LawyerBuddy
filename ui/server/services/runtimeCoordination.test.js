@@ -15,14 +15,14 @@ describe('runtime coordination', () => {
     const configuration = { state: 'ready', modelRef: 'openai/gpt-5' };
     const coordination = createRuntimeCoordination({
       processLike,
-      env: { PILOTDECK_RUNTIME_SUPERVISED: '1' },
+      env: { LAWYERBUDDY_RUNTIME_SUPERVISED: '1' },
       readConfigurationState: () => configuration,
     });
 
     expect(coordination.publishConfigurationState()).toBe(configuration);
     expect(coordination.getConfigurationState()).toBe(configuration);
     expect(processLike.send).toHaveBeenCalledWith({
-      type: 'pilotdeck:configuration-state',
+      type: 'lawyerbuddy:configuration-state',
       configuration,
     });
   });
@@ -31,14 +31,14 @@ describe('runtime coordination', () => {
     const processLike = createProcessLike();
     const coordination = createRuntimeCoordination({
       processLike,
-      env: { PILOTDECK_RUNTIME_SUPERVISED: '1' },
+      env: { LAWYERBUDDY_RUNTIME_SUPERVISED: '1' },
     });
 
-    processLike.emit('message', { type: 'pilotdeck:gateway-state', state: 'starting' });
+    processLike.emit('message', { type: 'lawyerbuddy:gateway-state', state: 'starting' });
     expect(coordination.getGatewayState()).toEqual({ state: 'starting' });
 
     processLike.emit('message', {
-      type: 'pilotdeck:gateway-state',
+      type: 'lawyerbuddy:gateway-state',
       state: 'error',
       error: 'port unavailable',
     });
@@ -52,10 +52,10 @@ describe('runtime coordination', () => {
     const processLike = createProcessLike();
     const coordination = createRuntimeCoordination({
       processLike,
-      env: { PILOTDECK_RUNTIME_SUPERVISED: '1' },
+      env: { LAWYERBUDDY_RUNTIME_SUPERVISED: '1' },
     });
     processLike.emit('message', {
-      type: 'pilotdeck:gateway-state',
+      type: 'lawyerbuddy:gateway-state',
       state: 'error',
       error: 'gateway timeout',
     });
@@ -63,7 +63,7 @@ describe('runtime coordination', () => {
     expect(coordination.requestGatewayRetry()).toBe(true);
     expect(coordination.getGatewayState()).toEqual({ state: 'starting' });
     expect(processLike.send).toHaveBeenLastCalledWith({
-      type: 'pilotdeck:retry-gateway',
+      type: 'lawyerbuddy:retry-gateway',
     });
   });
 

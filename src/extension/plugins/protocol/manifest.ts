@@ -1,22 +1,22 @@
-import type { PilotDeckHooksSettings } from "../../hooks/protocol/settings.js";
+import type { LawyerBuddyHooksSettings } from "../../hooks/protocol/settings.js";
 
-export type PilotDeckPluginManifest = {
+export type LawyerBuddyPluginManifest = {
   name: string;
   version?: string;
   description?: string;
   commands?: string | string[];
   agents?: string | string[];
   skills?: string | string[];
-  hooks?: string | PilotDeckHooksSettings;
+  hooks?: string | LawyerBuddyHooksSettings;
   mcpServers?: Record<string, unknown>;
   lspServers?: Record<string, unknown>;
   outputStyles?: string | string[];
-  marketplace?: PilotDeckMarketplaceReference;
+  marketplace?: LawyerBuddyMarketplaceReference;
   mcpb?: string;
   settings?: Record<string, unknown>;
 };
 
-export type PilotDeckMarketplaceReference = {
+export type LawyerBuddyMarketplaceReference = {
   name: string;
   plugin: string;
   version?: string;

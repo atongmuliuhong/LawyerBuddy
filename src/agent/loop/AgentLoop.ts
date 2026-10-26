@@ -22,13 +22,13 @@ import {
   materializeMediaReferences,
 } from "../../model/index.js";
 import type {
-  PilotDeckToolDefinition,
-  PilotDeckReadFileStateMap,
-  PilotDeckSubagentForkApi,
-  PilotDeckToolErrorResult,
-  PilotDeckToolResult,
-  PilotDeckToolRuntimeContext,
-  PilotDeckWriteSnapshotMap,
+  LawyerBuddyToolDefinition,
+  LawyerBuddyReadFileStateMap,
+  LawyerBuddySubagentForkApi,
+  LawyerBuddyToolErrorResult,
+  LawyerBuddyToolResult,
+  LawyerBuddyToolRuntimeContext,
+  LawyerBuddyWriteSnapshotMap,
 } from "../../tool/index.js";
 import {
   SUBAGENT_DEFINITIONS,
@@ -40,7 +40,7 @@ import type { AgentPermissionDenial, AgentTurnResult } from "../protocol/result.
 import type { AgentRuntimeConfig } from "../runtime/AgentRuntimeConfig.js";
 import type { AgentRuntimeDependencies } from "../runtime/AgentRuntimeDependencies.js";
 import type { LifecycleDispatchResult } from "../../lifecycle/index.js";
-import type { PilotDeckHookEvent } from "../../extension/hooks/protocol/events.js";
+import type { LawyerBuddyHookEvent } from "../../extension/hooks/protocol/events.js";
 import { NullContextRuntime } from "../../context/NullContextRuntime.js";
 import { buildCachePlan } from "../../context/cache/CachePlan.js";
 import { truncateHeadPreservingCheckpoint } from "../../context/compaction/CompactionEngine.js";
@@ -87,7 +87,7 @@ const CIRCUIT_BREAKER_GRACE_PROMPT = [
 ].join(" ");
 const PLAN_MODE_REMINDER_MESSAGE = [
   "Plan mode is active.",
-  "Read first using read-only tools, then write or refine plan markdown only under `.pilotdeck/plans/`.",
+  "Read first using read-only tools, then write or refine plan markdown only under `.lawyerbuddy/plans/`.",
   "Do not make implementation changes while planning.",
   "When the plan is ready for user review, call `exit_plan_mode` with the plan file path.",
 ].join("\n");
@@ -155,14 +155,14 @@ export type AgentLoopRunResult = {
 };
 
 export type AgentLoopSeedState = {
-  readFileState?: PilotDeckReadFileStateMap;
-  writeSnapshots?: PilotDeckWriteSnapshotMap;
+  readFileState?: LawyerBuddyReadFileStateMap;
+  writeSnapshots?: LawyerBuddyWriteSnapshotMap;
   allowedReadFiles?: string[];
 };
 
 export class AgentLoop {
-  private readonly readFileState: PilotDeckReadFileStateMap;
-  private readonly writeSnapshots: PilotDeckWriteSnapshotMap;
+  private readonly readFileState: LawyerBuddyReadFileStateMap;
+  private readonly writeSnapshots: LawyerBuddyWriteSnapshotMap;
   private readonly allowedReadFiles: Set<string>;
   private readonly tokenCalibrationByRoute = new Map<string, TokenCalibrationBaseline>();
   private readonly transientTokenCaps = new Map<string, {
@@ -1681,7 +1681,7 @@ export class AgentLoop {
         return { result, messages };
       }
 
-      let results: PilotDeckToolResult[];
+      let results: LawyerBuddyToolResult[];
       try {
         const toolContext = this.createToolContext(input, messages);
         if (assembled.finishReason === "length" || assembled.hasRepairedToolCalls) {
@@ -2050,7 +2050,7 @@ export class AgentLoop {
     for (const diagnostic of materialized.diagnostics) {
       // eslint-disable-next-line no-console
       console.warn(
-        `[pilotdeck] ${diagnostic.code}: ${diagnostic.message} (${diagnostic.mediaType}, ${diagnostic.path})`,
+        `[lawyerbuddy] ${diagnostic.code}: ${diagnostic.message} (${diagnostic.mediaType}, ${diagnostic.path})`,
       );
     }
 
@@ -2321,7 +2321,7 @@ export class AgentLoop {
   private createToolContext(
     input: AgentLoopInput,
     messages: CanonicalMessage[],
-  ): PilotDeckToolRuntimeContext {
+  ): LawyerBuddyToolRuntimeContext {
     const planDirectoryPath = this.dependencies.planFileManager?.getPlanDirectoryPath();
     const planTodo = this.dependencies.planTodoManager?.forSession(input.sessionId);
     const canPrompt = input.canPrompt ?? this.config.permissionContext.canPrompt;
@@ -2397,7 +2397,7 @@ export class AgentLoop {
   private buildSubagentForkApi(
     input: AgentLoopInput,
     messages: CanonicalMessage[],
-  ): PilotDeckSubagentForkApi {
+  ): LawyerBuddySubagentForkApi {
     const depth = this.config.subagentDepth ?? 0;
     const maxDepth = this.config.maxSubagentDepth ?? 1;
     return {
@@ -2556,7 +2556,7 @@ export class AgentLoop {
 
   private async dispatchLifecycle(
     input: AgentLoopInput,
-    event: PilotDeckHookEvent,
+    event: LawyerBuddyHookEvent,
     payload: Record<string, unknown>,
   ): Promise<LifecycleDispatchResult> {
     return this.dependencies.lifecycle?.dispatch({
@@ -2611,11 +2611,11 @@ export class AgentLoop {
 
   private async *executeToolsWithEventPump(
     toolCalls: CanonicalToolCall[],
-    context: PilotDeckToolRuntimeContext,
+    context: LawyerBuddyToolRuntimeContext,
     input: AgentLoopInput,
-  ): AsyncGenerator<AgentEvent, PilotDeckToolResult[], unknown> {
+  ): AsyncGenerator<AgentEvent, LawyerBuddyToolResult[], unknown> {
     const activeSubagents = new Map<string, ActiveSubagentStatus>();
-    let results: PilotDeckToolResult[] | undefined;
+    let results: LawyerBuddyToolResult[] | undefined;
     let error: unknown;
     let settled = false;
 
@@ -2789,11 +2789,11 @@ export function buildTurnEnvironment(
 ): NodeJS.ProcessEnv {
   return {
     ...(baseEnv ?? process.env),
-    PILOTDECK_SESSION_ID: sessionId,
-    PILOTDECK_TURN_ID: turnId,
-    PILOTDECK_WORK_DIR: path.join(
+    LAWYERBUDDY_SESSION_ID: sessionId,
+    LAWYERBUDDY_TURN_ID: turnId,
+    LAWYERBUDDY_WORK_DIR: path.join(
       path.resolve(cwd),
-      ".pilotdeck",
+      ".lawyerbuddy",
       "work",
       safeWorkPathSegment(sessionId),
       safeWorkPathSegment(turnId),
@@ -2811,7 +2811,7 @@ function mergeUserRules(target: PermissionRule[], userRules: PermissionRule[] | 
   target.splice(0, target.length, ...nonUserRules, ...(userRules ?? []));
 }
 
-function filterAskModeTools(tools: PilotDeckToolDefinition[]): CanonicalToolSchema[] {
+function filterAskModeTools(tools: LawyerBuddyToolDefinition[]): CanonicalToolSchema[] {
   const agentOverride = buildAskModeAgentToolSchema();
   return tools
     .filter(isAskModeAllowedTool)
@@ -2825,7 +2825,7 @@ function filterAskModeTools(tools: PilotDeckToolDefinition[]): CanonicalToolSche
     });
 }
 
-function toolToCanonicalSchema(tool: PilotDeckToolDefinition): CanonicalToolSchema {
+function toolToCanonicalSchema(tool: LawyerBuddyToolDefinition): CanonicalToolSchema {
   return {
     name: tool.name,
     description: tool.description,
@@ -2839,7 +2839,7 @@ function findLifecycleBlock(result: LifecycleDispatchResult): { reason: string; 
   );
 }
 
-function findToolLifecycleBlock(results: PilotDeckToolResult[]): { reason: string; stopReason?: string } | undefined {
+function findToolLifecycleBlock(results: LawyerBuddyToolResult[]): { reason: string; stopReason?: string } | undefined {
   for (const result of results) {
     const lifecycle = result.metadata?.lifecycle;
     if (isRecord(lifecycle) && isRecord(lifecycle.blocked) && typeof lifecycle.blocked.reason === "string") {
@@ -2956,9 +2956,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function cloneReadFileStateMap(
-  state: PilotDeckReadFileStateMap | undefined,
-): PilotDeckReadFileStateMap {
-  const out: PilotDeckReadFileStateMap = new Map();
+  state: LawyerBuddyReadFileStateMap | undefined,
+): LawyerBuddyReadFileStateMap {
+  const out: LawyerBuddyReadFileStateMap = new Map();
   if (!state) return out;
   for (const [key, value] of state.entries()) {
     out.set(key, { ...value });
@@ -2967,9 +2967,9 @@ function cloneReadFileStateMap(
 }
 
 function cloneWriteSnapshotMap(
-  state: PilotDeckWriteSnapshotMap | undefined,
-): PilotDeckWriteSnapshotMap {
-  const out: PilotDeckWriteSnapshotMap = new Map();
+  state: LawyerBuddyWriteSnapshotMap | undefined,
+): LawyerBuddyWriteSnapshotMap {
+  const out: LawyerBuddyWriteSnapshotMap = new Map();
   if (!state) return out;
   for (const [key, value] of state.entries()) {
     out.set(key, { ...value });
@@ -2990,10 +2990,10 @@ function truncateHeadKeepRatio(messages: CanonicalMessage[], keepRatio: number):
   return truncateHeadPreservingCheckpoint(messages, keepRatio);
 }
 
-function buildInvalidFingerprint(results: PilotDeckToolResult[]): string {
+function buildInvalidFingerprint(results: LawyerBuddyToolResult[]): string {
   return results
     .filter(
-      (result): result is PilotDeckToolErrorResult =>
+      (result): result is LawyerBuddyToolErrorResult =>
         result.type === "error" && result.error.code === "invalid_tool_input",
     )
     .map((result) => `${result.toolName}::${result.error.message}`)
@@ -3115,7 +3115,7 @@ function mergeMessageMetadata(
 }
 
 function detectRepeatedToolFailure(
-  results: PilotDeckToolResult[],
+  results: LawyerBuddyToolResult[],
   lastFingerprint: string | undefined,
 ): {
   currentFingerprint?: string;
@@ -3138,9 +3138,9 @@ function detectRepeatedToolFailure(
   };
 }
 
-function buildToolFailureKeys(results: PilotDeckToolResult[]): string[] {
+function buildToolFailureKeys(results: LawyerBuddyToolResult[]): string[] {
   return results
-    .filter((result): result is PilotDeckToolErrorResult => result.type === "error")
+    .filter((result): result is LawyerBuddyToolErrorResult => result.type === "error")
     .map((result) => {
       const recovery = readRecoveryMetadata(result);
       return toolFailureKey(result, recovery);
@@ -3149,9 +3149,9 @@ function buildToolFailureKeys(results: PilotDeckToolResult[]): string[] {
 }
 
 function annotateRepeatedToolFailures(
-  results: PilotDeckToolResult[],
+  results: LawyerBuddyToolResult[],
   repeatedKeys: Set<string>,
-): PilotDeckToolResult[] {
+): LawyerBuddyToolResult[] {
   if (repeatedKeys.size === 0) {
     return results;
   }
@@ -3191,7 +3191,7 @@ function annotateRepeatedToolFailures(
 }
 
 function toolFailureKey(
-  result: PilotDeckToolErrorResult,
+  result: LawyerBuddyToolErrorResult,
   recovery: Record<string, unknown> | undefined,
 ): string {
   return `${result.toolName}::${result.error.code}::${recovery?.failureClass ?? "unknown"}`;
@@ -3211,9 +3211,9 @@ function findRepeatedValues(values: string[]): Set<string> {
 }
 
 function appendTextToFirstContent(
-  content: PilotDeckToolErrorResult["content"],
+  content: LawyerBuddyToolErrorResult["content"],
   suffix: string,
-): PilotDeckToolErrorResult["content"] {
+): LawyerBuddyToolErrorResult["content"] {
   const [first, ...rest] = content;
   if (!first) {
     return [{ type: "text", text: suffix.trimStart() }];
@@ -3224,12 +3224,12 @@ function appendTextToFirstContent(
   return [{ ...first, text: `${first.text}${suffix}` }, ...rest];
 }
 
-function readRecoveryMetadata(result: PilotDeckToolErrorResult): Record<string, unknown> | undefined {
+function readRecoveryMetadata(result: LawyerBuddyToolErrorResult): Record<string, unknown> | undefined {
   const recovery = result.metadata?.recovery;
   return isRecord(recovery) ? recovery : undefined;
 }
 
-function collectPermissionDenials(results: PilotDeckToolResult[]): AgentPermissionDenial[] {
+function collectPermissionDenials(results: LawyerBuddyToolResult[]): AgentPermissionDenial[] {
   return results.flatMap((result) => {
     if (
       result.type === "error" &&
@@ -3278,7 +3278,7 @@ function readRequestedMode(value: unknown): AgentRuntimeConfig["permissionMode"]
 }
 
 function bindSupplementalMessagesToToolCalls(
-  results: PilotDeckToolResult[],
+  results: LawyerBuddyToolResult[],
   supplementalMessages: CanonicalMessage[],
 ): ContextSupplementalToolResultMessage[] {
   const bound: ContextSupplementalToolResultMessage[] = [];
@@ -3377,11 +3377,11 @@ export function modelFailureAction(error: CanonicalModelError | undefined): {
   const modelLabel = error.model ? ` model "${error.model}"` : " selected model";
 
   if (error.status === 401 || error.status === 403 || error.code === "auth_error") {
-    const hint = `Update the API key or access permissions for${providerLabel} in Settings → Model Provider, or run pilotdeck setup.`;
+    const hint = `Update the API key or access permissions for${providerLabel} in Settings → Model Provider, or run lawyerbuddy setup.`;
     return modelFailureActionResult(hint, "settings", "auth", { provider: error.provider ?? "the provider" });
   }
   if (error.code === "model_not_found") {
-    const hint = `Choose a valid${modelLabel} for${providerLabel} in Settings → Model Provider, or add it under model.providers.<id>.models in pilotdeck.yaml.`;
+    const hint = `Choose a valid${modelLabel} for${providerLabel} in Settings → Model Provider, or add it under model.providers.<id>.models in lawyerbuddy.yaml.`;
     return modelFailureActionResult(hint, "settings", "modelNotFound", { provider: error.provider ?? "the provider", model: error.model });
   }
   if (error.code === "timeout") {

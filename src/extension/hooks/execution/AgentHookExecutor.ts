@@ -1,12 +1,12 @@
-import type { PilotDeckHookInput } from "../protocol/input.js";
-import type { PilotDeckHookCommand } from "../protocol/settings.js";
+import type { LawyerBuddyHookInput } from "../protocol/input.js";
+import type { LawyerBuddyHookCommand } from "../protocol/settings.js";
 import { parseHookOutput } from "./parseHookOutput.js";
 import type { CommandHookExecutionResult } from "./CommandHookExecutor.js";
 
 export type AgentHookRunner = (input: {
   prompt: string;
   model?: string;
-  hookInput: PilotDeckHookInput;
+  hookInput: LawyerBuddyHookInput;
   signal?: AbortSignal;
 }) => Promise<string>;
 
@@ -14,8 +14,8 @@ export class AgentHookExecutor {
   constructor(private readonly runner?: AgentHookRunner) {}
 
   async execute(options: {
-    hook: Extract<PilotDeckHookCommand, { type: "agent" }>;
-    hookInput: PilotDeckHookInput;
+    hook: Extract<LawyerBuddyHookCommand, { type: "agent" }>;
+    hookInput: LawyerBuddyHookInput;
     signal?: AbortSignal;
   }): Promise<CommandHookExecutionResult> {
     if (!this.runner) {

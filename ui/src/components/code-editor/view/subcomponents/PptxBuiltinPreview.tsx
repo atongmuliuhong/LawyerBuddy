@@ -289,7 +289,7 @@ export default function PptxBuiltinPreview({
       },
       nearbyText: capture.nearbyText,
     });
-    window.dispatchEvent(new CustomEvent('pilotdeck:add-chat-reference', { detail: reference }));
+    window.dispatchEvent(new CustomEvent('lawyerbuddy:add-chat-reference', { detail: reference }));
     setReferenceMode(null);
   };
 

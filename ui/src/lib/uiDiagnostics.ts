@@ -1,11 +1,11 @@
-const STORAGE_KEY = 'pilotdeck:ui-diagnostics';
+const STORAGE_KEY = 'lawyerbuddy:ui-diagnostics';
 const LIMIT = 20;
 
 type Diagnostic = { at: string; event: string; metrics: Record<string, number | boolean | string> };
 // Deliberately exclude prompts, model replies, paths, credentials and session IDs.
 export function recordUiDiagnostic(event: string, metrics: Diagnostic['metrics'] = {}) {
   const item: Diagnostic = { at: new Date().toISOString(), event, metrics };
-  console.warn('[PilotDeck UI]', item);
+  console.warn('[LawyerBuddy UI]', item);
   try {
     const saved: unknown = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '[]');
     const entries = Array.isArray(saved) ? saved.slice(-(LIMIT - 1)) : [];
@@ -14,7 +14,7 @@ export function recordUiDiagnostic(event: string, metrics: Diagnostic['metrics']
 }
 
 export function reloadUi() {
-  window.dispatchEvent(new Event('pilotdeck:flush-drafts'));
+  window.dispatchEvent(new Event('lawyerbuddy:flush-drafts'));
   recordUiDiagnostic('manual-reload');
   window.location.reload();
 }

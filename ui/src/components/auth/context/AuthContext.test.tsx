@@ -56,7 +56,7 @@ describe('AuthContext model configuration state', () => {
         configuration: {
           state: 'needs_configuration',
           reason: 'missing_config',
-          configPath: '/tmp/pilotdeck.yaml',
+          configPath: '/tmp/lawyerbuddy.yaml',
           revision: 'revision',
         },
       }),
@@ -76,7 +76,7 @@ describe('AuthContext model configuration state', () => {
         configuration: {
           state: 'ready',
           modelRef: 'openai/gpt-5',
-          configPath: '/tmp/pilotdeck.yaml',
+          configPath: '/tmp/lawyerbuddy.yaml',
           revision: 'revision',
         },
         gateway: { state: 'starting' },
@@ -89,7 +89,7 @@ describe('AuthContext model configuration state', () => {
           configuration: {
             state: 'ready',
             modelRef: 'openai/gpt-5',
-            configPath: '/tmp/pilotdeck.yaml',
+            configPath: '/tmp/lawyerbuddy.yaml',
             revision: 'revision',
           },
           gateway: { state: 'starting' },
@@ -101,7 +101,7 @@ describe('AuthContext model configuration state', () => {
           configuration: {
             state: 'ready',
             modelRef: 'openai/gpt-5',
-            configPath: '/tmp/pilotdeck.yaml',
+            configPath: '/tmp/lawyerbuddy.yaml',
             revision: 'revision',
           },
           gateway: { state: 'ready' },

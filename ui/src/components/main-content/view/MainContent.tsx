@@ -85,8 +85,8 @@ const FILES_PANEL_SPLITTER_HEIGHT = 1;
 const FILES_PANEL_SPLITTER_WIDTH = 1;
 const FILES_PANEL_SECTION_MIN_HEIGHT = 330;
 const FILES_PANEL_SECTION_MIN_WIDTH = 220;
-const FILES_PANEL_LAYOUT_STORAGE_KEY = "pilotdeck:files-panel-layout";
-const FILES_PANEL_ORDER_STORAGE_KEY = "pilotdeck:files-panel-order";
+const FILES_PANEL_LAYOUT_STORAGE_KEY = "lawyerbuddy:files-panel-layout";
+const FILES_PANEL_ORDER_STORAGE_KEY = "lawyerbuddy:files-panel-order";
 
 type FilesDockPanel = "explorer" | "assistant";
 type FilesPanelLayout = "vertical" | "horizontal";
@@ -150,8 +150,8 @@ function dockArrangementFromDrop(
   };
 }
 const FILES_NARROW_BREAKPOINT = 1040;
-const FILES_ASSISTANT_STORAGE_KEY = "pilotdeck:files-assistant-width";
-const TOOL_PANEL_STORAGE_KEY = "pilotdeck:dashboard-panel-width";
+const FILES_ASSISTANT_STORAGE_KEY = "lawyerbuddy:files-assistant-width";
+const TOOL_PANEL_STORAGE_KEY = "lawyerbuddy:dashboard-panel-width";
 const TOOL_PANEL_DEFAULT_WIDTH = 480;
 const TOOL_PANEL_MIN_WIDTH = 360;
 const TOOL_PANEL_MAX_WIDTH = 720;
@@ -382,7 +382,7 @@ function MainContent({
     [getProjectSessions],
   );
 
-  const loadPilotDeckSession = useCallback(
+  const loadLawyerBuddySession = useCallback(
     async (projectName: string, sessionId: string) => {
       const response = await api.sessions(
         projectName,
@@ -422,7 +422,7 @@ function MainContent({
 
         const existingSession =
           findSessionInProject(targetProject, target.sessionId) ??
-          (await loadPilotDeckSession(lookupProjectName, target.sessionId));
+          (await loadLawyerBuddySession(lookupProjectName, target.sessionId));
 
         if (!existingSession) {
           flashToast({ kind: "error", text: missingMessage });
@@ -446,7 +446,7 @@ function MainContent({
 
       const existingSession =
         findSessionInProject(selectedProject, target.sessionId) ??
-        (await loadPilotDeckSession(selectedProject.name, target.sessionId));
+        (await loadLawyerBuddySession(selectedProject.name, target.sessionId));
 
       if (!existingSession) {
         flashToast({ kind: "error", text: missingMessage });
@@ -489,7 +489,7 @@ function MainContent({
       findSessionInProject,
       flashToast,
       i18n,
-      loadPilotDeckSession,
+      loadLawyerBuddySession,
       onNavigateToSession,
       onSelectSession,
       projects,

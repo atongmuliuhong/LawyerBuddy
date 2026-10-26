@@ -9,18 +9,18 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const mac = process.platform === 'darwin';
 const platformName = mac ? 'mac' : process.platform === 'linux' ? 'linux' : 'windows';
-const artifactDir = process.env.PILOTDECK_CHROME_ARTIFACTS || path.join(root, 'outputs/desktop-chrome-review');
+const artifactDir = process.env.LAWYERBUDDY_CHROME_ARTIFACTS || path.join(root, 'outputs/desktop-chrome-review');
 await fs.mkdir(artifactDir, { recursive: true });
-const profile = await fs.mkdtemp(path.join(os.tmpdir(), 'pilotdeck-chrome-'));
+const profile = await fs.mkdtemp(path.join(os.tmpdir(), 'lawyerbuddy-chrome-'));
 const app = await electron.launch({
   timeout: 60_000,
   executablePath: createRequire(import.meta.url)(path.join(root, 'apps/desktop/node_modules/electron')),
   args: [path.join(root, 'apps/desktop/scripts/fixtures/desktop-chrome.cjs'),
-    ...(process.env.PILOTDECK_CHROME_SCALE ? [`--force-device-scale-factor=${process.env.PILOTDECK_CHROME_SCALE}`] : []),
-    ...(process.env.PILOTDECK_CHROME_OZONE ? [`--ozone-platform=${process.env.PILOTDECK_CHROME_OZONE}`] : []),
-    ...(process.env.PILOTDECK_CHROME_DISABLE_SANDBOX ? ['--no-sandbox'] : []),
-    ...(process.env.PILOTDECK_CHROME_DISABLE_GPU ? ['--disable-gpu', '--disable-dev-shm-usage'] : [])],
-  env: { ...Object.fromEntries(Object.entries(process.env).filter(([key]) => key !== 'ELECTRON_RUN_AS_NODE')), PILOTDECK_CHROME_PROFILE: profile },
+    ...(process.env.LAWYERBUDDY_CHROME_SCALE ? [`--force-device-scale-factor=${process.env.LAWYERBUDDY_CHROME_SCALE}`] : []),
+    ...(process.env.LAWYERBUDDY_CHROME_OZONE ? [`--ozone-platform=${process.env.LAWYERBUDDY_CHROME_OZONE}`] : []),
+    ...(process.env.LAWYERBUDDY_CHROME_DISABLE_SANDBOX ? ['--no-sandbox'] : []),
+    ...(process.env.LAWYERBUDDY_CHROME_DISABLE_GPU ? ['--disable-gpu', '--disable-dev-shm-usage'] : [])],
+  env: { ...Object.fromEntries(Object.entries(process.env).filter(([key]) => key !== 'ELECTRON_RUN_AS_NODE')), LAWYERBUDDY_CHROME_PROFILE: profile },
 });
 app.process().on('exit', (code, signal) => { if (code) console.error('Electron exited', { code, signal }); });
 const errors = [];
@@ -85,7 +85,7 @@ try {
   if (mac) {
     expect(mainHeader).toEqual({ top: 0, bottom: 52 });
     await expect(page.locator('html')).toHaveAttribute('data-desktop-toolbar', '');
-    await expect(page.locator('#pilotdeck-window-caption')).toHaveCSS('width', '100px');
+    await expect(page.locator('#lawyerbuddy-window-caption')).toHaveCSS('width', '100px');
     const verifyToolbarHitTargets = async () => {
       const targets = await page.locator('.workspace-header button, .workspace-header input, .compact-brand').evaluateAll(elements =>
         elements.filter(el => el.getBoundingClientRect().width && el.getBoundingClientRect().height).map(el => {
@@ -107,7 +107,7 @@ try {
       await verifyToolbarHitTargets();
       if (width === 76) await page.screenshot({ path: path.join(artifactDir, 'mac-compact-sidebar.png') });
     }
-    await expect(page.locator('#pilotdeck-window-caption')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(page.locator('#lawyerbuddy-window-caption')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     // The original compact logo still expands the sidebar below the controls.
     const resizer = await page.locator('.sidebar-resizer').boundingBox();
     await page.mouse.move(resizer.x, resizer.y + 180); await page.mouse.down();
@@ -143,7 +143,7 @@ try {
   if (!mac) {
     expect(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isMenuBarVisible())).toBe(false);
     expect(await app.evaluate(({ nativeTheme }) => nativeTheme.shouldUseDarkColors)).toBe(true);
-    const caption = page.locator('#pilotdeck-window-caption');
+    const caption = page.locator('#lawyerbuddy-window-caption');
     await expect(caption.locator('button')).toHaveCount(5);
     await expect(caption).toHaveCSS('background-color', 'rgb(23, 23, 23)');
     await expect(page.locator('.project-sidebar')).toHaveCSS('background-color', 'rgb(10, 10, 10)');
@@ -151,7 +151,7 @@ try {
     // so it follows the app theme on GTK desktops with different system themes.
     await caption.getByRole('button', { name: 'File', exact: true }).click();
     await expect.poll(() => app.evaluate(() => global.chromeTest.menuRequests().at(-1)?.id)).toBe('menu-file');
-    const linuxPopup = page.locator('#pilotdeck-linux-popup');
+    const linuxPopup = page.locator('#lawyerbuddy-linux-popup');
     if (process.platform === 'linux') {
       await expect(linuxPopup).toBeVisible();
       await expect(linuxPopup.locator('.panel')).toHaveCSS('background-color', 'rgb(37, 37, 37)');
@@ -205,7 +205,7 @@ try {
     await app.evaluate(({ Menu }, id) => Menu.getApplicationMenu().getMenuItemById(id).click(), id);
   };
   if (!mac) {
-    const caption = page.locator('#pilotdeck-window-caption');
+    const caption = page.locator('#lawyerbuddy-window-caption');
     await expect(caption).toHaveCSS('height', '32px');
     await command('help-about');
     const firstAbout = await app.evaluate(() => global.chromeTest.about().dialogs.at(-1));
@@ -217,22 +217,22 @@ try {
     await expect.poll(() => app.evaluate(() => global.chromeTest.about().copiedVersion)).toContain('Commit: abc123fixture');
     await app.evaluate(() => { global.aboutResponse = 2; });
     await command('help-about');
-    await expect.poll(() => app.evaluate(() => global.chromeTest.about().openedWebsite)).toBe('https://github.com/OpenBMB/PilotDeck');
+    await expect.poll(() => app.evaluate(() => global.chromeTest.about().openedWebsite)).toBe('https://github.com/OpenBMB/LawyerBuddy');
     console.log('PASS: compact caption and rich About dialog, version copy and project link');
   }
-  if (process.env.PILOTDECK_CHROME_MANUAL === '1') {
-    await page.evaluate(() => window.pilotdeckDesktop.setAppearance({ language: 'zh-CN', themeMode: 'light' }));
+  if (process.env.LAWYERBUDDY_CHROME_MANUAL === '1') {
+    await page.evaluate(() => window.lawyerbuddyDesktop.setAppearance({ language: 'zh-CN', themeMode: 'light' }));
     await page.reload();
     await page.goto('http://127.0.0.1:5187/p/demo/c/chrome-review');
     await expect(page.locator('.workspace-header h1')).toHaveAttribute('data-desktop-no-drag', '');
     console.log('Native review window ready; waiting for manual inspection.');
-    await new Promise(resolve => setTimeout(resolve, Number(process.env.PILOTDECK_CHROME_MANUAL_WAIT_MS) || 120000));
-    await page.evaluate(() => window.pilotdeckDesktop.setAppearance({ language: 'en', themeMode: 'dark' }));
+    await new Promise(resolve => setTimeout(resolve, Number(process.env.LAWYERBUDDY_CHROME_MANUAL_WAIT_MS) || 120000));
+    await page.evaluate(() => window.lawyerbuddyDesktop.setAppearance({ language: 'en', themeMode: 'dark' }));
     await page.reload();
   }
   if (process.platform === 'linux') {
-    await page.locator('#pilotdeck-window-caption').getByRole('button', { name: 'File', exact: true }).click();
-    await page.locator('#pilotdeck-linux-popup').locator('[data-action="new-project"]').click();
+    await page.locator('#lawyerbuddy-window-caption').getByRole('button', { name: 'File', exact: true }).click();
+    await page.locator('#lawyerbuddy-linux-popup').locator('[data-action="new-project"]').click();
   } else await command('new-project');
   await expect(page.locator('.create-workspace-dialog')).toBeVisible();
   await expect.poll(() => app.evaluate(() => global.chromeTest.state().blocked)).toBe(true);
@@ -274,9 +274,9 @@ try {
   if (mac) await expect(page.locator('html')).toHaveAttribute('data-desktop-integrated', '');
   await command('check-updates');
   await expect(page).toHaveURL(/\/settings\/about$/);
-  await expect(page.locator('.pilotdeck-settings-app')).toBeVisible();
+  await expect(page.locator('.lawyerbuddy-settings-app')).toBeVisible();
   await expect.poll(() => app.evaluate(() => global.chromeTest.checks())).toBeGreaterThan(0);
-  if (mac) await expect(page.locator('.pilotdeck-settings-app')).toHaveCSS('border-top-left-radius', '0px');
+  if (mac) await expect(page.locator('.lawyerbuddy-settings-app')).toHaveCSS('border-top-left-radius', '0px');
   if (mac) {
     const settingsHeader = await page.locator('.settings-main > .topbar').evaluate(el => ({ top: el.getBoundingClientRect().top, bottom: el.getBoundingClientRect().bottom }));
     expect(settingsHeader).toEqual(mainHeader);
@@ -310,7 +310,7 @@ try {
   }));
   const darkPageIdentity = await pageIdentity();
   await page.screenshot({ path: path.join(artifactDir, `${platformName}-dark.png`) });
-  await page.evaluate(() => window.pilotdeckDesktop.setAppearance({ language: 'en', themeMode: 'light' }));
+  await page.evaluate(() => window.lawyerbuddyDesktop.setAppearance({ language: 'en', themeMode: 'light' }));
   await expect(page.locator('html')).not.toHaveAttribute('data-desktop-dark');
   expect(await app.evaluate(({ nativeTheme }) => nativeTheme.shouldUseDarkColors)).toBe(false);
   // ThemeContext consumes the persisted desktop appearance on reload.
@@ -321,31 +321,31 @@ try {
   expect(await pageIdentity()).toEqual(darkPageIdentity);
   await page.screenshot({ path: path.join(artifactDir, `${platformName}-light.png`) });
   if (!mac) {
-    await expect(page.locator('#pilotdeck-window-caption')).toHaveCSS('background-color', 'rgb(244, 244, 245)');
+    await expect(page.locator('#lawyerbuddy-window-caption')).toHaveCSS('background-color', 'rgb(244, 244, 245)');
     await verifyOriginalContentStyle();
     await expect(page.locator('.project-sidebar')).toHaveCSS('background-image', 'linear-gradient(rgb(251, 250, 255), rgb(244, 243, 255) 58%, rgb(240, 244, 255))');
     if (process.platform === 'linux') {
-      const popup = page.locator('#pilotdeck-linux-popup');
-      const caption = page.locator('#pilotdeck-window-caption');
+      const popup = page.locator('#lawyerbuddy-linux-popup');
+      const caption = page.locator('#lawyerbuddy-window-caption');
       await caption.getByRole('button', { name: 'File', exact: true }).click();
       await expect(popup.locator('.panel')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
       await page.screenshot({ path: path.join(artifactDir, `${platformName}-light-popup.png`) });
-      await page.evaluate(() => window.pilotdeckDesktop.setAppearance({ language: 'en', themeMode: 'dark' }));
+      await page.evaluate(() => window.lawyerbuddyDesktop.setAppearance({ language: 'en', themeMode: 'dark' }));
       await expect(popup.locator('.panel')).toHaveCSS('background-color', 'rgb(37, 37, 37)');
-      await page.evaluate(() => window.pilotdeckDesktop.setAppearance({ language: 'en', themeMode: 'light' }));
+      await page.evaluate(() => window.lawyerbuddyDesktop.setAppearance({ language: 'en', themeMode: 'light' }));
       await expect(popup.locator('.panel')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
     }
     // Exercise the actual i18n instance, including persistence across reload.
     await page.evaluate(async () => { const { default: i18n } = await import('/src/i18n/config.js'); await i18n.changeLanguage('zh-CN'); });
     await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
-    await expect(page.locator('#pilotdeck-window-caption button')).toHaveText(['文件', '编辑', '查看', '前往', '帮助']);
+    await expect(page.locator('#lawyerbuddy-window-caption button')).toHaveText(['文件', '编辑', '查看', '前往', '帮助']);
     await expect.poll(() => app.evaluate(({ Menu }) => Menu.getApplicationMenu().getMenuItemById('menu-file').label)).toBe('文件');
     expect(await app.evaluate(({ Menu }) => [
       Menu.getApplicationMenu().getMenuItemById('new-conversation').label,
       Menu.getApplicationMenu().getMenuItemById('help-docs').label,
     ])).toEqual(['新对话', '使用文档']);
     if (process.platform === 'linux') {
-      const popup = page.locator('#pilotdeck-linux-popup');
+      const popup = page.locator('#lawyerbuddy-linux-popup');
       for (const [id, selector, label] of [
         ['menu-file', '[data-action="new-project"]', '新建项目'],
         ['menu-edit', '[data-index="0"]', '撤销'],
@@ -354,7 +354,7 @@ try {
         ['menu-help', '[data-action="help-docs"]', '使用文档'],
       ]) {
         await page.keyboard.press('Escape');
-        await page.locator(`#pilotdeck-window-caption button[data-menu="${id}"]`).click();
+        await page.locator(`#lawyerbuddy-window-caption button[data-menu="${id}"]`).click();
         await expect(popup.locator('.panel')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
         await expect(popup.locator(selector)).toContainText(label);
       }
@@ -364,16 +364,16 @@ try {
     }
     await page.reload();
     await expect(page.locator('.app-shell')).toBeVisible();
-    await expect(page.locator('#pilotdeck-window-caption button')).toHaveText(['文件', '编辑', '查看', '前往', '帮助']);
+    await expect(page.locator('#lawyerbuddy-window-caption button')).toHaveText(['文件', '编辑', '查看', '前往', '帮助']);
     await page.screenshot({ path: path.join(artifactDir, `${platformName}-light-zh.png`) });
     await page.evaluate(async () => { const { default: i18n } = await import('/src/i18n/config.js'); await i18n.changeLanguage('en'); });
-    await expect(page.locator('#pilotdeck-window-caption button')).toHaveText(['File', 'Edit', 'View', 'Go', 'Help']);
+    await expect(page.locator('#lawyerbuddy-window-caption button')).toHaveText(['File', 'Edit', 'View', 'Go', 'Help']);
     await expect.poll(() => app.evaluate(({ Menu }) => Menu.getApplicationMenu().getMenuItemById('menu-file').label)).toBe('&File');
     expect(await app.evaluate(({ Menu }) => [
       Menu.getApplicationMenu().getMenuItemById('new-conversation').label,
       Menu.getApplicationMenu().getMenuItemById('help-docs').label,
     ])).toEqual(['New Conversation', 'Documentation']);
-    const safeArea = await page.locator('#pilotdeck-window-caption').evaluate(el => ({
+    const safeArea = await page.locator('#lawyerbuddy-window-caption').evaluate(el => ({
       left: el.getBoundingClientRect().left, right: el.getBoundingClientRect().right, width: innerWidth,
     }));
     expect(safeArea.left > 80 || safeArea.right < safeArea.width - 80).toBe(true);
@@ -384,19 +384,19 @@ try {
       await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isMaximized())).toBe(false);
     }
   }
-  const simulateFullscreen = process.env.PILOTDECK_CHROME_SIMULATE_FULLSCREEN === '1';
+  const simulateFullscreen = process.env.LAWYERBUDDY_CHROME_SIMULATE_FULLSCREEN === '1';
   if (simulateFullscreen) {
     console.log('INFO: fullscreen IPC simulation requested; this run does not validate a native fullscreen transition');
-    await app.evaluate(({ BrowserWindow, nativeTheme }) => BrowserWindow.getAllWindows()[0].webContents.send('pilotdeck:window-state', { fullscreen: true, dark: nativeTheme.shouldUseDarkColors }));
+    await app.evaluate(({ BrowserWindow, nativeTheme }) => BrowserWindow.getAllWindows()[0].webContents.send('lawyerbuddy:window-state', { fullscreen: true, dark: nativeTheme.shouldUseDarkColors }));
   } else {
     await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setFullScreen(true));
     await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen()), { timeout: 15000 }).toBe(true);
   }
   await expect(page.locator('html')).toHaveAttribute('data-desktop-fullscreen', '');
-  await expect(page.locator('#pilotdeck-window-caption')).toBeHidden();
+  await expect(page.locator('#lawyerbuddy-window-caption')).toBeHidden();
   await expect(page.locator('.app-root')).toHaveCSS('padding-top', mac ? '0px' : '6px');
   if (mac) expect(await headerGeometry()).toEqual({ top: 0, bottom: 52 });
-  if (simulateFullscreen) await app.evaluate(({ BrowserWindow, nativeTheme }) => BrowserWindow.getAllWindows()[0].webContents.send('pilotdeck:window-state', { fullscreen: false, dark: nativeTheme.shouldUseDarkColors }));
+  if (simulateFullscreen) await app.evaluate(({ BrowserWindow, nativeTheme }) => BrowserWindow.getAllWindows()[0].webContents.send('lawyerbuddy:window-state', { fullscreen: false, dark: nativeTheme.shouldUseDarkColors }));
   else await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setFullScreen(false));
   await expect(page.locator('html')).not.toHaveAttribute('data-desktop-fullscreen');
   if (!mac) await expect(page.locator('.app-root')).toHaveCSS('padding-top', '38px');
@@ -409,7 +409,7 @@ try {
   await expect(page.locator('.desktop-prototype-shell')).toBeVisible();
   if (mac) {
     await expect(page.locator('html')).not.toHaveAttribute('data-desktop-toolbar');
-    await expect(page.locator('#pilotdeck-window-caption')).toHaveCSS('width', `${await page.evaluate(() => innerWidth)}px`);
+    await expect(page.locator('#lawyerbuddy-window-caption')).toHaveCSS('width', `${await page.evaluate(() => innerWidth)}px`);
   }
   await expect.poll(() => page.locator('.content-page').evaluate(page =>
     page.getAnimations().some(animation => animation.playState === 'running'))).toBe(false);

@@ -239,7 +239,7 @@ internal static class InstallPayload
                 // Validate before assigning stage: finally must never clean an
                 // arbitrary path from a malformed state file.
                 if (Path.GetDirectoryName(candidate) != Path.GetDirectoryName(target)
-                    || !Regex.IsMatch(Path.GetFileName(candidate), @"^\.pilotdeck-install-[a-f0-9]{32}$"))
+                    || !Regex.IsMatch(Path.GetFileName(candidate), @"^\.lawyerbuddy-install-[a-f0-9]{32}$"))
                     throw new IOException("Invalid staging directory");
                 RejectReparseParents(candidate);
                 RejectReparseParents(target);
@@ -269,7 +269,7 @@ internal static class InstallPayload
             RejectReparseParents(target);
             string parent = Path.GetDirectoryName(target);
             if (String.IsNullOrEmpty(parent)) throw new IOException("Cannot install at a volume root");
-            if (!commitOnly) stage = Path.Combine(parent, ".pilotdeck-install-" + Guid.NewGuid().ToString("N"));
+            if (!commitOnly) stage = Path.Combine(parent, ".lawyerbuddy-install-" + Guid.NewGuid().ToString("N"));
             string payload = Path.Combine(stage, "payload"), backup = Path.Combine(stage, "backup");
             if (!commitOnly)
             {

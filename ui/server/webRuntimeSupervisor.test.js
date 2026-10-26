@@ -49,7 +49,7 @@ function createHarness({
   const exit = vi.fn();
   const supervisor = createRuntimeSupervisor({
     mode,
-    env: { PILOTDECK_GATEWAY_PORT: '18789', ...env },
+    env: { LAWYERBUDDY_GATEWAY_PORT: '18789', ...env },
     spawnImpl,
     waitForPortImpl,
     exists: () => requestExists,
@@ -68,10 +68,10 @@ describe('web runtime supervisor', () => {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), 'pd-runtime-commands-'));
     try {
       fs.mkdirSync(path.join(root, 'dist/src/cli'), { recursive: true });
-      fs.writeFileSync(path.join(root, 'dist/src/cli/pilotdeck.js'), '');
+      fs.writeFileSync(path.join(root, 'dist/src/cli/lawyerbuddy.js'), '');
       const commands = getRuntimeCommands('start-built', path.join(root, 'ui'));
       expect(commands[0].args).toEqual([path.join(root, 'ui/server/index.js')]);
-      expect(commands[1].args).toEqual([path.join(root, 'dist/src/cli/pilotdeck.js'), 'server']);
+      expect(commands[1].args).toEqual([path.join(root, 'dist/src/cli/lawyerbuddy.js'), 'server']);
     } finally { fs.rmSync(root, { recursive: true, force: true }); }
   });
   it('starts the UI server first and Vite only in development', () => {
@@ -91,19 +91,19 @@ describe('web runtime supervisor', () => {
   });
 
   it('passes one absolute config path to the UI server and Gateway', () => {
-    const relativeConfigPath = 'fixtures/pilotdeck.yaml';
+    const relativeConfigPath = 'fixtures/lawyerbuddy.yaml';
     const { supervisor, spawnImpl } = createHarness({
-      env: { PILOTDECK_CONFIG_PATH: relativeConfigPath },
+      env: { LAWYERBUDDY_CONFIG_PATH: relativeConfigPath },
     });
     const server = supervisor.children.get('server');
     server.emit('message', {
-      type: 'pilotdeck:configuration-state',
+      type: 'lawyerbuddy:configuration-state',
       configuration: { state: 'ready', revision: 'one' },
     });
 
     const expectedPath = path.resolve(relativeConfigPath);
-    expect(spawnImpl.mock.calls[0][2].env.PILOTDECK_CONFIG_PATH).toBe(expectedPath);
-    expect(spawnImpl.mock.calls[1][2].env.PILOTDECK_CONFIG_PATH).toBe(expectedPath);
+    expect(spawnImpl.mock.calls[0][2].env.LAWYERBUDDY_CONFIG_PATH).toBe(expectedPath);
+    expect(spawnImpl.mock.calls[1][2].env.LAWYERBUDDY_CONFIG_PATH).toBe(expectedPath);
   });
 
   it('resolves a dev config path before changing to the repository root', () => {
@@ -118,7 +118,7 @@ describe('web runtime supervisor', () => {
     const server = supervisor.children.get('server');
 
     server.emit('message', {
-      type: 'pilotdeck:configuration-state',
+      type: 'lawyerbuddy:configuration-state',
       configuration: { state: 'needs_configuration', reason: 'missing_config' },
     });
 
@@ -131,18 +131,18 @@ describe('web runtime supervisor', () => {
     const { supervisor, spawnImpl } = createHarness();
     const server = supervisor.children.get('server');
     server.emit('message', {
-      type: 'pilotdeck:configuration-state',
+      type: 'lawyerbuddy:configuration-state',
       configuration: { state: 'ready', revision: 'one' },
     });
     server.emit('message', {
-      type: 'pilotdeck:configuration-state',
+      type: 'lawyerbuddy:configuration-state',
       configuration: { state: 'ready', revision: 'one' },
     });
 
     expect(spawnImpl).toHaveBeenCalledTimes(2);
     await vi.waitFor(() => {
       expect(server.send).toHaveBeenLastCalledWith({
-        type: 'pilotdeck:gateway-state',
+        type: 'lawyerbuddy:gateway-state',
         state: 'ready',
       });
     });
@@ -152,7 +152,7 @@ describe('web runtime supervisor', () => {
     const { supervisor, exit } = createHarness();
     const server = supervisor.children.get('server');
     server.emit('message', {
-      type: 'pilotdeck:configuration-state',
+      type: 'lawyerbuddy:configuration-state',
       configuration: { state: 'ready', revision: 'one' },
     });
     const gateway = supervisor.children.get('gateway');
@@ -161,7 +161,7 @@ describe('web runtime supervisor', () => {
     expect(supervisor.children.has('server')).toBe(true);
     expect(exit).not.toHaveBeenCalled();
     expect(server.send).toHaveBeenLastCalledWith(expect.objectContaining({
-      type: 'pilotdeck:gateway-state',
+      type: 'lawyerbuddy:gateway-state',
       state: 'error',
     }));
   });
@@ -174,13 +174,13 @@ describe('web runtime supervisor', () => {
     });
     const server = supervisor.children.get('server');
     server.emit('message', {
-      type: 'pilotdeck:configuration-state',
+      type: 'lawyerbuddy:configuration-state',
       configuration: { state: 'ready', revision: 'one' },
     });
 
     await vi.waitFor(() => {
       expect(server.send).toHaveBeenLastCalledWith(expect.objectContaining({
-        type: 'pilotdeck:gateway-state',
+        type: 'lawyerbuddy:gateway-state',
         state: 'error',
         error: 'gateway timeout',
       }));
@@ -200,12 +200,12 @@ describe('web runtime supervisor', () => {
     const { supervisor, spawnImpl } = createHarness();
     const server = supervisor.children.get('server');
     server.emit('message', {
-      type: 'pilotdeck:configuration-state',
+      type: 'lawyerbuddy:configuration-state',
       configuration: { state: 'ready', revision: 'one' },
     });
     const firstGateway = supervisor.children.get('gateway');
     firstGateway.emit('close', 1, null);
-    server.emit('message', { type: 'pilotdeck:retry-gateway' });
+    server.emit('message', { type: 'lawyerbuddy:retry-gateway' });
 
     expect(spawnImpl).toHaveBeenCalledTimes(3);
     expect(supervisor.children.get('gateway')).not.toBe(firstGateway);
@@ -215,19 +215,19 @@ describe('web runtime supervisor', () => {
     const { supervisor } = createHarness();
     const server = supervisor.children.get('server');
     server.emit('message', {
-      type: 'pilotdeck:configuration-state',
+      type: 'lawyerbuddy:configuration-state',
       configuration: { state: 'ready', revision: 'one' },
     });
     const gateway = supervisor.children.get('gateway');
     server.emit('message', {
-      type: 'pilotdeck:configuration-state',
+      type: 'lawyerbuddy:configuration-state',
       configuration: { state: 'invalid', revision: 'two' },
     });
 
     expect(gateway.kill).toHaveBeenCalledWith('SIGTERM');
     expect(supervisor.children.has('gateway')).toBe(false);
     expect(server.send).toHaveBeenLastCalledWith({
-      type: 'pilotdeck:gateway-state',
+      type: 'lawyerbuddy:gateway-state',
       state: 'stopped',
     });
   });
@@ -236,15 +236,15 @@ describe('web runtime supervisor', () => {
     const { supervisor, spawnImpl } = createHarness();
     const server = supervisor.children.get('server');
     server.emit('message', {
-      type: 'pilotdeck:configuration-state',
+      type: 'lawyerbuddy:configuration-state',
       configuration: { state: 'ready', revision: 'one' },
     });
     server.emit('message', {
-      type: 'pilotdeck:configuration-state',
+      type: 'lawyerbuddy:configuration-state',
       configuration: { state: 'invalid', revision: 'two' },
     });
     server.emit('message', {
-      type: 'pilotdeck:configuration-state',
+      type: 'lawyerbuddy:configuration-state',
       configuration: { state: 'ready', revision: 'three' },
     });
 

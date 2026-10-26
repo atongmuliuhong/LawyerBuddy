@@ -14,7 +14,7 @@ export function createLinuxCaptionPopup(
   setActiveMenu: (id?: string) => void,
 ) {
   const host = document.createElement('div');
-  host.id = 'pilotdeck-linux-popup';
+  host.id = 'lawyerbuddy-linux-popup';
   host.hidden = true;
   const shadow = host.attachShadow({ mode: 'open' });
   const style = document.createElement('style');
@@ -72,7 +72,7 @@ export function createLinuxCaptionPopup(
     activeId = id;
     setActiveMenu(id);
     let entries: LinuxCaptionEntry[];
-    try { entries = await ipc.invoke('pilotdeck:linux-menu-items', id) as LinuxCaptionEntry[]; }
+    try { entries = await ipc.invoke('lawyerbuddy:linux-menu-items', id) as LinuxCaptionEntry[]; }
     catch (error) { console.warn('Could not read application menu', error); close(); return; }
     if (request !== serial || activeId !== id) return;
     panel.replaceChildren();
@@ -80,7 +80,7 @@ export function createLinuxCaptionPopup(
       const focus = previousFocus;
       close();
       if (focus?.isConnected && focus !== document.body && focus !== captionHost) focus.focus({ preventScroll: true });
-      void ipc.invoke('pilotdeck:linux-menu-activate', { id, index: entry.index })
+      void ipc.invoke('lawyerbuddy:linux-menu-activate', { id, index: entry.index })
         .catch(error => console.warn('Could not run application menu action', error));
     };
     for (const entry of entries) {
@@ -152,7 +152,7 @@ export function createLinuxCaptionPopup(
   });
   window.addEventListener('blur', () => { if (activeId) close(); });
   window.addEventListener('resize', () => { if (activeId) close(); });
-  ipc.on('pilotdeck:application-menu-updated', () => { if (activeId) void open(activeId); });
+  ipc.on('lawyerbuddy:application-menu-updated', () => { if (activeId) void open(activeId); });
 
   return { open, close, refresh: () => { if (activeId) void open(activeId); } };
 }

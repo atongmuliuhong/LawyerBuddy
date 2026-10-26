@@ -20,7 +20,7 @@ async function until(predicate) {
 let directory, server;
 const timeout = setTimeout(() => { console.error('Download integration test timed out'); app.exit(1); }, 60000);
 (async () => {
-  directory = await fs.mkdtemp(path.join(os.tmpdir(), 'pilotdeck-update-download-'));
+  directory = await fs.mkdtemp(path.join(os.tmpdir(), 'lawyerbuddy-update-download-'));
   app.setPath('userData', directory);
   await app.whenReady();
   const body = Buffer.alloc(4 * 1024 * 1024, 0x61);
@@ -43,9 +43,9 @@ const timeout = setTimeout(() => { console.error('Download integration test time
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const base = `http://127.0.0.1:${server.address().port}`;
   const config = path.join(directory, 'app-update.yml');
-  await fs.writeFile(config, 'updaterCacheDirName: pilotdeck-update-download-test\n');
+  await fs.writeFile(config, 'updaterCacheDirName: lawyerbuddy-update-download-test\n');
   const adapter = {
-    version: '2026.1001.0', name: 'PilotDeck download test', isPackaged: true,
+    version: '2026.1001.0', name: 'LawyerBuddy download test', isPackaged: true,
     appUpdateConfigPath: config, userDataPath: directory, baseCachePath: path.join(directory, 'cache'),
     whenReady: () => app.whenReady(), onQuit: () => {}, quit: () => { throw new Error('Must not install'); }, relaunch: () => { throw new Error('Must not relaunch'); },
   };
@@ -62,7 +62,7 @@ const timeout = setTimeout(() => { console.error('Download integration test time
   const progress = []; updater.on('download-progress', value => progress.push(value));
   let completed = false;
   const task = updater.downloadUpdate(checked.cancellationToken).then(files => { completed = true; return files; });
-  const pending = path.join(directory, 'cache', 'pilotdeck-update-download-test', 'pending');
+  const pending = path.join(directory, 'cache', 'lawyerbuddy-update-download-test', 'pending');
   let partial;
   await until(async () => {
     const names = await fs.readdir(pending).catch(() => []);

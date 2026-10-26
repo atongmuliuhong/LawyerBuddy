@@ -12,7 +12,7 @@ from urllib.parse import quote
 
 from obs_sync_debug import AWS, BUCKET, configure, credentials, local_hashes, log, s3, verify_one
 
-LATEST = "PilotDeck/latest.json"
+LATEST = "LawyerBuddy/latest.json"
 
 
 def release_prefix(release):
@@ -21,7 +21,7 @@ def release_prefix(release):
     if not match or release.get("draft") or release.get("prerelease") or not release.get("assets"):
         raise RuntimeError("A dated formal release with assets is required")
     datetime.strptime(match[1], "%Y.%m.%d")
-    return f"PilotDeck/{tag}/"
+    return f"LawyerBuddy/{tag}/"
 
 
 def website_manifest(release):
@@ -72,8 +72,8 @@ def main():
     release_prefix(release)
     directory = Path("release-assets")
     hashes = local_hashes(release, directory)
-    auth = credentials(os.environ.get("OBS_CREDENTIALS_BEARER_TOKEN", ""), "n00069-minicpm-5-0-pilotdeck",
-                       session_name="pilotdeck-production-sync")
+    auth = credentials(os.environ.get("OBS_CREDENTIALS_BEARER_TOKEN", ""), "n00069-minicpm-5-0-lawyerbuddy",
+                       session_name="lawyerbuddy-production-sync")
     aws = AWS(auth, minutes=50, workers=1)
     started = time.monotonic()
     try:

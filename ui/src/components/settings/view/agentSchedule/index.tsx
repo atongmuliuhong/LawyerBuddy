@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { usePilotDeckConfig } from "../../../../hooks/usePilotDeckConfig";
+import { useLawyerBuddyConfig } from "../../../../hooks/useLawyerBuddyConfig";
 import { configToYamlString, safeParseYaml } from "../modelPool/utils/configYaml";
-import type { PilotDeckConfig } from "../modelPool/types";
+import type { LawyerBuddyConfig } from "../modelPool/types";
 import { ConfigSaveError } from "../../shared/view";
 import CronSection from "./components/CronSection";
 
@@ -14,10 +14,10 @@ export default function AgentScheduleSections({
   title: _title,
 }: AgentScheduleSectionsProps) {
   const { t } = useTranslation("settings");
-  const { raw, commitRaw, loading, error } = usePilotDeckConfig();
+  const { raw, commitRaw, loading, error } = useLawyerBuddyConfig();
   const parsedConfig = useMemo(() => safeParseYaml(raw), [raw]);
 
-  const onFormChange = (next: PilotDeckConfig) => {
+  const onFormChange = (next: LawyerBuddyConfig) => {
     try {
       void commitRaw(configToYamlString(next));
     } catch (caught) {
@@ -29,7 +29,7 @@ export default function AgentScheduleSections({
     return (
       <div className="scheduled-page-content">
         <div className="py-6 text-xs text-muted-foreground">
-          {t("pilotDeckConfig.loading")}
+          {t("lawyerBuddyConfig.loading")}
         </div>
       </div>
     );

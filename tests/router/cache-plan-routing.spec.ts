@@ -90,7 +90,7 @@ test("router stats prefer an explicit baseline model over the scenario default",
     ...config,
     stats: {
       enabled: true,
-      filePath: `/tmp/pilotdeck-router-baseline-${process.pid}-${Math.random().toString(36).slice(2)}/stats.json`,
+      filePath: `/tmp/lawyerbuddy-router-baseline-${process.pid}-${Math.random().toString(36).slice(2)}/stats.json`,
       baselineModel: { provider: "baseline", model: "model" },
       modelPricing: {
         "primary/main": { input: 1 },

@@ -37,7 +37,7 @@ export function hasFindShortcutTarget(): boolean {
 }
 
 function refreshFindAvailability() {
-  window.dispatchEvent(new Event('pilotdeck:refresh-menu'));
+  window.dispatchEvent(new Event('lawyerbuddy:refresh-menu'));
 }
 
 function isTargetAvailable(target: FindShortcutTarget): boolean {
@@ -132,10 +132,10 @@ export function FindShortcutProvider({ activeScope, children }: FindShortcutProv
     };
 
     document.addEventListener('keydown', handleKeyDown, { capture: true });
-    window.addEventListener('pilotdeck:find', handleKeyDown);
+    window.addEventListener('lawyerbuddy:find', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown, { capture: true });
-      window.removeEventListener('pilotdeck:find', handleKeyDown);
+      window.removeEventListener('lawyerbuddy:find', handleKeyDown);
     };
   }, [resolveTarget]);
 

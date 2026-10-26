@@ -1,6 +1,6 @@
-import type { PilotDeckToolResult } from "../protocol/result.js";
-import type { PilotDeckToolCall, PilotDeckToolRuntimeContext } from "../protocol/types.js";
+import type { LawyerBuddyToolResult } from "../protocol/result.js";
+import type { LawyerBuddyToolCall, LawyerBuddyToolRuntimeContext } from "../protocol/types.js";
 
-export type PilotDeckToolScheduler = {
-  executeAll(calls: PilotDeckToolCall[], context: PilotDeckToolRuntimeContext): Promise<PilotDeckToolResult[]>;
+export type LawyerBuddyToolScheduler = {
+  executeAll(calls: LawyerBuddyToolCall[], context: LawyerBuddyToolRuntimeContext): Promise<LawyerBuddyToolResult[]>;
 };

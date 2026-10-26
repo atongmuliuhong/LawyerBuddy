@@ -21,7 +21,7 @@ vi.mock('../../onboarding/view/Onboarding', () => ({
 const readyConfiguration = {
   state: 'ready',
   modelRef: 'openai/gpt-5',
-  configPath: '/tmp/pilotdeck.yaml',
+  configPath: '/tmp/lawyerbuddy.yaml',
   revision: 'revision',
 };
 

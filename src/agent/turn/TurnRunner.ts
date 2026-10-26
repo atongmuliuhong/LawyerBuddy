@@ -62,7 +62,7 @@ export type TurnRunnerRuntimeReloadSnapshot = {
 };
 
 export type TurnRunnerDependencies = {
-  fileHistory?: import("../../tool/protocol/types.js").PilotDeckToolFileHistorySink;
+  fileHistory?: import("../../tool/protocol/types.js").LawyerBuddyToolFileHistorySink;
   metadataStore?: SessionMetadataStore;
   sessionTitleGenerator?: SessionTitleGenerator;
   autoGenerateSessionTitle?: boolean;

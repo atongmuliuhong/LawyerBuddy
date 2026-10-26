@@ -1,4 +1,4 @@
-export type PilotDeckPermissionHookDecision =
+export type LawyerBuddyPermissionHookDecision =
   | {
       behavior: "allow";
       updatedInput?: Record<string, unknown>;
@@ -10,7 +10,7 @@ export type PilotDeckPermissionHookDecision =
       interrupt?: boolean;
     };
 
-export type PilotDeckHookSpecificOutput = {
+export type LawyerBuddyHookSpecificOutput = {
   hookEventName: string;
   additionalContext?: string;
   initialUserMessage?: string;
@@ -19,12 +19,12 @@ export type PilotDeckHookSpecificOutput = {
   permissionDecisionReason?: string;
   updatedInput?: Record<string, unknown>;
   updatedMCPToolOutput?: unknown;
-  decision?: PilotDeckPermissionHookDecision;
+  decision?: LawyerBuddyPermissionHookDecision;
   retry?: boolean;
   worktreePath?: string;
 };
 
-export type PilotDeckHookSyncOutput = {
+export type LawyerBuddyHookSyncOutput = {
   type: "sync";
   continue?: boolean;
   suppressOutput?: boolean;
@@ -32,13 +32,13 @@ export type PilotDeckHookSyncOutput = {
   decision?: "approve" | "block";
   reason?: string;
   systemMessage?: string;
-  specific?: PilotDeckHookSpecificOutput;
+  specific?: LawyerBuddyHookSpecificOutput;
   raw?: unknown;
 };
 
-export type PilotDeckHookAsyncOutput = {
+export type LawyerBuddyHookAsyncOutput = {
   type: "async";
   raw?: unknown;
 };
 
-export type PilotDeckHookOutput = PilotDeckHookSyncOutput | PilotDeckHookAsyncOutput;
+export type LawyerBuddyHookOutput = LawyerBuddyHookSyncOutput | LawyerBuddyHookAsyncOutput;

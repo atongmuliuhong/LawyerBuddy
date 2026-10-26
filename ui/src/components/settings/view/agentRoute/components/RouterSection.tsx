@@ -12,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { patch } from "../../modelPool/utils/patch";
-import type { PilotDeckConfig } from "../../modelPool/types";
+import type { LawyerBuddyConfig } from "../../modelPool/types";
 import {
   buildModelRefOptions,
   ensureModelRefConfigured,
@@ -30,8 +30,8 @@ import {
 } from "../utils/router";
 
 type RouterSectionProps = {
-  config: PilotDeckConfig;
-  onChange: (next: PilotDeckConfig) => void;
+  config: LawyerBuddyConfig;
+  onChange: (next: LawyerBuddyConfig) => void;
 };
 
 type TierMap = Record<
@@ -110,7 +110,7 @@ export default function RouterSection({
       const provider =
         slash > 0
           ? option.value.slice(0, slash)
-          : t("pilotDeckConfig.panels.router.ui.otherProvider");
+          : t("lawyerBuddyConfig.panels.router.ui.otherProvider");
       const catalogProvider = findCatalogProviderById(provider);
       const providerLabel =
         catalogProvider?.displayName ??
@@ -145,7 +145,7 @@ export default function RouterSection({
     return [...labels].map(([ref, label]) => ({ ref, label }));
   }, [modelOpts, r.stats?.modelPricing]);
 
-  const seedRouterDefaults = (base: PilotDeckConfig) => {
+  const seedRouterDefaults = (base: LawyerBuddyConfig) => {
     const model =
       base.router?.scenarios?.default ||
       base.agent?.model ||
@@ -238,7 +238,7 @@ export default function RouterSection({
     }
     setEditingTiers(false);
     queueSettingsSaveSuccess(
-      t("pilotDeckConfig.panels.router.ui.tierDefinitionsSaved"),
+      t("lawyerBuddyConfig.panels.router.ui.tierDefinitionsSaved"),
     );
     onChange(next);
   };
@@ -258,7 +258,7 @@ export default function RouterSection({
     );
     setEditingPricing(false);
     queueSettingsSaveSuccess(
-      t("pilotDeckConfig.panels.router.ui.pricingSaved"),
+      t("lawyerBuddyConfig.panels.router.ui.pricingSaved"),
     );
     onChange(patch(config, ["router", "stats", "modelPricing"], normalized));
   };
@@ -275,7 +275,7 @@ export default function RouterSection({
         aria-label={ariaLabel}
         onChange={(event) => {
           queueSettingsSaveSuccess(
-            t("pilotDeckConfig.panels.router.ui.modelChanged", {
+            t("lawyerBuddyConfig.panels.router.ui.modelChanged", {
               label: ariaLabel,
               value:
                 event.target.selectedOptions[0]?.text || event.target.value,
@@ -286,12 +286,12 @@ export default function RouterSection({
       >
         {!value ? (
           <option value="">
-            {t("pilotDeckConfig.panels.router.ui.selectModel")}
+            {t("lawyerBuddyConfig.panels.router.ui.selectModel")}
           </option>
         ) : null}
         {includeInherit ? (
           <option value="inherit">
-            {t("pilotDeckConfig.panels.router.ui.inheritMainModel")}
+            {t("lawyerBuddyConfig.panels.router.ui.inheritMainModel")}
           </option>
         ) : null}
         {groupedModels.map(([provider, group]) => (
@@ -315,21 +315,21 @@ export default function RouterSection({
           <span className="route-heading-icon">
             <Route size={20} />
           </span>
-          <h2>{t("pilotDeckConfig.panels.router.ui.smartRouting")}</h2>
+          <h2>{t("lawyerBuddyConfig.panels.router.ui.smartRouting")}</h2>
         </div>
         <button
           className={`route-switch${enabled ? " on" : ""}`}
           type="button"
           role="switch"
           aria-checked={enabled}
-          aria-label={t("pilotDeckConfig.panels.router.ui.smartRouting")}
+          aria-label={t("lawyerBuddyConfig.panels.router.ui.smartRouting")}
           onClick={() => {
             const nextEnabled = !enabled;
             queueSettingsSaveSuccess(
               t(
                 nextEnabled
-                  ? "pilotDeckConfig.panels.router.ui.routingEnabled"
-                  : "pilotDeckConfig.panels.router.ui.routingDisabled",
+                  ? "lawyerBuddyConfig.panels.router.ui.routingEnabled"
+                  : "lawyerBuddyConfig.panels.router.ui.routingDisabled",
               ),
             );
             onChange(
@@ -348,11 +348,11 @@ export default function RouterSection({
           <div className="route-subagent-model-setting">
             <div className="route-subagent-model-copy">
               <label>
-                {t("pilotDeckConfig.panels.router.ui.subagentModel")}
+                {t("lawyerBuddyConfig.panels.router.ui.subagentModel")}
               </label>
               <p>
                 {t(
-                  "pilotDeckConfig.panels.router.ui.subagentModelDescription",
+                  "lawyerBuddyConfig.panels.router.ui.subagentModelDescription",
                 )}
               </p>
             </div>
@@ -361,7 +361,7 @@ export default function RouterSection({
                 config.agent?.model ??
                 modelOpts[0]?.value ??
                 "",
-              t("pilotDeckConfig.panels.router.ui.subagentModel"),
+              t("lawyerBuddyConfig.panels.router.ui.subagentModel"),
               (value) => updateModel(["agent", "subagents", "default"], value),
               true,
             )}
@@ -370,11 +370,11 @@ export default function RouterSection({
       ) : (
         <fieldset
           className="route-config-stack"
-          aria-label={t("pilotDeckConfig.panels.router.ui.routingConfig")}
+          aria-label={t("lawyerBuddyConfig.panels.router.ui.routingConfig")}
         >
           <section className="route-card route-models-card">
             <header className="route-section-header">
-              <h2>{t("pilotDeckConfig.panels.router.ui.routingModels")}</h2>
+              <h2>{t("lawyerBuddyConfig.panels.router.ui.routingModels")}</h2>
             </header>
             <div className="route-model-list">
               <div className="route-model-row judge-row" data-model-reference="router.tokenSaver.judge" tabIndex={-1}>
@@ -386,21 +386,21 @@ export default function RouterSection({
                     <div className="route-label-line">
                       <strong>
                         {t(
-                          "pilotDeckConfig.panels.router.levels.judge.label",
+                          "lawyerBuddyConfig.panels.router.levels.judge.label",
                         )}
                       </strong>
                       <span>Judge</span>
                     </div>
                     <p>
                       {t(
-                        "pilotDeckConfig.panels.router.levels.judge.description",
+                        "lawyerBuddyConfig.panels.router.levels.judge.description",
                       )}
                     </p>
                   </div>
                 </div>
                 {renderModelSelect(
                   r.tokenSaver?.judge ?? fallbackModel,
-                  t("pilotDeckConfig.panels.router.levels.judge.label"),
+                  t("lawyerBuddyConfig.panels.router.levels.judge.label"),
                   (value) =>
                     updateModel(["router", "tokenSaver", "judge"], value),
                 )}
@@ -410,7 +410,7 @@ export default function RouterSection({
                 const usesPresetLabel =
                   preset && (!tier.label || tier.label === preset.label);
                 const label = usesPresetLabel
-                  ? t(`pilotDeckConfig.panels.router.levels.${key}.label`)
+                  ? t(`lawyerBuddyConfig.panels.router.levels.${key}.label`)
                   : tier.label || key;
                 return (
                   <div
@@ -431,7 +431,7 @@ export default function RouterSection({
                           {defaultTier === key ? (
                             <span className="route-default-badge">
                               {t(
-                                "pilotDeckConfig.panels.router.ui.defaultBadge",
+                                "lawyerBuddyConfig.panels.router.ui.defaultBadge",
                               )}
                             </span>
                           ) : (
@@ -441,7 +441,7 @@ export default function RouterSection({
                               onClick={() => {
                                 queueSettingsSaveSuccess(
                                   t(
-                                    "pilotDeckConfig.panels.router.ui.defaultTierChanged",
+                                    "lawyerBuddyConfig.panels.router.ui.defaultTierChanged",
                                     { label },
                                   ),
                                 );
@@ -455,7 +455,7 @@ export default function RouterSection({
                               }}
                             >
                               {t(
-                                "pilotDeckConfig.panels.router.ui.setDefault",
+                                "lawyerBuddyConfig.panels.router.ui.setDefault",
                               )}
                             </button>
                           )}
@@ -465,18 +465,18 @@ export default function RouterSection({
                           (!tier.description ||
                             tier.description === preset.description)
                             ? t(
-                                `pilotDeckConfig.panels.router.levels.${key}.description`,
+                                `lawyerBuddyConfig.panels.router.levels.${key}.description`,
                               )
                             : tier.description ||
                               t(
-                                "pilotDeckConfig.panels.router.ui.customTierDescription",
+                                "lawyerBuddyConfig.panels.router.ui.customTierDescription",
                               )}
                         </p>
                       </div>
                     </div>
                     {renderModelSelect(
                       tier.model ?? fallbackModel,
-                      t("pilotDeckConfig.panels.router.ui.modelSuffix", {
+                      t("lawyerBuddyConfig.panels.router.ui.modelSuffix", {
                         label,
                       }),
                       (value) =>
@@ -500,7 +500,7 @@ export default function RouterSection({
             >
               <span>
                 <SlidersHorizontal size={18} />{" "}
-                {t("pilotDeckConfig.panels.router.advancedToggle")}
+                {t("lawyerBuddyConfig.panels.router.advancedToggle")}
               </span>
               <ChevronDown size={16} className={showAdvanced ? "open" : ""} />
             </button>
@@ -512,22 +512,22 @@ export default function RouterSection({
                       <SubagentIcon />
                       <span>
                         {t(
-                          "pilotDeckConfig.panels.router.tokenSaver.subagentPolicy.label",
+                          "lawyerBuddyConfig.panels.router.tokenSaver.subagentPolicy.label",
                         )}
                       </span>
                     </span>
                     <select
                       aria-label={t(
-                        "pilotDeckConfig.panels.router.tokenSaver.subagentPolicy.label",
+                        "lawyerBuddyConfig.panels.router.tokenSaver.subagentPolicy.label",
                       )}
                       value={subagentPolicy}
                       onChange={(event) => {
                         queueSettingsSaveSuccess(
                           t(
-                            "pilotDeckConfig.panels.router.ui.modelChanged",
+                            "lawyerBuddyConfig.panels.router.ui.modelChanged",
                             {
                               label: t(
-                                "pilotDeckConfig.panels.router.tokenSaver.subagentPolicy.label",
+                                "lawyerBuddyConfig.panels.router.tokenSaver.subagentPolicy.label",
                               ),
                               value: event.target.value,
                             },
@@ -547,7 +547,7 @@ export default function RouterSection({
                     </select>
                     <p>
                       {t(
-                        "pilotDeckConfig.panels.router.ui.subagentPolicyDescription",
+                        "lawyerBuddyConfig.panels.router.ui.subagentPolicyDescription",
                       )}
                     </p>
                   </div>
@@ -557,19 +557,19 @@ export default function RouterSection({
                         <div className="route-subagent-model-copy">
                           <label>
                             {t(
-                              "pilotDeckConfig.panels.router.ui.subagentModel",
+                              "lawyerBuddyConfig.panels.router.ui.subagentModel",
                             )}
                           </label>
                           <p>
                             {t(
-                              "pilotDeckConfig.panels.router.ui.subagentFixedModelDescription",
+                              "lawyerBuddyConfig.panels.router.ui.subagentFixedModelDescription",
                             )}
                           </p>
                         </div>
                         {renderModelSelect(
                           config.agent?.subagents?.default ?? fallbackModel,
                           t(
-                            "pilotDeckConfig.panels.router.ui.subagentModel",
+                            "lawyerBuddyConfig.panels.router.ui.subagentModel",
                           ),
                           (value) =>
                             updateModel(
@@ -592,12 +592,12 @@ export default function RouterSection({
                       <div>
                         <h2>
                           {t(
-                            "pilotDeckConfig.panels.router.ui.tierDefinitions",
+                            "lawyerBuddyConfig.panels.router.ui.tierDefinitions",
                           )}
                         </h2>
                         <p>
                           {t(
-                            "pilotDeckConfig.panels.router.ui.tierDefinitionsDescription",
+                            "lawyerBuddyConfig.panels.router.ui.tierDefinitionsDescription",
                           )}
                         </p>
                       </div>
@@ -613,13 +613,13 @@ export default function RouterSection({
                               setEditingTiers(false);
                               showSettingsSuccess(
                                 t(
-                                  "pilotDeckConfig.panels.router.ui.tierDefinitionsCancelled",
+                                  "lawyerBuddyConfig.panels.router.ui.tierDefinitionsCancelled",
                                 ),
                               );
                             }}
                           >
                             <X size={15} />
-                            {t("pilotDeckConfig.panels.router.ui.cancel")}
+                            {t("lawyerBuddyConfig.panels.router.ui.cancel")}
                           </button>
                           <button
                             className="button primary compact"
@@ -628,7 +628,7 @@ export default function RouterSection({
                           >
                             <Save size={15} />
                             {t(
-                              "pilotDeckConfig.panels.router.ui.saveChanges",
+                              "lawyerBuddyConfig.panels.router.ui.saveChanges",
                             )}
                           </button>
                         </>
@@ -639,7 +639,7 @@ export default function RouterSection({
                           onClick={() => setEditingTiers(true)}
                         >
                           <EditIcon />
-                          {t("pilotDeckConfig.panels.router.ui.edit")}
+                          {t("lawyerBuddyConfig.panels.router.ui.edit")}
                         </button>
                       )}
                     </div>
@@ -654,7 +654,7 @@ export default function RouterSection({
                       const localizedTierLabel = preset
                         && (!tier.label || tier.label === preset.label)
                         ? t(
-                            `pilotDeckConfig.panels.router.levels.${key}.label`,
+                            `lawyerBuddyConfig.panels.router.levels.${key}.label`,
                           )
                         : tier.label || key;
                       const localizedTierDescription =
@@ -662,7 +662,7 @@ export default function RouterSection({
                         (!tier.description ||
                           tier.description === preset.description)
                           ? t(
-                              `pilotDeckConfig.panels.router.levels.${key}.description`,
+                              `lawyerBuddyConfig.panels.router.levels.${key}.description`,
                             )
                           : tier.description ?? "";
                       return (
@@ -673,7 +673,7 @@ export default function RouterSection({
                           <input
                             className="tier-definition-label"
                             aria-label={t(
-                              "pilotDeckConfig.panels.router.ui.tierName",
+                              "lawyerBuddyConfig.panels.router.ui.tierName",
                               { label: localizedTierLabel },
                             )}
                             value={localizedTierLabel}
@@ -692,7 +692,7 @@ export default function RouterSection({
                             className="tier-definition-description"
                             rows={1}
                             aria-label={t(
-                              "pilotDeckConfig.panels.router.ui.tierDescription",
+                              "lawyerBuddyConfig.panels.router.ui.tierDescription",
                               { label: localizedTierLabel },
                             )}
                             value={localizedTierDescription}
@@ -711,7 +711,7 @@ export default function RouterSection({
                             <button
                               type="button"
                               aria-label={t(
-                                "pilotDeckConfig.panels.router.ui.deleteTier",
+                                "lawyerBuddyConfig.panels.router.ui.deleteTier",
                               )}
                               onClick={() =>
                                 setTierDraft((current) =>
@@ -744,7 +744,7 @@ export default function RouterSection({
                           [key]: {
                             model: fallbackModel,
                             label: t(
-                              "pilotDeckConfig.panels.router.ui.customTier",
+                              "lawyerBuddyConfig.panels.router.ui.customTier",
                             ),
                             description: "",
                           },
@@ -752,7 +752,7 @@ export default function RouterSection({
                       }}
                     >
                       <Plus size={15} />
-                      {t("pilotDeckConfig.panels.router.ui.add")}
+                      {t("lawyerBuddyConfig.panels.router.ui.add")}
                     </button>
                   </div>
                 </section>
@@ -765,11 +765,11 @@ export default function RouterSection({
                       </span>
                       <div>
                         <h2>
-                          {t("pilotDeckConfig.panels.router.pricing.title")}
+                          {t("lawyerBuddyConfig.panels.router.pricing.title")}
                         </h2>
                         <p>
                           {t(
-                            "pilotDeckConfig.panels.router.ui.pricingDescription",
+                            "lawyerBuddyConfig.panels.router.ui.pricingDescription",
                           )}
                         </p>
                       </div>
@@ -785,13 +785,13 @@ export default function RouterSection({
                               setEditingPricing(false);
                               showSettingsSuccess(
                                 t(
-                                  "pilotDeckConfig.panels.router.ui.pricingCancelled",
+                                  "lawyerBuddyConfig.panels.router.ui.pricingCancelled",
                                 ),
                               );
                             }}
                           >
                             <X size={15} />
-                            {t("pilotDeckConfig.panels.router.ui.cancel")}
+                            {t("lawyerBuddyConfig.panels.router.ui.cancel")}
                           </button>
                           <button
                             className="button primary compact"
@@ -800,7 +800,7 @@ export default function RouterSection({
                           >
                             <Save size={15} />
                             {t(
-                              "pilotDeckConfig.panels.router.ui.saveChanges",
+                              "lawyerBuddyConfig.panels.router.ui.saveChanges",
                             )}
                           </button>
                         </>
@@ -811,7 +811,7 @@ export default function RouterSection({
                           onClick={() => setEditingPricing(true)}
                         >
                           <EditIcon />
-                          {t("pilotDeckConfig.panels.router.ui.edit")}
+                          {t("lawyerBuddyConfig.panels.router.ui.edit")}
                         </button>
                       )}
                     </div>
@@ -844,14 +844,14 @@ export default function RouterSection({
                                 <span>
                                   {field === "input"
                                     ? t(
-                                        "pilotDeckConfig.panels.router.ui.pricingInput",
+                                        "lawyerBuddyConfig.panels.router.ui.pricingInput",
                                       )
                                     : field === "output"
                                       ? t(
-                                          "pilotDeckConfig.panels.router.ui.pricingOutput",
+                                          "lawyerBuddyConfig.panels.router.ui.pricingOutput",
                                         )
                                       : t(
-                                          "pilotDeckConfig.panels.router.ui.pricingCache",
+                                          "lawyerBuddyConfig.panels.router.ui.pricingCache",
                                         )}
                                 </span>
                                 <input
@@ -869,7 +869,7 @@ export default function RouterSection({
                           )}
                           <select
                             aria-label={t(
-                              "pilotDeckConfig.panels.router.ui.pricingUnit",
+                              "lawyerBuddyConfig.panels.router.ui.pricingUnit",
                               { label },
                             )}
                             disabled={!editingPricing}
@@ -888,12 +888,12 @@ export default function RouterSection({
                           >
                             <option value="$/百万 Token">
                               {t(
-                                "pilotDeckConfig.panels.router.ui.millionTokenUnitUsd",
+                                "lawyerBuddyConfig.panels.router.ui.millionTokenUnitUsd",
                               )}
                             </option>
                             <option value="¥/百万 Token">
                               {t(
-                                "pilotDeckConfig.panels.router.ui.millionTokenUnitCny",
+                                "lawyerBuddyConfig.panels.router.ui.millionTokenUnitCny",
                               )}
                             </option>
                           </select>
@@ -901,7 +901,7 @@ export default function RouterSection({
                             type="button"
                             disabled={!editingPricing}
                             aria-label={t(
-                              "pilotDeckConfig.panels.router.ui.clearPricing",
+                              "lawyerBuddyConfig.panels.router.ui.clearPricing",
                             )}
                             onClick={() =>
                               setPricingDraft((current) => ({

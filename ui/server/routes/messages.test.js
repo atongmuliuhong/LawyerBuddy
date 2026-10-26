@@ -10,10 +10,10 @@ afterEach(() => {
 
 describe('message routes', () => {
   it('retains block IDs in the HTTP history returned to the browser', async () => {
-    vi.doMock('../pilotdeck-bridge.js', () => ({
-      getPilotDeckGateway: vi.fn(),
+    vi.doMock('../lawyerbuddy-bridge.js', () => ({
+      getLawyerBuddyGateway: vi.fn(),
       isGatewayUnavailableError: () => false,
-      withPilotDeckGatewayReadRetry: vi.fn(async () => ({ messages: [
+      withLawyerBuddyGatewayReadRetry: vi.fn(async () => ({ messages: [
         { id: 'history-1', kind: 'thinking', text: 'same', turnId: 'turn-1', blockId: 'response-1:thinking:0' },
         { id: 'history-2', kind: 'text', role: 'assistant', text: 'same', turnId: 'turn-1', blockId: 'response-1:text:0' },
       ] })),
@@ -32,10 +32,10 @@ describe('message routes', () => {
     }
   });
   it.each([['Gateway WebSocket is not connected.', 503, 'gateway_unavailable'], ['Transcript read failed', 500, 'session_messages_read_failed']])('reports read failure %s instead of a successful empty transcript', async (message, status, code) => {
-    vi.doMock('../pilotdeck-bridge.js', () => ({
-      getPilotDeckGateway: vi.fn(),
+    vi.doMock('../lawyerbuddy-bridge.js', () => ({
+      getLawyerBuddyGateway: vi.fn(),
       isGatewayUnavailableError: (error) => /Gateway WebSocket/i.test(error?.message || ''),
-      withPilotDeckGatewayReadRetry: vi.fn(async () => {
+      withLawyerBuddyGatewayReadRetry: vi.fn(async () => {
         throw new Error(message);
       }),
     }));

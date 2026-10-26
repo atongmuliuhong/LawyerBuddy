@@ -48,8 +48,8 @@ export default defineConfig(({ mode }) => {
   ]
 
   const disableLocalAuth =
-    env.PILOTDECK_DISABLE_LOCAL_AUTH !== '0' &&
-    env.PILOTDECK_DISABLE_LOCAL_AUTH !== 'false'
+    env.LAWYERBUDDY_DISABLE_LOCAL_AUTH !== '0' &&
+    env.LAWYERBUDDY_DISABLE_LOCAL_AUTH !== 'false'
 
   return {
     define: {
@@ -62,13 +62,13 @@ export default defineConfig(({ mode }) => {
         // wrong canvas. Full validation and token application follow at boot.
         return [{ tag: 'script', injectTo: 'head-prepend', children: `
           try {
-            var desktop = window.pilotdeckDesktop?.getAppearance?.();
+            var desktop = window.lawyerbuddyDesktop?.getAppearance?.();
             var mode = desktop?.themeMode || localStorage.getItem('themeMode') || localStorage.getItem('theme') || 'system';
             if (!['light', 'dark', 'system'].includes(mode)) mode = 'system';
             var dark = mode === 'dark' || (mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
             document.documentElement.classList.toggle('dark', dark);
             document.documentElement.style.backgroundColor = dark ? '#0a0a0a' : '#ffffff';
-            var preference = desktop?.lightAppearance || JSON.parse(localStorage.getItem('pilotdeck-light-appearance-v1') || 'null');
+            var preference = desktop?.lightAppearance || JSON.parse(localStorage.getItem('lawyerbuddy-light-appearance-v1') || 'null');
             var presets = ${JSON.stringify(LIGHT_PRESETS)};
             var background = preference?.preset === 'custom' ? preference.custom?.background : presets[preference?.preset]?.background;
             document.documentElement.style.backgroundColor = dark ? '#0a0a0a' : /^#[0-9a-f]{6}$/i.test(background) ? background : '#ffffff';

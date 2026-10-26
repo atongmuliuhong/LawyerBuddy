@@ -10,11 +10,11 @@ const gateway = vi.hoisted(() => ({
     listSessions: vi.fn(),
 }));
 
-vi.mock('./pilotdeck-bridge.js', () => ({
-    getPilotDeckGateway: vi.fn(async () => gateway),
+vi.mock('./lawyerbuddy-bridge.js', () => ({
+    getLawyerBuddyGateway: vi.fn(async () => gateway),
     beginSessionDeletion: vi.fn(() => () => {}),
     isGatewayUnavailableError: (error) => /Gateway WebSocket/i.test(error?.message || ''),
-    withPilotDeckGatewayReadRetry: vi.fn(async (operation) => operation(gateway)),
+    withLawyerBuddyGatewayReadRetry: vi.fn(async (operation) => operation(gateway)),
 }));
 
 vi.mock('./database/db.js', () => ({
@@ -38,8 +38,8 @@ function deferred() {
 
 describe('getProjects', () => {
     beforeAll(async () => {
-        process.env.PILOT_HOME = '/tmp/pilotdeck-project-sort-test';
-        testWorkspacesRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'pilotdeck-projects-test-'));
+        process.env.PILOT_HOME = '/tmp/lawyerbuddy-project-sort-test';
+        testWorkspacesRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'lawyerbuddy-projects-test-'));
         process.env.WORKSPACES_ROOT = testWorkspacesRoot;
     });
 
@@ -188,7 +188,7 @@ describe('project registration and snapshot ordering', () => {
     beforeEach(async () => {
         previousHome = process.env.PILOT_HOME;
         previousWorkspacesRoot = process.env.WORKSPACES_ROOT;
-        pilotHome = await fs.mkdtemp(path.join(os.tmpdir(), 'pilotdeck-project-registration-'));
+        pilotHome = await fs.mkdtemp(path.join(os.tmpdir(), 'lawyerbuddy-project-registration-'));
         process.env.PILOT_HOME = pilotHome;
         process.env.WORKSPACES_ROOT = path.join(pilotHome, 'workspaces');
         gateway.listProjects.mockReset().mockResolvedValue({ projects: [] });
@@ -241,7 +241,7 @@ describe('deleteSession lifecycle', () => {
     const sessionId = 'web:delete-background-title';
     beforeEach(async () => {
         previousHome = process.env.PILOT_HOME;
-        pilotHome = await fs.mkdtemp(path.join(os.tmpdir(), 'pilotdeck-delete-lifecycle-'));
+        pilotHome = await fs.mkdtemp(path.join(os.tmpdir(), 'lawyerbuddy-delete-lifecycle-'));
         process.env.PILOT_HOME = pilotHome;
         project = path.join(pilotHome, 'workspace');
         const projectDirectory = path.join(pilotHome, 'projects', createProjectId(project));

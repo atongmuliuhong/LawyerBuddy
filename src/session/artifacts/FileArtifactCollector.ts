@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { createReadStream, lstatSync, realpathSync } from "node:fs";
 import { opendir, stat } from "node:fs/promises";
 import path from "node:path";
-import type { PilotDeckToolResult } from "../../tool/index.js";
+import type { LawyerBuddyToolResult } from "../../tool/index.js";
 import type {
   FileArtifact,
   FileArtifactOperation,
@@ -37,7 +37,7 @@ const workspaceFingerprintCache = new Map<string, Map<string, FileFingerprint>>(
 
 const EXCLUDED_DIRECTORY_NAMES = new Set([
   ".git",
-  ".pilotdeck",
+  ".lawyerbuddy",
   ".cache",
   ".idea",
   ".next",
@@ -67,7 +67,7 @@ const EXCLUDED_DIRECTORY_NAMES = new Set([
 ]);
 
 const INTERNAL_FILE_PATTERNS = [
-  /^\.pilotdeck_build\.(?:c|m)?js$/i,
+  /^\.lawyerbuddy_build\.(?:c|m)?js$/i,
   /^\.DS_Store$/i,
   /\.(?:log|pid|sock)$/i,
   /\.(?:db|sqlite)(?:-(?:shm|wal))$/i,
@@ -156,7 +156,7 @@ export class FileArtifactCollector {
     return collector;
   }
 
-  observeToolResult(result: PilotDeckToolResult): void {
+  observeToolResult(result: LawyerBuddyToolResult): void {
     if (canToolMutateWorkspace(result.toolName) && toolResultCouldHaveMutatedWorkspace(result)) {
       this.sawWorkspaceMutationCandidate = true;
     }
@@ -423,7 +423,7 @@ function canToolMutateWorkspace(toolName: string): boolean {
   return !READ_ONLY_TOOL_NAMES.has(toolName.toLowerCase());
 }
 
-function toolResultCouldHaveMutatedWorkspace(result: PilotDeckToolResult): boolean {
+function toolResultCouldHaveMutatedWorkspace(result: LawyerBuddyToolResult): boolean {
   if (result.type === "success") return true;
 
   switch (result.error.code) {
@@ -503,8 +503,8 @@ function isHardInternalPath(root: string, absolutePath: string): boolean {
   const relativePath = normalizeRelativePath(path.relative(root, absolutePath));
   if (!relativePath) return true;
   const segments = relativePath.split("/").map((segment) => segment.toLowerCase());
-  return segments.some((segment) => segment === ".pilotdeck" || segment === ".git" || segment === "node_modules")
-    || /^\.pilotdeck_build\.(?:c|m)?js$/i.test(path.basename(relativePath));
+  return segments.some((segment) => segment === ".lawyerbuddy" || segment === ".git" || segment === "node_modules")
+    || /^\.lawyerbuddy_build\.(?:c|m)?js$/i.test(path.basename(relativePath));
 }
 
 function isWithin(root: string, candidate: string): boolean {

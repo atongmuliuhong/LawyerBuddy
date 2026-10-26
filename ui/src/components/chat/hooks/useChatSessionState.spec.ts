@@ -20,7 +20,7 @@ describe('chatMessageToNormalized', () => {
     expect(chatMessageToNormalized(
       message,
       'web:session-1',
-      'pilotdeck' as SessionProvider,
+      'lawyerbuddy' as SessionProvider,
     )).toMatchObject({
       kind: 'text',
       role: 'user',

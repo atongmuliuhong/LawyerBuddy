@@ -14,7 +14,7 @@ import { createRegisteredWebProjectResolver } from '../../src/web/server/listPro
 import { createProjectId } from '../../src/pilot/index.js';
 
 test('tool task followed by explicit models and Auto accepts each turn once and releases the session', async () => {
-  const root = await mkdtemp(join(tmpdir(), 'pilotdeck-fast-send-'));
+  const root = await mkdtemp(join(tmpdir(), 'lawyerbuddy-fast-send-'));
   const pilotHome = join(root, 'home');
   const project = join(root, 'project');
   const transcript = new InMemoryTranscriptWriter();

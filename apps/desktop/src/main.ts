@@ -102,7 +102,7 @@ let desktopTray: ReturnType<typeof createDesktopTray> | null = null;
 const APP_ID = "cn.lawyerbuddy.desktop";
 const EXTERNAL_NAVIGATION_PROTOCOLS = new Set(["http:", "https:", "mailto:", "tel:"]);
 const PLAYWRIGHT_BROWSER_DIR = "playwright-browsers";
-const DEFAULT_UPDATE_REPOSITORY = "OpenBMB/PilotDeck";
+const DEFAULT_UPDATE_REPOSITORY = "OpenBMB/LawyerBuddy";
 const PROCESS_LAUNCH_CWD = process.cwd();
 // Electron requires this before ready; saving the preference takes effect on
 // the next launch, never by changing a live window's renderer settings.
@@ -160,7 +160,7 @@ class RuntimeManager {
       message: "Preparing LawyerBuddy runtime...",
       logPath: this.logPath,
     });
-    this.log(`PilotDeck Desktop runtime starting from ${this.runtimeRoot}`);
+    this.log(`LawyerBuddy Desktop runtime starting from ${this.runtimeRoot}`);
     publishRuntimeStatus({
       phase: "config",
       message: "Checking local configuration...",
@@ -192,11 +192,11 @@ class RuntimeManager {
     const buildMetadata = readBuildMetadata();
     this.log(`Playwright browsers path: ${playwrightBrowsersPath}`);
     const inheritedEnv = { ...process.env };
-    const configuredConfigPath = inheritedEnv.PILOTDECK_CONFIG_PATH?.trim();
+    const configuredConfigPath = inheritedEnv.LAWYERBUDDY_CONFIG_PATH?.trim();
     if (configuredConfigPath) {
-      inheritedEnv.PILOTDECK_CONFIG_PATH = path.resolve(PROCESS_LAUNCH_CWD, configuredConfigPath);
+      inheritedEnv.LAWYERBUDDY_CONFIG_PATH = path.resolve(PROCESS_LAUNCH_CWD, configuredConfigPath);
     } else {
-      delete inheritedEnv.PILOTDECK_CONFIG_PATH;
+      delete inheritedEnv.LAWYERBUDDY_CONFIG_PATH;
     }
     const commonEnv = withRuntimeCommandPath({
       ...inheritedEnv,
@@ -204,27 +204,27 @@ class RuntimeManager {
       TMP: path.join(DATA_ROOT, "temp"),
       TEMP: path.join(DATA_ROOT, "temp"),
       HOST: "127.0.0.1",
-      PILOTDECK_RUNTIME_ROOT: this.runtimeRoot,
-      PILOTDECK_DESKTOP_RUNTIME_ROOT: this.runtimeRoot,
+      LAWYERBUDDY_RUNTIME_ROOT: this.runtimeRoot,
+      LAWYERBUDDY_DESKTOP_RUNTIME_ROOT: this.runtimeRoot,
       PILOT_HOME: config.pilotHome,
-      PILOTDECK_CONFIG_DIR: config.pilotHome,
+      LAWYERBUDDY_CONFIG_DIR: config.pilotHome,
       SERVER_PORT: String(serverPort),
-      PILOTDECK_GATEWAY_PORT: String(gatewayPort),
-      PILOTDECK_GATEWAY_URL: `ws://127.0.0.1:${gatewayPort}/ws`,
-      PILOTDECK_DESKTOP: "1",
-      PILOTDECK_COMPUTER_USE_DIRECTORY: computerUseDirectory,
-      PILOTDECK_COMPUTER_USE_MCP_CONFIG: path.join(computerUseDirectory, 'mcp.json'),
-      PILOTDECK_DESKTOP_VERSION: app.getVersion(),
-      PILOTDECK_VERSION: app.getVersion(),
-      PILOTDECK_DESKTOP_BUILD_TIME: buildMetadata.buildTime,
-      PILOTDECK_COMMIT_SHA: buildMetadata.commitSha,
-      PILOTDECK_GIT_SHA: buildMetadata.commitSha,
-      PILOTDECK_UPDATE_REPOSITORY:
-        process.env.PILOTDECK_UPDATE_REPOSITORY || buildMetadata.repository || DEFAULT_UPDATE_REPOSITORY,
-      PILOTDECK_DISABLE_LOCAL_AUTH: process.env.PILOTDECK_DISABLE_LOCAL_AUTH || "1",
-      PILOTDECK_SKIP_BROWSER_OPEN: "1",
-      PILOTDECK_SKIP_DEFAULT_PROJECT: "1",
-      PILOTDECK_RUNTIME_SUPERVISED: "1",
+      LAWYERBUDDY_GATEWAY_PORT: String(gatewayPort),
+      LAWYERBUDDY_GATEWAY_URL: `ws://127.0.0.1:${gatewayPort}/ws`,
+      LAWYERBUDDY_DESKTOP: "1",
+      LAWYERBUDDY_COMPUTER_USE_DIRECTORY: computerUseDirectory,
+      LAWYERBUDDY_COMPUTER_USE_MCP_CONFIG: path.join(computerUseDirectory, 'mcp.json'),
+      LAWYERBUDDY_DESKTOP_VERSION: app.getVersion(),
+      LAWYERBUDDY_VERSION: app.getVersion(),
+      LAWYERBUDDY_DESKTOP_BUILD_TIME: buildMetadata.buildTime,
+      LAWYERBUDDY_COMMIT_SHA: buildMetadata.commitSha,
+      LAWYERBUDDY_GIT_SHA: buildMetadata.commitSha,
+      LAWYERBUDDY_UPDATE_REPOSITORY:
+        process.env.LAWYERBUDDY_UPDATE_REPOSITORY || buildMetadata.repository || DEFAULT_UPDATE_REPOSITORY,
+      LAWYERBUDDY_DISABLE_LOCAL_AUTH: process.env.LAWYERBUDDY_DISABLE_LOCAL_AUTH || "1",
+      LAWYERBUDDY_SKIP_BROWSER_OPEN: "1",
+      LAWYERBUDDY_SKIP_DEFAULT_PROJECT: "1",
+      LAWYERBUDDY_RUNTIME_SUPERVISED: "1",
       PLAYWRIGHT_BROWSERS_PATH: playwrightBrowsersPath,
     }, this.runtimeRoot, this.nodeBinary, bundledGit);
     this.commonEnv = commonEnv;
@@ -253,7 +253,7 @@ class RuntimeManager {
       runtimeRoot: this.runtimeRoot,
       logPath: this.logPath,
     };
-    this.log(`PilotDeck Web UI ready: http://127.0.0.1:${serverPort}`);
+    this.log(`LawyerBuddy Web UI ready: http://127.0.0.1:${serverPort}`);
     if (!this.configurationState || this.configurationState.state !== "ready") {
       publishRuntimeStatus({
         phase: "awaiting_configuration",
@@ -284,7 +284,7 @@ class RuntimeManager {
     this.serverProcess = null;
     this.gatewayProcess = null;
     this.gatewayStartPromise = null;
-    this.log("PilotDeck Desktop runtime stopped");
+    this.log("LawyerBuddy Desktop runtime stopped");
     this.logStream?.end();
     this.logStream = null;
     this.info = null;
@@ -302,18 +302,18 @@ class RuntimeManager {
   }
 
   private gatewayCommand(): string[] {
-    const builtEntry = path.join(this.runtimeRoot, "dist", "src", "cli", "pilotdeck.js");
+    const builtEntry = path.join(this.runtimeRoot, "dist", "src", "cli", "lawyerbuddy.js");
     if (fs.existsSync(builtEntry)) {
       return [this.nodeBinary, builtEntry, "server"];
     }
-    if (app.isPackaged || process.env.PILOTDECK_DESKTOP_RUNTIME_ROOT) {
-      throw new Error(`Compiled PilotDeck gateway entry not found: ${builtEntry}`);
+    if (app.isPackaged || process.env.LAWYERBUDDY_DESKTOP_RUNTIME_ROOT) {
+      throw new Error(`Compiled LawyerBuddy gateway entry not found: ${builtEntry}`);
     }
-    return [this.nodeBinary, "--import", "tsx", path.join(this.runtimeRoot, "src", "cli", "pilotdeck.ts"), "server"];
+    return [this.nodeBinary, "--import", "tsx", path.join(this.runtimeRoot, "src", "cli", "lawyerbuddy.ts"), "server"];
   }
 
   private serverCommand(): string[] {
-    if (app.isPackaged || process.env.PILOTDECK_DESKTOP_RUNTIME_ROOT) {
+    if (app.isPackaged || process.env.LAWYERBUDDY_DESKTOP_RUNTIME_ROOT) {
       return [this.nodeBinary, "server/index.js"];
     }
     return [this.nodeBinary, "--import", "tsx", "server/index.js"];
@@ -382,9 +382,9 @@ class RuntimeManager {
       action?: string;
       value?: unknown;
     };
-    if (runtimeMessage.type === 'pilotdeck:computer-use-request' && typeof runtimeMessage.id === 'string') {
+    if (runtimeMessage.type === 'lawyerbuddy:computer-use-request' && typeof runtimeMessage.id === 'string') {
       const reply = (status?: unknown, error?: string) => {
-        if (this.serverProcess?.connected) this.serverProcess.send({ type: 'pilotdeck:computer-use-response', id: runtimeMessage.id, status, error }, () => {});
+        if (this.serverProcess?.connected) this.serverProcess.send({ type: 'lawyerbuddy:computer-use-response', id: runtimeMessage.id, status, error }, () => {});
       };
       void (async () => {
         if (this.stopping || !this.computerUse) throw new Error('Computer use host is not ready');
@@ -399,7 +399,7 @@ class RuntimeManager {
       })().then(status => reply(status), error => reply(undefined, String(error.message || error)));
       return;
     }
-    if (runtimeMessage.type === "pilotdeck:configuration-state" && runtimeMessage.configuration) {
+    if (runtimeMessage.type === "lawyerbuddy:configuration-state" && runtimeMessage.configuration) {
       this.configurationState = runtimeMessage.configuration;
       if (runtimeMessage.configuration.state === "ready") {
         void this.startGateway().catch(error => this.reportGatewayError(error));
@@ -409,13 +409,13 @@ class RuntimeManager {
           phase: "awaiting_configuration",
           message: runtimeMessage.configuration.state === "invalid"
             ? "Model configuration needs attention."
-            : "PilotDeck is ready for model setup.",
+            : "LawyerBuddy is ready for model setup.",
           logPath: this.logPath,
         });
       }
       return;
     }
-    if (runtimeMessage.type === "pilotdeck:retry-gateway" && this.configurationState?.state === "ready") {
+    if (runtimeMessage.type === "lawyerbuddy:retry-gateway" && this.configurationState?.state === "ready") {
       void this.stopGateway().then(() => this.startGateway()).catch(error => this.reportGatewayError(error));
     }
   }
@@ -536,7 +536,7 @@ class RuntimeManager {
     const server = this.serverProcess;
     if (!server || !server.connected) return;
     server.send({
-      type: "pilotdeck:gateway-state",
+      type: "lawyerbuddy:gateway-state",
       ...state,
     }, (error) => {
       if (error) this.log(`Failed to publish Gateway state: ${error.message}`);
@@ -703,7 +703,7 @@ function publishRuntimeStatus(status: RuntimeStatus): void {
 
 function sendRuntimeStatus(status: RuntimeStatus): void {
   if (!mainWindow || mainWindow.isDestroyed()) return;
-  mainWindow.webContents.send("pilotdeck:runtime-status", status);
+  mainWindow.webContents.send("lawyerbuddy:runtime-status", status);
 }
 
 function shouldOpenInSystemBrowser(rawUrl: string): boolean {
@@ -748,7 +748,7 @@ async function startRuntimeAndLoad(): Promise<void> {
     const detail = error instanceof Error ? error.stack ?? error.message : String(error);
     publishRuntimeStatus({
       phase: "error",
-      message: "PilotDeck failed to start.",
+      message: "LawyerBuddy failed to start.",
       logPath: runtime?.getLogPath(),
       error: detail,
     });
@@ -780,8 +780,8 @@ async function retryRuntime(): Promise<void> {
 
 
 function resolveRuntimeRoot(): string {
-  if (process.env.PILOTDECK_DESKTOP_RUNTIME_ROOT) {
-    return path.resolve(process.env.PILOTDECK_DESKTOP_RUNTIME_ROOT);
+  if (process.env.LAWYERBUDDY_DESKTOP_RUNTIME_ROOT) {
+    return path.resolve(process.env.LAWYERBUDDY_DESKTOP_RUNTIME_ROOT);
   }
   if (app.isPackaged) {
     return path.join(process.resourcesPath, "runtime");
@@ -790,8 +790,8 @@ function resolveRuntimeRoot(): string {
 }
 
 function resolveNodeBinary(): string {
-  if (process.env.PILOTDECK_DESKTOP_NODE) {
-    return process.env.PILOTDECK_DESKTOP_NODE;
+  if (process.env.LAWYERBUDDY_DESKTOP_NODE) {
+    return process.env.LAWYERBUDDY_DESKTOP_NODE;
   }
   if (!app.isPackaged) {
     return process.platform === "win32" ? "node.exe" : "node";
@@ -811,8 +811,8 @@ function resolveBundledGitPaths(): BundledGitPaths | undefined {
     return undefined;
   }
 
-  const configuredRoot = process.env.PILOTDECK_DESKTOP_GIT_ROOT
-    ? path.resolve(process.env.PILOTDECK_DESKTOP_GIT_ROOT)
+  const configuredRoot = process.env.LAWYERBUDDY_DESKTOP_GIT_ROOT
+    ? path.resolve(process.env.LAWYERBUDDY_DESKTOP_GIT_ROOT)
     : undefined;
   const root = configuredRoot
     ?? (app.isPackaged
@@ -896,8 +896,8 @@ function withRuntimeCommandPath(
     [pathKey]: entries.join(path.delimiter),
   };
   if (bundledGit) {
-    nextEnv.PILOTDECK_GIT_BASH_PATH = bundledGit.bash;
-    nextEnv.PILOTDECK_GIT_PATH = bundledGit.git;
+    nextEnv.LAWYERBUDDY_GIT_BASH_PATH = bundledGit.bash;
+    nextEnv.LAWYERBUDDY_GIT_PATH = bundledGit.git;
     nextEnv.CHERE_INVOKING = nextEnv.CHERE_INVOKING || "1";
     nextEnv.MSYSTEM = nextEnv.MSYSTEM || "MINGW64";
   }
@@ -920,7 +920,7 @@ function ensurePilotHome(log: (message: string) => void): { pilotHome: string } 
     ? path.resolve(process.env.PILOT_HOME)
     : HOME_DIR;
   fs.mkdirSync(pilotHome, { recursive: true });
-  log(`PilotDeck home ready at ${pilotHome}`);
+  log(`LawyerBuddy home ready at ${pilotHome}`);
   return { pilotHome };
 }
 
@@ -1002,7 +1002,7 @@ function getUpdateController() {
   // Node bundled with Electron supports require(ESM). Reuse the same release
   // discovery module as Web, from the packaged runtime outside app.asar.
   const releases = require(path.join(resolveRuntimeRoot(), "ui/server/services/releaseService.js"));
-  const repository = releases.normalizeRepository(process.env.PILOTDECK_UPDATE_REPOSITORY || readBuildMetadata().repository || DEFAULT_UPDATE_REPOSITORY);
+  const repository = releases.normalizeRepository(process.env.LAWYERBUDDY_UPDATE_REPOSITORY || readBuildMetadata().repository || DEFAULT_UPDATE_REPOSITORY);
   const linuxPackageType = process.platform === "linux" && app.isPackaged
     ? fs.readFileSync(path.join(process.resourcesPath, "package-type"), "utf8").trim() : "deb";
   const updater = process.platform === "darwin" ? new MacUpdater()
@@ -1012,9 +1012,9 @@ function getUpdateController() {
   // executable's actual installed directory so custom paths survive upgrades.
   if (updater instanceof NsisUpdater && app.isPackaged) updater.installDirectory = path.dirname(app.getPath("exe"));
   const network = createUpdateNetwork(updater.netSession, () => {
-    const configService = require(path.join(resolveRuntimeRoot(), "ui/server/services/pilotdeckConfig.js"));
-    const record = configService.readPilotDeckConfigFile();
-    if (record.parseError) throw new Error("Invalid PilotDeck proxy configuration");
+    const configService = require(path.join(resolveRuntimeRoot(), "ui/server/services/lawyerbuddyConfig.js"));
+    const record = configService.readLawyerBuddyConfigFile();
+    if (record.parseError) throw new Error("Invalid LawyerBuddy proxy configuration");
     return record.config.proxy;
   });
   updater.on("login", network.login);
@@ -1050,13 +1050,13 @@ function requireUpdateSender(event: Electron.IpcMainEvent | Electron.IpcMainInvo
   if (!updateOrigin || url.origin !== updateOrigin) throw new Error("Invalid update origin");
 }
 for (const [channel, action] of Object.entries({
-  "pilotdeck:about-info": () => desktopAboutInfo(desktopAboutContext()),
-  "pilotdeck:update-check": () => getUpdateController().check(),
-  "pilotdeck:update-status": () => getUpdateController().status(),
-  "pilotdeck:update-start": () => getUpdateController().start(),
-  "pilotdeck:update-cancel": () => getUpdateController().cancel(),
-  "pilotdeck:update-pause": () => getUpdateController().pause(),
-  "pilotdeck:update-resume": () => getUpdateController().resume(),
+  "lawyerbuddy:about-info": () => desktopAboutInfo(desktopAboutContext()),
+  "lawyerbuddy:update-check": () => getUpdateController().check(),
+  "lawyerbuddy:update-status": () => getUpdateController().status(),
+  "lawyerbuddy:update-start": () => getUpdateController().start(),
+  "lawyerbuddy:update-cancel": () => getUpdateController().cancel(),
+  "lawyerbuddy:update-pause": () => getUpdateController().pause(),
+  "lawyerbuddy:update-resume": () => getUpdateController().resume(),
 })) {
   ipcMain.handle(channel, (event) => { requireUpdateSender(event); return action(); });
 }
@@ -1068,7 +1068,7 @@ function readAppearance(): DesktopAppearance {
   } catch { return normalizeAppearance(null, locale); }
 }
 
-ipcMain.on("pilotdeck:get-appearance", (event) => {
+ipcMain.on("lawyerbuddy:get-appearance", (event) => {
   try {
     requireUpdateSender(event);
     event.returnValue = readAppearance();
@@ -1085,7 +1085,7 @@ function dispatchDesktopCommand(command: DesktopCommand): void {
   }
   if (mainWindow.isMinimized()) mainWindow.restore();
   mainWindow.focus();
-  mainWindow.webContents.send("pilotdeck:command", command);
+  mainWindow.webContents.send("lawyerbuddy:command", command);
 }
 
 function desktopAboutContext() {
@@ -1111,8 +1111,8 @@ function desktopMenuTemplate() {
           if (mainWindow && !mainWindow.isDestroyed()) void showDesktopAbout(mainWindow).catch(error => console.error("Desktop about dialog failed", error));
         } else {
           const operation = action === "docs"
-            ? shell.openExternal("https://pilotdeck.openbmb.cn/pilotdeck.github.io/docs/introduction")
-            : action === "issues" ? shell.openExternal("https://github.com/OpenBMB/PilotDeck/issues")
+            ? shell.openExternal("https://lawyerbuddy.openbmb.cn/lawyerbuddy.github.io/docs/introduction")
+            : action === "issues" ? shell.openExternal("https://github.com/OpenBMB/LawyerBuddy/issues")
               : shell.openPath(runtime?.getLogPath() || app.getPath("logs"));
           void operation.catch(error => console.error("Desktop help action failed", error));
         }
@@ -1124,7 +1124,7 @@ function updateApplicationMenu(): void {
   Menu.setApplicationMenu(Menu.buildFromTemplate(desktopMenuTemplate()));
   if ((process.platform === "win32" || process.platform === "linux") && mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.setMenuBarVisibility(false);
-    if (process.platform === "linux") mainWindow.webContents.send("pilotdeck:application-menu-updated");
+    if (process.platform === "linux") mainWindow.webContents.send("lawyerbuddy:application-menu-updated");
   }
 }
 
@@ -1148,12 +1148,12 @@ function activateLinuxMenuRole(role: string, owner: BrowserWindow): void {
   }
 }
 
-ipcMain.handle("pilotdeck:linux-menu-items", (event, id: unknown) => {
+ipcMain.handle("lawyerbuddy:linux-menu-items", (event, id: unknown) => {
   requireCaptionSender(event);
   return process.platform === "linux" ? linuxCaptionEntries(desktopMenuTemplate(), id) : [];
 });
 
-ipcMain.handle("pilotdeck:linux-menu-activate", (event, request?: { id?: unknown; index?: unknown }) => {
+ipcMain.handle("lawyerbuddy:linux-menu-activate", (event, request?: { id?: unknown; index?: unknown }) => {
   requireCaptionSender(event);
   if (process.platform !== "linux" || !mainWindow || mainWindow.isDestroyed()) return false;
   const item = linuxCaptionAction(desktopMenuTemplate(), request?.id, request?.index);
@@ -1173,7 +1173,7 @@ function publishWindowState(): void {
   if ((process.platform === "win32" || process.platform === "linux") && !fullscreen) mainWindow.setTitleBarOverlay({
     color: palette.caption, symbolColor: palette.symbol, height: WINDOWS_CAPTION_HEIGHT,
   });
-  mainWindow.webContents.send("pilotdeck:window-state", { dark, fullscreen, palette });
+  mainWindow.webContents.send("lawyerbuddy:window-state", { dark, fullscreen, palette });
 }
 
 // Caption controls are also available in our startup data document, before the
@@ -1186,14 +1186,14 @@ function requireCaptionSender(event: Electron.IpcMainEvent | Electron.IpcMainInv
   if (url.protocol !== "data:" && (!updateOrigin || url.origin !== updateOrigin)) throw new Error("Invalid caption origin");
 }
 
-ipcMain.on("pilotdeck:get-window-state", event => {
+ipcMain.on("lawyerbuddy:get-window-state", event => {
   try {
     requireCaptionSender(event);
     const dark = nativeTheme.shouldUseDarkColors;
     event.returnValue = { dark, fullscreen: mainWindow!.isFullScreen(), palette: windowPalette(dark, process.platform, readAppearance().lightAppearance) };
   } catch { event.returnValue = { dark: false, fullscreen: false }; }
 });
-ipcMain.handle("pilotdeck:menu-state", (event, state: unknown) => {
+ipcMain.handle("lawyerbuddy:menu-state", (event, state: unknown) => {
   requireUpdateSender(event);
   const next = normalizeMenuState(state);
   if (JSON.stringify(next) === JSON.stringify(desktopMenuState)) return;
@@ -1201,7 +1201,7 @@ ipcMain.handle("pilotdeck:menu-state", (event, state: unknown) => {
   updateApplicationMenu();
 });
 const captionMenus = new WeakMap<BrowserWindow, WindowsCaptionMenu>();
-ipcMain.handle("pilotdeck:show-menu", (event, request?: CaptionMenuRequest) => {
+ipcMain.handle("lawyerbuddy:show-menu", (event, request?: CaptionMenuRequest) => {
   requireCaptionSender(event);
   if (process.platform !== "win32") return;
   const owner = mainWindow!;
@@ -1214,7 +1214,7 @@ ipcMain.handle("pilotdeck:show-menu", (event, request?: CaptionMenuRequest) => {
 });
 nativeTheme.on("updated", publishWindowState);
 
-ipcMain.handle("pilotdeck:set-appearance", (event, value: unknown) => {
+ipcMain.handle("lawyerbuddy:set-appearance", (event, value: unknown) => {
   requireUpdateSender(event);
   const current = readAppearance();
   const appearance = saveAppearancePatch(app.getPath('userData'), current, value, app.getLocale());
@@ -1226,36 +1226,36 @@ ipcMain.handle("pilotdeck:set-appearance", (event, value: unknown) => {
     desktopTray?.refreshMenu();
   }
 });
-ipcMain.handle('pilotdeck:appearance-capabilities', event => {
+ipcMain.handle('lawyerbuddy:appearance-capabilities', event => {
   requireUpdateSender(event);
   return { hardwareAcceleration: startupHardwareAcceleration };
 });
-ipcMain.handle('pilotdeck:save-appearance-image', (event, bytes: unknown) => {
+ipcMain.handle('lawyerbuddy:save-appearance-image', (event, bytes: unknown) => {
   requireUpdateSender(event);
   return writeAppearanceImage(app.getPath('userData'), bytes, buffer => nativeImage.createFromBuffer(buffer).getSize());
 });
-ipcMain.handle('pilotdeck:read-appearance-image', async (event, id: unknown) => {
+ipcMain.handle('lawyerbuddy:read-appearance-image', async (event, id: unknown) => {
   requireUpdateSender(event);
   const file = appearanceImagePath(app.getPath('userData'), id);
   if ((await fs.promises.stat(file)).size > 10 * 1024 * 1024) throw new Error('Invalid background image');
   return new Uint8Array(await fs.promises.readFile(file));
 });
-ipcMain.handle('pilotdeck:delete-appearance-image', (event, id: unknown) => {
+ipcMain.handle('lawyerbuddy:delete-appearance-image', (event, id: unknown) => {
   requireUpdateSender(event);
   // Never remove an image referenced by the last successfully saved configuration.
   if (readAppearance().lightAppearance?.background.imageId === id) return;
   fs.rmSync(appearanceImagePath(app.getPath('userData'), id), { force: true });
 });
 
-ipcMain.handle("pilotdeck:get-runtime-info", () => runtime?.getInfo());
-ipcMain.handle("pilotdeck:retry-runtime", () => retryRuntime());
-ipcMain.handle("pilotdeck:open-runtime-log", async () => {
+ipcMain.handle("lawyerbuddy:get-runtime-info", () => runtime?.getInfo());
+ipcMain.handle("lawyerbuddy:retry-runtime", () => retryRuntime());
+ipcMain.handle("lawyerbuddy:open-runtime-log", async () => {
   const logPath = runtime?.getLogPath() ?? lastRuntimeStatus?.logPath;
   if (logPath) {
     await shell.openPath(logPath);
   }
 });
-ipcMain.handle("pilotdeck:pick-folder", async () => {
+ipcMain.handle("lawyerbuddy:pick-folder", async () => {
   const owner = BrowserWindow.getFocusedWindow() ?? mainWindow ?? undefined;
   const result = owner
     ? await dialog.showOpenDialog(owner, { properties: ["openDirectory", "createDirectory"] })
@@ -1268,7 +1268,7 @@ const pickFiles = createFilePicker({
   chinese: () => readAppearance().language === 'zh-CN',
   showDialog: (owner, options) => dialog.showOpenDialog(owner, options),
 });
-ipcMain.handle('pilotdeck:pick-files', (event, request: unknown) => {
+ipcMain.handle('lawyerbuddy:pick-files', (event, request: unknown) => {
   requireUpdateSender(event);
   return pickFiles(mainWindow!, request);
 });
@@ -1301,8 +1301,8 @@ const lifecycle = createDesktopLifecycle({
     runtimeStartPromise = null;
   },
   quit: () => app.quit(),
-  reportError: error => console.error("PilotDeck lifecycle operation failed", error),
-  reportStopError: error => dialog.showErrorBox(startupText("PilotDeck could not stop", readAppearance().language), String(error)),
+  reportError: error => console.error("LawyerBuddy lifecycle operation failed", error),
+  reportStopError: error => dialog.showErrorBox(startupText("LawyerBuddy could not stop", readAppearance().language), String(error)),
 });
 
 const ownsInstance = process.platform === "darwin" || app.requestSingleInstanceLock();
@@ -1310,7 +1310,7 @@ if (!ownsInstance) {
   app.quit();
 } else {
   app.on("second-instance", () => {
-    void restoreMainWindow().catch(error => console.error("Could not restore PilotDeck", error));
+    void restoreMainWindow().catch(error => console.error("Could not restore LawyerBuddy", error));
   });
   app.whenReady()
     .then(async () => {
@@ -1323,15 +1323,15 @@ if (!ownsInstance) {
                 ? path.join(process.resourcesPath, "icons", "trayTemplate.png")
                 : path.resolve(__dirname, "..", "resources", "icons", "trayTemplate.png");
               const image = nativeImage.createFromPath(iconPath);
-              if (image.isEmpty()) throw new Error("PilotDeck menu bar icon is missing");
+              if (image.isEmpty()) throw new Error("LawyerBuddy menu bar icon is missing");
               image.setTemplateImage(true);
               return new Tray(image);
             }
             const iconPath = resolveAppIcon();
-            if (!iconPath) throw new Error("PilotDeck tray icon is missing");
+            if (!iconPath) throw new Error("LawyerBuddy tray icon is missing");
             if (process.platform === "linux") {
               const image = nativeImage.createFromPath(iconPath).resize({ width: 24, height: 24 });
-              if (image.isEmpty()) throw new Error("PilotDeck tray icon is invalid");
+              if (image.isEmpty()) throw new Error("LawyerBuddy tray icon is invalid");
               return new Tray(image);
             }
             return new Tray(iconPath);
@@ -1340,7 +1340,7 @@ if (!ownsInstance) {
           isChinese: () => readAppearance().language === "zh-CN",
           open: lifecycle.open,
           requestQuit: lifecycle.requestQuit,
-          reportError: error => console.error("PilotDeck tray operation failed", error),
+          reportError: error => console.error("LawyerBuddy tray operation failed", error),
         });
       }
       if (process.platform === "darwin") {
@@ -1358,7 +1358,7 @@ if (!ownsInstance) {
       await runtime?.stop().catch(() => undefined);
       publishRuntimeStatus({
         phase: "error",
-        message: "PilotDeck failed to start.",
+        message: "LawyerBuddy failed to start.",
         logPath: runtime?.getLogPath(),
         error: detail,
       });

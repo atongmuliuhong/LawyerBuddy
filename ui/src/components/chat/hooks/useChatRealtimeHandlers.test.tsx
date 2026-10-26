@@ -18,7 +18,7 @@ vi.mock('../../../contexts/WebSocketContext', () => ({
   useWebSocket: () => ({ sendMessage: mocks.sendMessage, subscribe: mocks.subscribe }),
 }));
 
-const provider = 'pilotdeck' as SessionProvider;
+const provider = 'lawyerbuddy' as SessionProvider;
 const noop = () => undefined;
 afterEach(cleanup);
 
@@ -64,7 +64,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession: noop,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },
@@ -85,7 +85,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
   it.each([false, true])('preserves first WS child termination and error details (existing cache: %s)', async (cached) => {
     // Load the Node bridge at runtime without adding its backend dependencies
     // to the browser TypeScript project. Exercise the real transport mapping.
-    const bridgePath = '../../../../server/pilotdeck-bridge.js';
+    const bridgePath = '../../../../server/lawyerbuddy-bridge.js';
     const { gatewayEventToFrames } = await import(bridgePath) as {
       gatewayEventToFrames: (event: Record<string, unknown>, sessionId: string, provider: SessionProvider) => unknown[];
     };
@@ -104,7 +104,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession: noop,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },
@@ -146,7 +146,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession: noop,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },
@@ -182,7 +182,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession: noop,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },
@@ -224,7 +224,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession: noop,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },
@@ -261,7 +261,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession: noop,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },
@@ -301,7 +301,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },
@@ -329,7 +329,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
     expect(mocks.sendMessage).toHaveBeenCalledWith({
       type: 'check-session-status',
       sessionId: 'cron:task-1',
-      provider: 'pilotdeck',
+      provider: 'lawyerbuddy',
       expectedActiveRunId: null,
       includeActiveTurnMessages: true,
       statusRequestId: 1,
@@ -353,7 +353,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession: noop,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },
@@ -392,7 +392,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession: noop,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },
@@ -447,7 +447,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession: noop,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },
@@ -510,7 +510,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },
@@ -542,7 +542,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
     expect(mocks.sendMessage).toHaveBeenCalledWith({
       type: 'check-session-status',
       sessionId: 'cron:task-1',
-      provider: 'pilotdeck',
+      provider: 'lawyerbuddy',
       expectedActiveRunId: 'run-current',
       includeActiveTurnMessages: true,
       statusRequestId: 1,
@@ -568,7 +568,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession: noop,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },
@@ -608,7 +608,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession: noop,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },
@@ -676,7 +676,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession: noop,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },
@@ -743,7 +743,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession: noop,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },
@@ -804,7 +804,7 @@ describe('useChatRealtimeHandlers terminal errors', () => {
       setCanAbortSession: noop,
       setIsAborting: noop,
       setClaudeStatus: noop,
-      setPilotDeckStatus: noop,
+      setLawyerBuddyStatus: noop,
       setTokenBudget: noop,
       setPendingPermissionRequests: noop,
       pendingViewSessionRef: { current: null },

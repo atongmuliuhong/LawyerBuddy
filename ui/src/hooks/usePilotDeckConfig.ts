@@ -82,7 +82,7 @@ function configSaveError(data: unknown): string {
   return 'Failed to save config';
 }
 
-function usePilotDeckConfigState() {
+function useLawyerBuddyConfigState() {
   const [path, setPath] = useState('');
   const [raw, setRaw] = useState('');
   const [revision, setRevision] = useState('');
@@ -484,23 +484,23 @@ function usePilotDeckConfigState() {
   };
 }
 
-type PilotDeckConfigController = ReturnType<typeof usePilotDeckConfigState>;
+type LawyerBuddyConfigController = ReturnType<typeof useLawyerBuddyConfigState>;
 
-const PilotDeckConfigContext = createContext<PilotDeckConfigController | null>(null);
+const LawyerBuddyConfigContext = createContext<LawyerBuddyConfigController | null>(null);
 
-export function PilotDeckConfigProvider({ children }: { children: ReactNode }) {
-  const controller = usePilotDeckConfigState();
+export function LawyerBuddyConfigProvider({ children }: { children: ReactNode }) {
+  const controller = useLawyerBuddyConfigState();
   return createElement(
-    PilotDeckConfigContext.Provider,
+    LawyerBuddyConfigContext.Provider,
     { value: controller },
     children,
   );
 }
 
-export function usePilotDeckConfig(): PilotDeckConfigController {
-  const controller = useContext(PilotDeckConfigContext);
+export function useLawyerBuddyConfig(): LawyerBuddyConfigController {
+  const controller = useContext(LawyerBuddyConfigContext);
   if (!controller) {
-    throw new Error('usePilotDeckConfig must be used within PilotDeckConfigProvider');
+    throw new Error('useLawyerBuddyConfig must be used within LawyerBuddyConfigProvider');
   }
   return controller;
 }

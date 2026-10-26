@@ -327,7 +327,7 @@ export default function AppShellV2() {
       if (!message || message.type !== 'notification:navigate') return;
 
       // Provider hint from notifications is no longer stored; all sessions
-      // go through the unified pilotdeck gateway.
+      // go through the unified lawyerbuddy gateway.
 
       setActiveTab('chat');
       setSidebarOpen(false);
@@ -634,10 +634,10 @@ export default function AppShellV2() {
         case 'new-project': handleOpenNewProject(); break;
         case 'settings': onShowSettings(); break;
         case 'check-updates':
-          if (isSettingsRoute) window.dispatchEvent(new Event('pilotdeck:check-updates'));
+          if (isSettingsRoute) window.dispatchEvent(new Event('lawyerbuddy:check-updates'));
           navigate(`${SETTINGS_PATH}/about`);
           break;
-        case 'find': window.dispatchEvent(new Event('pilotdeck:find')); break;
+        case 'find': window.dispatchEvent(new Event('lawyerbuddy:find')); break;
         case 'toggle-sidebar':
           if (isSettingsRoute) onCloseSettings();
           setDesktopSidebarOpen(value => isSettingsRoute ? true : !value);

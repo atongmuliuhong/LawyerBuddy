@@ -156,7 +156,7 @@ function createPaneElement({
         loadAllMessages={() => {}}
         allMessagesLoaded
         isLoadingAllMessages={false}
-        provider="pilotdeck"
+        provider="lawyerbuddy"
         selectedProject={null}
         selectedSession={null}
         createDiff={() => []}
@@ -213,7 +213,7 @@ function SessionPaneHarness({
         loadAllMessages={() => {}}
         allMessagesLoaded
         isLoadingAllMessages={false}
-        provider="pilotdeck"
+        provider="lawyerbuddy"
         selectedProject={{ name: 'project', displayName: 'Project', fullPath: '/project' }}
         selectedSession={{ id: sessionId }}
         createDiff={() => []}
@@ -1740,7 +1740,7 @@ it('uploaded image stays visible when sent with a document region reference', ()
     image: { name: 'region.png', mimeType: 'image/png' as const, width: 100, height: 100, dataUrl: regionData },
   };
   const messages = normalizedToChatMessages([{
-    id: 'local-mixed', sessionId: 'web:test', provider: 'pilotdeck', kind: 'text', role: 'user',
+    id: 'local-mixed', sessionId: 'web:test', provider: 'lawyerbuddy', kind: 'text', role: 'user',
     content: 'compare the uploaded image with this document region', timestamp: '2026-09-11T00:00:00Z',
     images: [regionData],
     attachments: [ { name: 'uploaded.png', uploadId: 'u', attachmentId: 'a', previewData: uploadedPreview },

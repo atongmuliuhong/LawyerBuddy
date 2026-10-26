@@ -1,22 +1,22 @@
 import path from "node:path";
 import { readlinkSync, realpathSync, statSync } from "node:fs";
 import { homedir } from "node:os";
-import type { PilotDeckToolRuntimeContext } from "../../protocol/types.js";
-import type { PilotDeckToolError } from "../../protocol/errors.js";
+import type { LawyerBuddyToolRuntimeContext } from "../../protocol/types.js";
+import type { LawyerBuddyToolError } from "../../protocol/errors.js";
 import { toolError } from "../../protocol/errors.js";
 
-export type PilotDeckPathSafetyResult =
+export type LawyerBuddyPathSafetyResult =
   | { ok: true; absolutePath: string; relativePath: string; root: string }
-  | { ok: false; error: PilotDeckToolError };
+  | { ok: false; error: LawyerBuddyToolError };
 
 const DEFAULT_WRITE_DENY_DIRECTORIES = new Set([".git", "node_modules", "dist"]);
 const MAX_SYMLINK_HOPS = 40;
 
-export function resolvePilotDeckWorkspacePath(
+export function resolveLawyerBuddyWorkspacePath(
   inputPath: string,
-  context: PilotDeckToolRuntimeContext,
+  context: LawyerBuddyToolRuntimeContext,
   options?: { forWrite?: boolean; mustExist?: boolean; allowOutsideWorkspace?: boolean; allowRegisteredReadFiles?: boolean },
-): PilotDeckPathSafetyResult {
+): LawyerBuddyPathSafetyResult {
   if (!inputPath || inputPath.includes("\0")) {
     return {
       ok: false,
@@ -83,7 +83,7 @@ export function resolvePilotDeckWorkspacePath(
 
     return {
       ok: false,
-      error: toolError("path_not_allowed", `Path ${inputPath} is outside the PilotDeck workspace.`),
+      error: toolError("path_not_allowed", `Path ${inputPath} is outside the LawyerBuddy workspace.`),
     };
   }
 
@@ -98,7 +98,7 @@ export function resolvePilotDeckWorkspacePath(
   if (realWritePath && !findRealRoot(realWritePath, roots) && !options?.allowOutsideWorkspace) {
     return {
       ok: false,
-      error: toolError("path_not_allowed", `Path ${inputPath} resolves outside the PilotDeck workspace.`),
+      error: toolError("path_not_allowed", `Path ${inputPath} resolves outside the LawyerBuddy workspace.`),
     };
   }
 
@@ -115,7 +115,7 @@ export function resolvePilotDeckWorkspacePath(
     if (!isPathWithinRoot(real, realRoot)) {
       return {
         ok: false,
-        error: toolError("path_not_allowed", `Path ${inputPath} resolves outside the PilotDeck workspace.`),
+        error: toolError("path_not_allowed", `Path ${inputPath} resolves outside the LawyerBuddy workspace.`),
       };
     }
   }
@@ -219,8 +219,8 @@ function safeReadlink(value: string): string | undefined {
   }
 }
 
-function isManagedImAttachmentFile(realPath: string, context: PilotDeckToolRuntimeContext): boolean {
-  const pilotHome = path.resolve(context.env?.PILOT_HOME ?? path.join(homedir(), ".pilotdeck"));
+function isManagedImAttachmentFile(realPath: string, context: LawyerBuddyToolRuntimeContext): boolean {
+  const pilotHome = path.resolve(context.env?.PILOT_HOME ?? path.join(homedir(), ".lawyerbuddy"));
   const root = safeRealpath(path.join(pilotHome, "im-attachments")) ?? path.join(pilotHome, "im-attachments");
   return isPathWithinRoot(realPath, root) && isRegularFile(realPath);
 }

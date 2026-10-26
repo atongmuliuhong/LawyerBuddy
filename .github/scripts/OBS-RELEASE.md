@@ -14,7 +14,7 @@ All object names, sizes and full content must pass before latest publication.
 No delete operations are used. Branch push/PR CI only runs credential-free tests;
 it cannot enter the production job or publish a pointer.
 
-PilotDeck/latest.json keeps the website contract: tag, published_at and assets
+LawyerBuddy/latest.json keeps the website contract: tag, published_at and assets
 with name, size and public OBS url. The prior pointer is backed up before writes;
 the new JSON is written with application/json and no-store then read back.
 resolved-release.json, previous-latest.json, published-latest.json and logs are
@@ -32,7 +32,7 @@ acceptance set OBS_SYNC_ENABLED=true. Record both run links and elapsed times.
 
 If publication or website acceptance fails, keep scheduling disabled. Inspect the
 current pointer and obtain fresh broker credentials, then restore the first run's
-previous-latest.json to PilotDeck/latest.json using the same S3 virtual-host
+previous-latest.json to LawyerBuddy/latest.json using the same S3 virtual-host
 settings, JSON content type and no-store policy. Read back and compare the saved
 JSON, and confirm the website returns the old tag. Do not delete version assets.
 Do not report production acceptance complete before these live checks pass.

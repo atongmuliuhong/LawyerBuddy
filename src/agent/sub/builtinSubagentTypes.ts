@@ -25,7 +25,7 @@ export type SubagentDefinition = {
   /** Short, single-line summary used in tool descriptions. */
   description: string;
   /**
-   * Allowed tool names (canonical PilotDeck tool names). Use `["*"]` for
+   * Allowed tool names (canonical LawyerBuddy tool names). Use `["*"]` for
    * full access. Empty array means *no* tools (degenerate).
    */
   allowedTools: readonly string[];

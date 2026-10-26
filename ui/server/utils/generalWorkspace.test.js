@@ -11,7 +11,7 @@ import {
 const temporaryRoots = [];
 
 async function makeTemporaryRoot() {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'pilotdeck-general-workspace-'));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'lawyerbuddy-general-workspace-'));
     temporaryRoots.push(root);
     return root;
 }
@@ -52,7 +52,7 @@ describe('General workspace isolation', () => {
     });
 
     it('rejects workspace roots that would expose PILOT_HOME', () => {
-        const pilotHome = '/tmp/pilotdeck-home';
+        const pilotHome = '/tmp/lawyerbuddy-home';
         expect(() => resolveGeneralWorkspaceDirectory({
             PILOT_HOME: pilotHome,
             WORKSPACES_ROOT: pilotHome,

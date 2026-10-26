@@ -1,8 +1,8 @@
 ; Included inside the install section, after the upstream extraction macro.
-!macro PilotDeckConfirmUpgrade
+!macro LawyerBuddyConfirmUpgrade
   ; Like Harness's directory-based upgrade, installation in the registered
   ; location replaces files directly. Moving is the only uninstall decision.
-  StrCpy $PilotDeckReplaceMode "overwrite"
+  StrCpy $LawyerBuddyReplaceMode "overwrite"
   ReadRegStr $R2 SHELL_CONTEXT "${INSTALL_REGISTRY_KEY}" InstallLocation
   ${If} $installMode == "all"
   ${AndIf} $R2 == ""
@@ -54,25 +54,25 @@
             StrCpy $R1 "无法确认旧版安装目录。要继续，必须先卸载旧版。是否继续？"
           ${EndIf}
         ${EndIf}
-        MessageBox MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON2 "$R1" /SD IDNO IDYES pilotdeck_uninstall_first
+        MessageBox MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON2 "$R1" /SD IDNO IDYES lawyerbuddy_uninstall_first
         SetErrorLevel 1223
         Quit
-        pilotdeck_uninstall_first:
-          StrCpy $PilotDeckReplaceMode "uninstall"
+        lawyerbuddy_uninstall_first:
+          StrCpy $LawyerBuddyReplaceMode "uninstall"
       ${EndIf}
     ${EndIf}
   ${EndIf}
 !macroend
 
-!macro PilotDeckDiscard
-  nsExec::ExecToLog '"$PLUGINSDIR\install-payload.exe" --discard "$PilotDeckState"'
+!macro LawyerBuddyDiscard
+  nsExec::ExecToLog '"$PLUGINSDIR\install-payload.exe" --discard "$LawyerBuddyState"'
   Pop $R9
 !macroend
 
-!macro PilotDeckCheckUninstall
+!macro LawyerBuddyCheckUninstall
   ${If} ${Errors}
   ${OrIf} $R0 != 0
-    !insertmacro PilotDeckDiscard
+    !insertmacro LawyerBuddyDiscard
     MessageBox MB_OK|MB_ICONEXCLAMATION "Unable to remove the previous version. Installation stopped; see details below." /SD IDOK
     SetErrorLevel 2
     Quit
@@ -90,18 +90,18 @@
   ${OrIf} $LANGUAGE == 1028
     StrCpy $R8 "zh"
   ${EndIf}
-  pilotdeck_extract_retry:
+  lawyerbuddy_extract_retry:
     SetDetailsPrint both
-    nsExec::ExecToLog '"$PLUGINSDIR\install-payload.exe" "$PLUGINSDIR\7za.exe" "${ARCHIVE}" "$INSTDIR" "$HWNDPARENT" "$R8" "$PilotDeckState"'
+    nsExec::ExecToLog '"$PLUGINSDIR\install-payload.exe" "$PLUGINSDIR\7za.exe" "${ARCHIVE}" "$INSTDIR" "$HWNDPARENT" "$R8" "$LawyerBuddyState"'
     Pop $R9
     ; A cancellation confirmation can stay open after extraction finishes.
     ; Wait for that answer before crossing into the non-cancellable phase.
-    ${DoWhile} $PilotDeckPhase == "confirm-cancel"
+    ${DoWhile} $LawyerBuddyPhase == "confirm-cancel"
       Sleep 50
     ${Loop}
     ${If} $R9 == 1223
-    ${OrIf} ${FileExists} "$PilotDeckState.cancel"
-      !insertmacro PilotDeckDiscard
+    ${OrIf} ${FileExists} "$LawyerBuddyState.cancel"
+      !insertmacro LawyerBuddyDiscard
       SetErrorLevel 1223
       Quit
     ${EndIf}
@@ -111,25 +111,25 @@
       ${If} $R8 == "zh"
         StrCpy $R7 "解压未完成。请检查磁盘空间，并查看下方详情后重试。"
       ${EndIf}
-      MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "$R7" /SD IDCANCEL IDRETRY pilotdeck_extract_retry
+      MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "$R7" /SD IDCANCEL IDRETRY lawyerbuddy_extract_retry
       SetErrorLevel 1
       Quit
     ${EndIf}
 
   ; The long extraction phase is cancellable. Protect uninstall/commit from
   ; interruption so filesystem, uninstaller and registry stay consistent.
-  StrCpy $PilotDeckPhase "commit"
+  StrCpy $LawyerBuddyPhase "commit"
   GetDlgItem $0 $HWNDPARENT 2
   EnableWindow $0 0
   DetailPrint "Files ready. Replacing installation and updating registration..."
-  !insertmacro PilotDeckReplaceOldVersion
+  !insertmacro LawyerBuddyReplaceOldVersion
   ; The upstream uninstaller uses R8; restore the language before committing.
   StrCpy $R8 "en"
   ${If} $LANGUAGE == 2052
   ${OrIf} $LANGUAGE == 1028
     StrCpy $R8 "zh"
   ${EndIf}
-  nsExec::ExecToLog '"$PLUGINSDIR\install-payload.exe" --commit "$PilotDeckState" "$HWNDPARENT" "$R8"'
+  nsExec::ExecToLog '"$PLUGINSDIR\install-payload.exe" --commit "$LawyerBuddyState" "$HWNDPARENT" "$R8"'
   Pop $R9
   ${If} $R9 != 0
     SetDetailsView show

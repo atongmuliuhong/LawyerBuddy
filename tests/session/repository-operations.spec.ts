@@ -9,7 +9,7 @@ import { runRepositoryOperation } from "../../src/session/checkpoints/repository
 const execute = promisify(execFile);
 
 test("Git operations honor the real index, literal filenames, unborn branches, stale staging and first push", async t => {
-  const base = await mkdtemp(join(tmpdir(), "pilotdeck-git-")), workspace = join(base, "repo"), remote = join(base, "remote.git");
+  const base = await mkdtemp(join(tmpdir(), "lawyerbuddy-git-")), workspace = join(base, "repo"), remote = join(base, "remote.git");
   await mkdir(workspace); t.after(() => rm(base, { recursive: true, force: true }));
   const git = async (...args: string[]) => (await execute("git", args, { cwd: workspace })).stdout.trim();
   await runRepositoryOperation(workspace, { operation: "init" });

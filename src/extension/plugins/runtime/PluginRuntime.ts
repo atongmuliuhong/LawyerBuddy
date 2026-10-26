@@ -3,11 +3,11 @@ import { discoverPluginPaths, discoverSkillPaths } from "../discovery/discoverLo
 import { loadPluginFromPath, loadSkillFromPath } from "../loading/PluginLoader.js";
 import { loadPluginHooks } from "../loading/PluginHookLoader.js";
 import type { LoadedPluginCommand } from "../loading/PluginCommandLoader.js";
-import type { PilotDeckLoadedPlugin } from "../protocol/plugin.js";
+import type { LawyerBuddyLoadedPlugin } from "../protocol/plugin.js";
 import { PluginRegistry } from "./PluginRegistry.js";
 import { truncateMcpInstructionString } from "./truncateMcpString.js";
-import type { PilotDeckHooksSettings } from "../../hooks/protocol/settings.js";
-import type { PilotDeckCustomRouter } from "../../../router/customRouter/customRouter.js";
+import type { LawyerBuddyHooksSettings } from "../../hooks/protocol/settings.js";
+import type { LawyerBuddyCustomRouter } from "../../../router/customRouter/customRouter.js";
 import { renderSkillContent } from "../../skills/renderSkillContent.js";
 
 /**
@@ -16,7 +16,7 @@ import { renderSkillContent } from "../../skills/renderSkillContent.js";
  * this type is *advisory* — the runtime only reads `instructions` and falls
  * back gracefully when missing.
  */
-export type PilotDeckMcpServerStaticSpec = {
+export type LawyerBuddyMcpServerStaticSpec = {
   instructions?: string;
   [key: string]: unknown;
 };
@@ -26,7 +26,7 @@ export type PilotDeckMcpServerStaticSpec = {
  * as a stricter alias of {@link PluginMcpInstruction} so callers that only
  * care about *populated* entries keep a non-optional `instructions` field.
  */
-export type PilotDeckMcpInstructionEntry = {
+export type LawyerBuddyMcpInstructionEntry = {
   serverName: string;
   instructions: string;
 };
@@ -34,17 +34,17 @@ export type PilotDeckMcpInstructionEntry = {
 export type PluginRuntimeOptions = {
   projectRoot: string;
   pilotHome: string;
-  /** Read-only skills shipped with the active PilotDeck build. */
+  /** Read-only skills shipped with the active LawyerBuddy build. */
   builtinSkillsRoot?: string;
-  builtinPlugins?: PilotDeckLoadedPlugin[];
+  builtinPlugins?: LawyerBuddyLoadedPlugin[];
   builtinPluginsEnabled?: Record<string, boolean>;
 };
 
 export type PluginRefreshResult = {
-  previous: PilotDeckLoadedPlugin[];
-  next: PilotDeckLoadedPlugin[];
-  added: PilotDeckLoadedPlugin[];
-  removed: PilotDeckLoadedPlugin[];
+  previous: LawyerBuddyLoadedPlugin[];
+  next: LawyerBuddyLoadedPlugin[];
+  added: LawyerBuddyLoadedPlugin[];
+  removed: LawyerBuddyLoadedPlugin[];
 };
 
 export type PluginCommandContribution = {
@@ -68,11 +68,11 @@ export type PluginMcpInstruction = {
 };
 
 export type PluginContributionSnapshot = {
-  plugins: PilotDeckLoadedPlugin[];
+  plugins: LawyerBuddyLoadedPlugin[];
   commands: PluginCommandContribution[];
   skills: PluginSkillContribution[];
   outputStyles: LoadedPluginCommand[];
-  hooks: PilotDeckHooksSettings;
+  hooks: LawyerBuddyHooksSettings;
   mcpServers: Record<string, unknown>;
   lspServers: Record<string, unknown>;
   mcpInstructions: PluginMcpInstruction[];
@@ -83,7 +83,7 @@ export class PluginRuntime {
 
   constructor(private readonly options: PluginRuntimeOptions) {}
 
-  snapshot(): PilotDeckLoadedPlugin[] {
+  snapshot(): LawyerBuddyLoadedPlugin[] {
     return this.registry.list();
   }
 
@@ -102,8 +102,8 @@ export class PluginRuntime {
    * instructions on top via the same `getAllMcpInstructions` aggregator
    * surface used by `PluginRuntimeExtensionResolver`.
    */
-  getAllMcpInstructions(): PilotDeckMcpInstructionEntry[] {
-    const entries: PilotDeckMcpInstructionEntry[] = [];
+  getAllMcpInstructions(): LawyerBuddyMcpInstructionEntry[] {
+    const entries: LawyerBuddyMcpInstructionEntry[] = [];
     const seen = new Set<string>();
     for (const plugin of this.registry.list()) {
       const servers = plugin.mcpServers;
@@ -111,7 +111,7 @@ export class PluginRuntime {
       for (const [serverName, raw] of Object.entries(servers)) {
         if (seen.has(serverName)) continue;
         if (!raw || typeof raw !== "object") continue;
-        const candidate = (raw as PilotDeckMcpServerStaticSpec).instructions;
+        const candidate = (raw as LawyerBuddyMcpServerStaticSpec).instructions;
         if (typeof candidate !== "string") continue;
         const trimmed = candidate.trim();
         if (trimmed.length === 0) continue;
@@ -152,7 +152,7 @@ export class PluginRuntime {
     return this.snapshotContributions().skills;
   }
 
-  lookupRouter(extensionId: string): PilotDeckCustomRouter | undefined {
+  lookupRouter(extensionId: string): LawyerBuddyCustomRouter | undefined {
     for (const plugin of this.registry.list()) {
       for (const contribution of plugin.routerContributions ?? []) {
         if (contribution.id !== extensionId) {
@@ -199,7 +199,7 @@ export class PluginRuntime {
     return undefined;
   }
 
-  async refresh(): Promise<PilotDeckLoadedPlugin[]> {
+  async refresh(): Promise<LawyerBuddyLoadedPlugin[]> {
     return (await this.refreshWithReport()).next;
   }
 
@@ -250,23 +250,23 @@ export class PluginRuntime {
   }
 }
 
-function isLoadedPlugin(value: PilotDeckLoadedPlugin | undefined): value is PilotDeckLoadedPlugin {
+function isLoadedPlugin(value: LawyerBuddyLoadedPlugin | undefined): value is LawyerBuddyLoadedPlugin {
   return value !== undefined;
 }
 
 function enabledBuiltinPlugins(
-  plugins: PilotDeckLoadedPlugin[],
+  plugins: LawyerBuddyLoadedPlugin[],
   enabled: Record<string, boolean>,
-): PilotDeckLoadedPlugin[] {
+): LawyerBuddyLoadedPlugin[] {
   return plugins.filter((plugin) => plugin.source !== "builtin" || enabled[plugin.name] !== false);
 }
 
-function hasPlugin(plugins: PilotDeckLoadedPlugin[], plugin: PilotDeckLoadedPlugin): boolean {
+function hasPlugin(plugins: LawyerBuddyLoadedPlugin[], plugin: LawyerBuddyLoadedPlugin): boolean {
   return plugins.some((candidate) => candidate.name === plugin.name && candidate.source === plugin.source);
 }
 
 function toCommandContribution(
-  plugin: PilotDeckLoadedPlugin,
+  plugin: LawyerBuddyLoadedPlugin,
   command: LoadedPluginCommand,
 ): PluginCommandContribution {
   return {
@@ -281,7 +281,7 @@ function toCommandContribution(
 }
 
 function toSkillContribution(
-  plugin: PilotDeckLoadedPlugin,
+  plugin: LawyerBuddyLoadedPlugin,
   skill: LoadedPluginCommand,
 ): PluginSkillContribution {
   return {
@@ -292,7 +292,7 @@ function toSkillContribution(
   };
 }
 
-function sourcePriority(source: PilotDeckLoadedPlugin["source"]): number {
+function sourcePriority(source: LawyerBuddyLoadedPlugin["source"]): number {
   switch (source) {
     case "project":
       return 2;
@@ -304,11 +304,11 @@ function sourcePriority(source: PilotDeckLoadedPlugin["source"]): number {
   }
 }
 
-function sortByResolutionPriority(plugins: PilotDeckLoadedPlugin[]): PilotDeckLoadedPlugin[] {
+function sortByResolutionPriority(plugins: LawyerBuddyLoadedPlugin[]): LawyerBuddyLoadedPlugin[] {
   return [...plugins].sort((a, b) => sourcePriority(b.source) - sourcePriority(a.source));
 }
 
-function collectSkillContributions(plugins: PilotDeckLoadedPlugin[]): PluginSkillContribution[] {
+function collectSkillContributions(plugins: LawyerBuddyLoadedPlugin[]): PluginSkillContribution[] {
   const selected = new Map<string, { contribution: PluginSkillContribution; priority: number }>();
   for (const plugin of plugins) {
     const priority = sourcePriority(plugin.source);

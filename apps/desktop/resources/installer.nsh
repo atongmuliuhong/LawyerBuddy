@@ -1,11 +1,11 @@
-; Custom NSIS include for PilotDeck
+; Custom NSIS include for LawyerBuddy
 !include LogicLib.nsh
 !ifndef BUILD_UNINSTALLER
-  Var PilotDeckPhase
-  Var PilotDeckState
-  Var PilotDeckProgress
-  Var PilotDeckReplaceMode
-  !define MUI_CUSTOMFUNCTION_ABORT PilotDeckAbort
+  Var LawyerBuddyPhase
+  Var LawyerBuddyState
+  Var LawyerBuddyProgress
+  Var LawyerBuddyReplaceMode
+  !define MUI_CUSTOMFUNCTION_ABORT LawyerBuddyAbort
 !endif
 
 ; Fix 1: Reload icon after UAC elevation to prevent title bar icon loss.
@@ -32,13 +32,13 @@ FunctionEnd
 
 ; Define this immediately before MUI_PAGE_INSTFILES, after the directory page.
 !macro customPageAfterChangeDir
-  !define MUI_PAGE_CUSTOMFUNCTION_SHOW PilotDeckInstallPageShow
+  !define MUI_PAGE_CUSTOMFUNCTION_SHOW LawyerBuddyInstallPageShow
 !macroend
 
 !ifndef BUILD_UNINSTALLER
-Function PilotDeckInstallPageShow
+Function LawyerBuddyInstallPageShow
   InitPluginsDir
-  StrCpy $PilotDeckState "$PLUGINSDIR\payload.state"
+  StrCpy $LawyerBuddyState "$PLUGINSDIR\payload.state"
   ; NSIS updates its native bar per instruction, including each log line.
   ; Maintain a separate cumulative control at the same position.
   FindWindow $0 "#32770" "" $HWNDPARENT
@@ -52,11 +52,11 @@ Function PilotDeckInstallPageShow
   IntOp $6 $6 - $4
   ShowWindow $1 0
   System::Call 'user32::CreateWindowEx(i 0, t "msctls_progress32", t "", i 0x50000000, i r3, i r4, i r5, i r6, p r0, p 1136, p 0, p 0) p .r2'
-  StrCpy $PilotDeckProgress $2
-  SendMessage $PilotDeckProgress 0x0406 0 1000
+  StrCpy $LawyerBuddyProgress $2
+  SendMessage $LawyerBuddyProgress 0x0406 0 1000
   GetDlgItem $1 $HWNDPARENT 2
   EnableWindow $1 1
-  StrCpy $PilotDeckPhase "prepare"
+  StrCpy $LawyerBuddyPhase "prepare"
   SetDetailsPrint both
   ${If} $LANGUAGE == 2052
   ${OrIf} $LANGUAGE == 1028
@@ -66,9 +66,9 @@ Function PilotDeckInstallPageShow
   ${EndIf}
 FunctionEnd
 
-Function PilotDeckAbort
-  ${If} $PilotDeckPhase == "prepare"
-    StrCpy $PilotDeckPhase "confirm-cancel"
+Function LawyerBuddyAbort
+  ${If} $LawyerBuddyPhase == "prepare"
+    StrCpy $LawyerBuddyPhase "confirm-cancel"
     Push $0
     Push $1
     StrCpy $0 "Cancel installation? The existing version will be kept."
@@ -76,28 +76,28 @@ Function PilotDeckAbort
     ${OrIf} $LANGUAGE == 1028
       StrCpy $0 "是否取消安装？已安装的旧版本将保留。"
     ${EndIf}
-    MessageBox MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON2 "$0" IDNO pilotdeck_keep_installing
+    MessageBox MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON2 "$0" IDNO lawyerbuddy_keep_installing
     ; Cooperatively stop the decoder before closing the installer.
-    FileOpen $1 "$PilotDeckState.cancel" w
+    FileOpen $1 "$LawyerBuddyState.cancel" w
     FileWrite $1 "cancel"
     FileClose $1
     GetDlgItem $1 $HWNDPARENT 2
     EnableWindow $1 0
-    pilotdeck_keep_installing:
-    StrCpy $PilotDeckPhase "prepare"
+    lawyerbuddy_keep_installing:
+    StrCpy $LawyerBuddyPhase "prepare"
     Pop $1
     Pop $0
     Abort
   ${EndIf}
-  ${If} $PilotDeckPhase == "commit"
+  ${If} $LawyerBuddyPhase == "commit"
     Abort
   ${EndIf}
 FunctionEnd
 !endif
 
 !macro customInstall
-  StrCpy $PilotDeckPhase "done"
-  SendMessage $PilotDeckProgress 0x0402 1000 0
+  StrCpy $LawyerBuddyPhase "done"
+  SendMessage $LawyerBuddyProgress 0x0402 1000 0
   SetDetailsPrint both
   ${If} $LANGUAGE == 2052
   ${OrIf} $LANGUAGE == 1028
@@ -107,13 +107,13 @@ FunctionEnd
   ${EndIf}
 !macroend
 
-!macro PilotDeckStartApp
+!macro LawyerBuddyStartApp
   Exec '"$WINDIR\explorer.exe" "$INSTDIR\${APP_EXECUTABLE_FILENAME}"'
 !macroend
 
 !macro customFinishPage
   Function StartApp
-    !insertmacro PilotDeckStartApp
+    !insertmacro LawyerBuddyStartApp
   FunctionEnd
 
   !define MUI_FINISHPAGE_RUN

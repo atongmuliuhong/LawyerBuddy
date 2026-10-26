@@ -1130,7 +1130,7 @@ export default function SidebarV2({
             alt=""
             aria-hidden="true"
             className="brand-mark"
-            src="/pilotdeck-p-mark-compact.png"
+            src="/lawyerbuddy-p-mark-compact.png"
           />
         </button>
       ) : (

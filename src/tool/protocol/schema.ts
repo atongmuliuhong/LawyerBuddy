@@ -1,27 +1,27 @@
-export type PilotDeckToolInputSchema = {
+export type LawyerBuddyToolInputSchema = {
   type: "object";
-  properties?: Record<string, PilotDeckJsonSchema>;
+  properties?: Record<string, LawyerBuddyJsonSchema>;
   required?: string[];
   additionalProperties?: boolean;
   [key: string]: unknown;
 };
 
-export type PilotDeckJsonSchema = {
+export type LawyerBuddyJsonSchema = {
   type?: string | string[];
-  properties?: Record<string, PilotDeckJsonSchema>;
+  properties?: Record<string, LawyerBuddyJsonSchema>;
   required?: string[];
   additionalProperties?: boolean;
-  items?: PilotDeckJsonSchema;
+  items?: LawyerBuddyJsonSchema;
   enum?: unknown[];
   [key: string]: unknown;
 };
 
-export type PilotDeckToolValidationIssue = {
+export type LawyerBuddyToolValidationIssue = {
   path: string;
   code: "required" | "unknown_property" | "invalid_type" | "invalid_enum" | "invalid_schema";
   message: string;
 };
 
-export type PilotDeckToolValidationResult =
+export type LawyerBuddyToolValidationResult =
   | { ok: true; input: unknown }
-  | { ok: false; issues: PilotDeckToolValidationIssue[] };
+  | { ok: false; issues: LawyerBuddyToolValidationIssue[] };

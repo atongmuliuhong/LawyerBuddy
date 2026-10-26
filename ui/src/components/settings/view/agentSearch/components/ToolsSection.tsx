@@ -9,7 +9,7 @@ import { GeneralSettingsIcon } from "../../../shared/view/GeneralSettingsPrimiti
 import { authenticatedFetch } from "../../../../../utils/api";
 import { SettingsToggle } from "../../../shared/view";
 import { MASK } from "../../../shared/utils/secret";
-import type { PilotDeckConfig } from "../../modelPool/types";
+import type { LawyerBuddyConfig } from "../../modelPool/types";
 import { patch } from "../../modelPool/utils/patch";
 import {
   hasUsableSecret,
@@ -22,15 +22,15 @@ import {
 } from "../utils/webSearchConfig";
 
 type ToolsSectionProps = {
-  config: PilotDeckConfig;
-  onChange: (next: PilotDeckConfig) => void;
+  config: LawyerBuddyConfig;
+  onChange: (next: LawyerBuddyConfig) => void;
 };
 
 type TestStatus = "idle" | "testing" | "success" | "error";
 type TestErrorKind = "validation" | "connection";
 type EditableSearchField = "apiKey" | "endpoint";
 type WebSearchConfig = NonNullable<
-  NonNullable<PilotDeckConfig["tools"]>["webSearch"]
+  NonNullable<LawyerBuddyConfig["tools"]>["webSearch"]
 >;
 
 const GLM_DEFAULT_ENDPOINT = "https://api.z.ai/api/paas/v4/web_search";
@@ -346,20 +346,20 @@ export default function ToolsSection({ config, onChange }: ToolsSectionProps) {
       setTestStatus("error");
       setTestErrorKind("validation");
       setTestMessage(
-        t("pilotDeckConfig.panels.tools.test.needsEndpointAndKey"),
+        t("lawyerBuddyConfig.panels.tools.test.needsEndpointAndKey"),
       );
       return;
     }
     if (provider === "custom" && !trimmedEndpoint) {
       setTestStatus("error");
       setTestErrorKind("validation");
-      setTestMessage(t("pilotDeckConfig.panels.tools.test.needsEndpoint"));
+      setTestMessage(t("lawyerBuddyConfig.panels.tools.test.needsEndpoint"));
       return;
     }
     if (apiKeyRequired && !trimmedKey) {
       setTestStatus("error");
       setTestErrorKind("validation");
-      setTestMessage(t("pilotDeckConfig.panels.tools.test.needsKey"));
+      setTestMessage(t("lawyerBuddyConfig.panels.tools.test.needsKey"));
       return;
     }
 
@@ -392,7 +392,7 @@ export default function ToolsSection({ config, onChange }: ToolsSectionProps) {
         setTestStatus("success");
         setTestErrorKind(null);
         setTestMessage(
-          t("pilotDeckConfig.panels.tools.test.success", {
+          t("lawyerBuddyConfig.panels.tools.test.success", {
             count: data.organicCount ?? 0,
             latency: data.latencyMs ?? 0,
           }),
@@ -401,7 +401,7 @@ export default function ToolsSection({ config, onChange }: ToolsSectionProps) {
         setTestStatus("error");
         setTestErrorKind("connection");
         setTestMessage(
-          t("pilotDeckConfig.panels.tools.test.failureDetail", {
+          t("lawyerBuddyConfig.panels.tools.test.failureDetail", {
             error: data.error || "unknown",
           }),
         );
@@ -410,7 +410,7 @@ export default function ToolsSection({ config, onChange }: ToolsSectionProps) {
       setTestStatus("error");
       setTestErrorKind("connection");
       setTestMessage(
-        t("pilotDeckConfig.panels.tools.test.failureDetail", {
+        t("lawyerBuddyConfig.panels.tools.test.failureDetail", {
           error: error instanceof Error ? error.message : String(error),
         }),
       );
@@ -460,19 +460,19 @@ export default function ToolsSection({ config, onChange }: ToolsSectionProps) {
     <>
       <section
         className="route-card route-enable-card search-enable-card"
-        aria-label={t("pilotDeckConfig.panels.tools.enabled.aria")}
+        aria-label={t("lawyerBuddyConfig.panels.tools.enabled.aria")}
       >
         <div className="route-card-heading">
           <span className="route-heading-icon">
             <SearchIcon />
           </span>
           <div>
-            <h2>{t("pilotDeckConfig.panels.tools.enabled.label")}</h2>
+            <h2>{t("lawyerBuddyConfig.panels.tools.enabled.label")}</h2>
           </div>
         </div>
         <SettingsToggle
           checked={enabled}
-          ariaLabel={t("pilotDeckConfig.panels.tools.enabled.label")}
+          ariaLabel={t("lawyerBuddyConfig.panels.tools.enabled.label")}
           onChange={(value) => {
             updateWebSearch({ ...ws, enabled: value });
             setEditingField(null);
@@ -483,31 +483,31 @@ export default function ToolsSection({ config, onChange }: ToolsSectionProps) {
 
       <section
         className="search-card"
-        aria-label={t("pilotDeckConfig.panels.tools.configAria")}
+        aria-label={t("lawyerBuddyConfig.panels.tools.configAria")}
       >
         <div className={`search-config-body${enabled ? "" : " disabled"}`}>
           <div className="search-setting-row">
             <div className="search-setting-copy">
               {provider === "custom" ? <label htmlFor="search-provider">
-                {t("pilotDeckConfig.panels.tools.provider.label")}
-              </label> : <Tooltip content={t("pilotDeckConfig.panels.tools.provider.docsHint", {
-                provider: t(`pilotDeckConfig.panels.tools.provider.${provider}`),
+                {t("lawyerBuddyConfig.panels.tools.provider.label")}
+              </label> : <Tooltip content={t("lawyerBuddyConfig.panels.tools.provider.docsHint", {
+                provider: t(`lawyerBuddyConfig.panels.tools.provider.${provider}`),
               })}>
                 <a href={WEB_SEARCH_DOCS[provider]} target="_blank" rel="noopener noreferrer" className="search-provider-help"
-                  aria-label={t("pilotDeckConfig.panels.tools.provider.docsLabel", {
-                    provider: t(`pilotDeckConfig.panels.tools.provider.${provider}`),
+                  aria-label={t("lawyerBuddyConfig.panels.tools.provider.docsLabel", {
+                    provider: t(`lawyerBuddyConfig.panels.tools.provider.${provider}`),
                   })}>
-                  <span>{t("pilotDeckConfig.panels.tools.provider.label")}</span>
+                  <span>{t("lawyerBuddyConfig.panels.tools.provider.label")}</span>
                   <GeneralSettingsIcon icon={CircleHelp} />
                 </a>
               </Tooltip>}
-              <p>{t("pilotDeckConfig.panels.tools.provider.description")}</p>
+              <p>{t("lawyerBuddyConfig.panels.tools.provider.description")}</p>
             </div>
             <div className="search-control-area">
               <div className="search-select-wrap">
                 <select
                   id="search-provider"
-                  aria-label={t("pilotDeckConfig.panels.tools.provider.label")}
+                  aria-label={t("lawyerBuddyConfig.panels.tools.provider.label")}
                   value={provider}
                   disabled={!enabled}
                   onChange={(event) =>
@@ -516,7 +516,7 @@ export default function ToolsSection({ config, onChange }: ToolsSectionProps) {
                 >
                   {PROVIDERS.map((value) => (
                     <option key={value} value={value}>
-                      {t(`pilotDeckConfig.panels.tools.provider.${value}`)}
+                      {t(`lawyerBuddyConfig.panels.tools.provider.${value}`)}
                     </option>
                   ))}
                 </select>
@@ -527,13 +527,13 @@ export default function ToolsSection({ config, onChange }: ToolsSectionProps) {
 
           {provider === "serpapi" && <div className="search-setting-row">
             <div className="search-setting-copy">
-              <label htmlFor="search-engine">{t("pilotDeckConfig.panels.tools.engine.label")}</label>
-              <p>{t("pilotDeckConfig.panels.tools.engine.description")}</p>
+              <label htmlFor="search-engine">{t("lawyerBuddyConfig.panels.tools.engine.label")}</label>
+              <p>{t("lawyerBuddyConfig.panels.tools.engine.description")}</p>
             </div>
             <div className="search-control-area"><div className="search-select-wrap">
               <select id="search-engine" value={ws.searchEngine ?? "google"} disabled={!enabled}
                 onChange={event => { if (isSerpApiEngine(event.target.value)) updateWebSearch({ ...ws, searchEngine: event.target.value }); }}>
-                {SERPAPI_ENGINES.map(value => <option key={value} value={value}>{t(`pilotDeckConfig.panels.tools.engine.${value}`)}</option>)}
+                {SERPAPI_ENGINES.map(value => <option key={value} value={value}>{t(`lawyerBuddyConfig.panels.tools.engine.${value}`)}</option>)}
               </select><ChevronIcon />
             </div></div>
           </div>}
@@ -542,9 +542,9 @@ export default function ToolsSection({ config, onChange }: ToolsSectionProps) {
             <div className="search-setting-row">
               <div className="search-setting-copy">
                 <label htmlFor="search-endpoint">
-                  {t("pilotDeckConfig.panels.tools.endpoint.label")}
+                  {t("lawyerBuddyConfig.panels.tools.endpoint.label")}
                 </label>
-                <p>{t("pilotDeckConfig.panels.tools.endpoint.description")}</p>
+                <p>{t("lawyerBuddyConfig.panels.tools.endpoint.description")}</p>
               </div>
               <div className="search-control-area search-editable-control">
                 <div className="search-input-wrap">
@@ -561,7 +561,7 @@ export default function ToolsSection({ config, onChange }: ToolsSectionProps) {
                       editingField === "endpoint" ? endpointDraft : endpoint
                     }
                     placeholder={t(
-                      "pilotDeckConfig.panels.tools.endpoint.placeholder",
+                      "lawyerBuddyConfig.panels.tools.endpoint.placeholder",
                     )}
                     onChange={(event) => setEndpointDraft(event.target.value)}
                   />
@@ -578,9 +578,9 @@ export default function ToolsSection({ config, onChange }: ToolsSectionProps) {
           <div className="search-setting-row">
             <div className="search-setting-copy">
               <label htmlFor="search-api-key">
-                {t("pilotDeckConfig.panels.tools.apiKey.label")}
+                {t("lawyerBuddyConfig.panels.tools.apiKey.label")}
               </label>
-              <p>{t("pilotDeckConfig.panels.tools.apiKey.description")}</p>
+              <p>{t("lawyerBuddyConfig.panels.tools.apiKey.description")}</p>
             </div>
             <div className="search-control-area search-editable-control">
               <div className="search-input-wrap">
@@ -602,10 +602,10 @@ export default function ToolsSection({ config, onChange }: ToolsSectionProps) {
                         : apiKey
                   }
                   placeholder={t(
-                    "pilotDeckConfig.panels.tools.apiKey.providerPlaceholder",
+                    "lawyerBuddyConfig.panels.tools.apiKey.providerPlaceholder",
                     {
                       provider: t(
-                        `pilotDeckConfig.panels.tools.provider.${provider}`,
+                        `lawyerBuddyConfig.panels.tools.provider.${provider}`,
                       ),
                     },
                   )}
@@ -628,7 +628,7 @@ export default function ToolsSection({ config, onChange }: ToolsSectionProps) {
                 <SuccessIcon />
                 <div>
                   <strong>
-                    {t("pilotDeckConfig.panels.tools.test.successTitle")}
+                    {t("lawyerBuddyConfig.panels.tools.test.successTitle")}
                   </strong>
                   <p>{testMessage}</p>
                 </div>
@@ -641,8 +641,8 @@ export default function ToolsSection({ config, onChange }: ToolsSectionProps) {
                   <strong>
                     {t(
                       testErrorKind === "validation"
-                        ? "pilotDeckConfig.panels.tools.test.incompleteTitle"
-                        : "pilotDeckConfig.panels.tools.test.failureTitle",
+                        ? "lawyerBuddyConfig.panels.tools.test.incompleteTitle"
+                        : "lawyerBuddyConfig.panels.tools.test.failureTitle",
                     )}
                   </strong>
                   <p>{testMessage}</p>
@@ -661,8 +661,8 @@ export default function ToolsSection({ config, onChange }: ToolsSectionProps) {
                 <PlugIcon />
               )}
               {testStatus === "testing"
-                ? t("pilotDeckConfig.panels.tools.test.testing")
-                : t("pilotDeckConfig.panels.tools.test.button")}
+                ? t("lawyerBuddyConfig.panels.tools.test.testing")
+                : t("lawyerBuddyConfig.panels.tools.test.button")}
             </button>
           </div>
         </footer>

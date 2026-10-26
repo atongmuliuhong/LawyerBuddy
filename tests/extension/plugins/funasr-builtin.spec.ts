@@ -9,11 +9,11 @@ import { PluginRuntime } from "../../../src/extension/plugins/runtime/PluginRunt
 import { parsePluginMcpServers } from "../../../src/mcp/runtime/parsePluginMcpServers.js";
 import {
   patchProjectScopedMcpSpec,
-  PILOTDECK_FUNASR_INSTALL_COMMAND_MARKER,
-  PILOTDECK_FUNASR_MCP_ENTRYPOINT_MARKER,
-  PILOTDECK_FUNASR_RUNTIME_ROOT_MARKER,
-  PILOTDECK_NODE_EXECUTABLE_MARKER,
-  PILOTDECK_PROJECT_ROOT_MARKER,
+  LAWYERBUDDY_FUNASR_INSTALL_COMMAND_MARKER,
+  LAWYERBUDDY_FUNASR_MCP_ENTRYPOINT_MARKER,
+  LAWYERBUDDY_FUNASR_RUNTIME_ROOT_MARKER,
+  LAWYERBUDDY_NODE_EXECUTABLE_MARKER,
+  LAWYERBUDDY_PROJECT_ROOT_MARKER,
 } from "../../../src/mcp/runtime/projectMcpSpec.js";
 
 test("built-in FunASR plugin exposes a local per-session Node MCP", () => {
@@ -27,12 +27,12 @@ test("built-in FunASR plugin exposes a local per-session Node MCP", () => {
   assert.equal(servers[0]?.id, "funasr");
   assert.equal(servers[0]?.transport, "stdio");
   assert.equal(servers[0]?.perSession, true);
-  assert.equal(servers[0]?.command, PILOTDECK_NODE_EXECUTABLE_MARKER);
+  assert.equal(servers[0]?.command, LAWYERBUDDY_NODE_EXECUTABLE_MARKER);
   assert.equal(servers[0]?.callTimeoutMs, 300_000);
-  assert.ok(servers[0]?.args?.includes(PILOTDECK_FUNASR_MCP_ENTRYPOINT_MARKER));
-  assert.ok(servers[0]?.args?.includes(PILOTDECK_PROJECT_ROOT_MARKER));
-  assert.ok(servers[0]?.args?.includes(PILOTDECK_FUNASR_RUNTIME_ROOT_MARKER));
-  assert.ok(servers[0]?.args?.includes(PILOTDECK_FUNASR_INSTALL_COMMAND_MARKER));
+  assert.ok(servers[0]?.args?.includes(LAWYERBUDDY_FUNASR_MCP_ENTRYPOINT_MARKER));
+  assert.ok(servers[0]?.args?.includes(LAWYERBUDDY_PROJECT_ROOT_MARKER));
+  assert.ok(servers[0]?.args?.includes(LAWYERBUDDY_FUNASR_RUNTIME_ROOT_MARKER));
+  assert.ok(servers[0]?.args?.includes(LAWYERBUDDY_FUNASR_INSTALL_COMMAND_MARKER));
 });
 
 test("FunASR MCP receives Node, project-root, runtime-root, and entrypoint markers", () => {
@@ -40,34 +40,34 @@ test("FunASR MCP receives Node, project-root, runtime-root, and entrypoint marke
     {
       id: "funasr",
       transport: "stdio",
-      command: PILOTDECK_NODE_EXECUTABLE_MARKER,
+      command: LAWYERBUDDY_NODE_EXECUTABLE_MARKER,
       args: [
-        PILOTDECK_FUNASR_MCP_ENTRYPOINT_MARKER,
+        LAWYERBUDDY_FUNASR_MCP_ENTRYPOINT_MARKER,
         "--project-root",
-        PILOTDECK_PROJECT_ROOT_MARKER,
+        LAWYERBUDDY_PROJECT_ROOT_MARKER,
         "--runtime-root",
-        PILOTDECK_FUNASR_RUNTIME_ROOT_MARKER,
+        LAWYERBUDDY_FUNASR_RUNTIME_ROOT_MARKER,
         "--install-command",
-        PILOTDECK_FUNASR_INSTALL_COMMAND_MARKER,
+        LAWYERBUDDY_FUNASR_INSTALL_COMMAND_MARKER,
       ],
     },
-    "/tmp/pilotdeck-project",
-    "/tmp/pilotdeck-home",
+    "/tmp/lawyerbuddy-project",
+    "/tmp/lawyerbuddy-home",
   );
 
   assert.equal(patched.transport, "stdio");
   if (patched.transport !== "stdio") throw new Error("expected stdio MCP spec");
   assert.equal(patched.command, process.execPath);
-  assert.equal(patched.cwd, "/tmp/pilotdeck-project");
+  assert.equal(patched.cwd, "/tmp/lawyerbuddy-project");
   assert.deepEqual(patched.args?.slice(1, 5), [
-    "--project-root", "/tmp/pilotdeck-project", "--runtime-root", "/tmp/pilotdeck-home/funasr",
+    "--project-root", "/tmp/lawyerbuddy-project", "--runtime-root", "/tmp/lawyerbuddy-home/funasr",
   ]);
   assert.match(patched.args?.[0] ?? "", /funasr-local-mcp\.mjs$/);
   assert.match(patched.args?.[6] ?? "", /npm --prefix/);
 });
 
 test("FunASR can be disabled through builtinPluginsEnabled", async () => {
-  const root = await mkdtemp(join(tmpdir(), "pilotdeck-funasr-plugin-"));
+  const root = await mkdtemp(join(tmpdir(), "lawyerbuddy-funasr-plugin-"));
   try {
     const runtime = new PluginRuntime({
       projectRoot: root,

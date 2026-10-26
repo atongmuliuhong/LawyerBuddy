@@ -1,6 +1,6 @@
 import type { SettingsProject } from "../types";
 
-type PilotDeckConfigLike = Record<string, any>;
+type LawyerBuddyConfigLike = Record<string, any>;
 
 export function getAlwaysOnProjectRoot(project: SettingsProject): string {
   const root = project.fullPath || project.path || "";
@@ -8,14 +8,14 @@ export function getAlwaysOnProjectRoot(project: SettingsProject): string {
 }
 
 export function isAlwaysOnProjectEnabled(
-  config: PilotDeckConfigLike,
+  config: LawyerBuddyConfigLike,
   project: SettingsProject,
 ): boolean {
   const root = getAlwaysOnProjectRoot(project);
   return Boolean(root && config.alwaysOn?.projects?.[root]?.enabled === true);
 }
 
-export function setAlwaysOnProjectEnabled<T extends PilotDeckConfigLike>(
+export function setAlwaysOnProjectEnabled<T extends LawyerBuddyConfigLike>(
   config: T,
   project: SettingsProject,
   enabled: boolean,

@@ -4,7 +4,7 @@ import { authenticatedFetch } from '../../../utils/api';
 import type {
   ChatMessage,
   ClaudeWorkStatus,
-  PilotDeckWorkStatus,
+  LawyerBuddyWorkStatus,
   SessionRuntimeState,
 } from '../types/types';
 import {
@@ -327,7 +327,7 @@ export function useChatSessionState({
   const [tokenBudget, setTokenBudget] = useState<Record<string, unknown> | null>(null);
   const [visibleMessageCount, setVisibleMessageCount] = useState(INITIAL_VISIBLE_MESSAGES);
   const [claudeStatus, setClaudeStatus] = useState<ClaudeWorkStatus | null>(null);
-  const [pilotDeckStatus, setPilotDeckStatus] = useState<PilotDeckWorkStatus | null>(null);
+  const [lawyerBuddyStatus, setLawyerBuddyStatus] = useState<LawyerBuddyWorkStatus | null>(null);
   const [sessionLoadError, setSessionLoadError] = useState<string | null>(null);
   const [allMessagesLoaded, setAllMessagesLoaded] = useState(false);
   const [isLoadingAllMessages, setIsLoadingAllMessages] = useState(false);
@@ -441,7 +441,7 @@ export function useChatSessionState({
   if (activeSessionId && activeSessionId !== prevActiveSessionRef.current && pendingUserMessage) {
     const expectedSessionId = pendingViewSessionRef.current?.sessionId ?? null;
     if (expectedSessionId && activeSessionId === expectedSessionId) {
-      const normalized = chatMessageToNormalized(pendingUserMessage, activeSessionId, 'pilotdeck' as SessionProvider);
+      const normalized = chatMessageToNormalized(pendingUserMessage, activeSessionId, 'lawyerbuddy' as SessionProvider);
       if (normalized) {
         sessionStore.appendRealtime(activeSessionId, normalized);
       }
@@ -516,7 +516,7 @@ export function useChatSessionState({
       setPendingUserMessage(msg);
       return;
     }
-    const normalized = chatMessageToNormalized(msg, sessionId, 'pilotdeck' as SessionProvider);
+    const normalized = chatMessageToNormalized(msg, sessionId, 'lawyerbuddy' as SessionProvider);
     if (normalized) {
       sessionStore.appendRealtime(sessionId, normalized);
     }
@@ -580,7 +580,7 @@ export function useChatSessionState({
 
       try {
         const slot = await sessionStore.fetchMore(selectedSession.id, {
-          provider: 'pilotdeck',
+          provider: 'lawyerbuddy',
           projectName: selectedProject.name,
           projectPath: selectedProject.fullPath || selectedProject.path || '',
           ...sessionRequestParams,
@@ -728,7 +728,7 @@ export function useChatSessionState({
       pendingViewSessionRef.current = null;
       setPendingUserMessage(null);
       setClaudeStatus(null);
-      setPilotDeckStatus(null);
+      setLawyerBuddyStatus(null);
       setCanAbortSession(false);
       setIsAborting(false);
       setIsLoading(false);
@@ -744,7 +744,7 @@ export function useChatSessionState({
       return;
     }
 
-    const provider = 'pilotdeck';
+    const provider = 'lawyerbuddy';
     const sessionKey = JSON.stringify([
       selectedSession.id,
       selectedProject.name,
@@ -787,7 +787,7 @@ export function useChatSessionState({
       setActiveRunId(null);
       pendingViewSessionRef.current = null;
       setClaudeStatus(null);
-      setPilotDeckStatus(null);
+      setLawyerBuddyStatus(null);
       setSessionLoadError(null);
       setCanAbortSession(false);
       setIsAborting(false);
@@ -831,7 +831,7 @@ export function useChatSessionState({
 
     // Fetch from server → store updates → chatMessages re-derives automatically
     setIsLoadingSessionMessages(true);
-    // Intentionally fetch the WHOLE transcript on session entry: PilotDeck's
+    // Intentionally fetch the WHOLE transcript on session entry: LawyerBuddy's
     // `readSessionMessages` slices in jsonl-forward order (`allMessages.slice(
     // offset, offset+limit)`), but the ui-side `fetchMore` path that handles
     // scroll-to-top assumes "more older messages" semantics and prepends the
@@ -841,7 +841,7 @@ export function useChatSessionState({
     // already on screen). Sessions are typically well under a few hundred
     // messages, so fetching everything is fine.
     sessionStore.fetchFromServer(selectedSession.id, {
-      provider: 'pilotdeck',
+      provider: 'lawyerbuddy',
       projectName: selectedProject.name,
       projectPath: selectedProject.fullPath || selectedProject.path || '',
       ...sessionRequestParams,
@@ -884,7 +884,7 @@ export function useChatSessionState({
         // Skip store refresh during active streaming
         if (!isLoading) {
           await sessionStore.refreshFromServer(selectedSession.id, {
-            provider: 'pilotdeck',
+            provider: 'lawyerbuddy',
             projectName: selectedProject.name,
             projectPath: selectedProject.fullPath || selectedProject.path || '',
             ...sessionRequestParams,
@@ -961,7 +961,7 @@ export function useChatSessionState({
         {
           try {
             const slot = await sessionStore.fetchFromServer(selectedSession.id, {
-              provider: 'pilotdeck',
+              provider: 'lawyerbuddy',
               projectName: selectedProject.name,
               projectPath: selectedProject.fullPath || selectedProject.path || '',
               ...sessionRequestParams,
@@ -1057,7 +1057,7 @@ export function useChatSessionState({
 
     const fetchInitialTokenUsage = async () => {
       try {
-        const url = `/api/projects/${selectedProject.name}/sessions/${encodeURIComponent(selectedSession.id)}/token-usage?provider=pilotdeck`;
+        const url = `/api/projects/${selectedProject.name}/sessions/${encodeURIComponent(selectedSession.id)}/token-usage?provider=lawyerbuddy`;
         const response = await authenticatedFetch(url);
         if (response.ok) {
           setTokenBudget(await response.json());
@@ -1130,7 +1130,7 @@ export function useChatSessionState({
     const requestStatus = () => {
       const request = buildSessionStatusRequestIfIdle({
         sessionId: activeViewSessionId,
-        provider: 'pilotdeck',
+        provider: 'lawyerbuddy',
         expectedActiveRunId: activeRunIdRef.current,
         includeActiveTurnMessages: false,
       });
@@ -1182,7 +1182,7 @@ export function useChatSessionState({
 
     try {
       const slot = await sessionStore.fetchFromServer(requestSessionId, {
-        provider: 'pilotdeck',
+        provider: 'lawyerbuddy',
         projectName: selectedProject.name,
         projectPath: selectedProject.fullPath || selectedProject.path || '',
         ...sessionRequestParams,
@@ -1267,8 +1267,8 @@ export function useChatSessionState({
     showLoadAllOverlay,
     claudeStatus,
     setClaudeStatus,
-    pilotDeckStatus,
-    setPilotDeckStatus,
+    lawyerBuddyStatus,
+    setLawyerBuddyStatus,
     createDiff,
     scrollContainerRef,
     scrollToBottom,

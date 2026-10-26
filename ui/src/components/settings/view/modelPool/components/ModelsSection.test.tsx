@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { PilotDeckConfig } from "../types";
+import type { LawyerBuddyConfig } from "../types";
 import { findCatalogProviderById } from "../../../../../shared/catalogProviders";
 import ModelsSection from "./ModelsSection";
 import ProviderCard from "./ProviderCard";
@@ -25,7 +25,7 @@ afterEach(() => {
 describe("model provider drafts", () => {
   it("displays custom provider names with their exact case and separators", () => {
     const provider = { protocol: "openai" as const, url: "https://example.test/v1", apiKey: "********", models: { model: {} } };
-    const config = { model: { providers: { HXAPI: provider, hxapi: provider, my_API: provider } } } as PilotDeckConfig;
+    const config = { model: { providers: { HXAPI: provider, hxapi: provider, my_API: provider } } } as LawyerBuddyConfig;
     render(<ModelsSection config={config} onChange={vi.fn()} />);
     expect(screen.getAllByText("HXAPI").length).toBeGreaterThan(0);
     expect(screen.getByText("hxapi")).toBeTruthy();
@@ -40,13 +40,13 @@ describe("model provider drafts", () => {
     const config = {
       agent: { model: "old/model" },
       model: { providers: { old: provider } },
-    } as PilotDeckConfig;
+    } as LawyerBuddyConfig;
     render(<ModelsSection config={config} onChange={onChange} />);
     fireEvent.click(screen.getByRole("button", { name: "settingsPage.actions.edit" }));
     fireEvent.change(screen.getByDisplayValue("old"), { target: { value: "renamed" } });
     fireEvent.click(screen.getByRole("button", { name: "actions.saveChanges" }));
     await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
-    const [next, options] = onChange.mock.calls[0] as unknown as [PilotDeckConfig, { providerRenames: unknown }];
+    const [next, options] = onChange.mock.calls[0] as unknown as [LawyerBuddyConfig, { providerRenames: unknown }];
     expect(Object.keys(next.model?.providers ?? {})).toEqual(["renamed"]);
     expect(options).toEqual({ providerRenames: [{ from: "old", to: "renamed" }] });
     // The server owns reference rewriting (including routing statistics).
@@ -55,15 +55,15 @@ describe("model provider drafts", () => {
 
   it("keeps a new custom provider local until it is explicitly saved", () => {
     const onChange = vi.fn();
-    const config = { model: { providers: {} } } as PilotDeckConfig;
+    const config = { model: { providers: {} } } as LawyerBuddyConfig;
 
     render(<ModelsSection config={config} onChange={onChange} />);
 
     fireEvent.click(screen.getByRole("button", {
-      name: "pilotDeckConfig.panels.models.addProvider",
+      name: "lawyerBuddyConfig.panels.models.addProvider",
     }));
     fireEvent.click(screen.getByRole("button", {
-      name: /pilotDeckConfig\.panels\.models\.customProvider/,
+      name: /lawyerBuddyConfig\.panels\.models\.customProvider/,
     }));
 
     expect(onChange).not.toHaveBeenCalled();
@@ -96,7 +96,7 @@ describe("model provider drafts", () => {
 
     expect(onSave).not.toHaveBeenCalled();
     expect(screen.getByText(
-      "pilotDeckConfig.panels.models.providerUrlRequired",
+      "lawyerBuddyConfig.panels.models.providerUrlRequired",
     )).toBeTruthy();
   });
 
@@ -119,7 +119,7 @@ describe("model provider drafts", () => {
     );
 
     expect((screen.getByRole("button", {
-      name: "pilotDeckConfig.panels.models.fetchApiModels",
+      name: "lawyerBuddyConfig.panels.models.fetchApiModels",
     }) as HTMLButtonElement).disabled).toBe(false);
     fireEvent.click(screen.getByRole("button", {
       name: "actions.saveChanges",
@@ -127,7 +127,7 @@ describe("model provider drafts", () => {
 
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
     expect(screen.queryByText(
-      "pilotDeckConfig.panels.models.providerApiKeyRequired",
+      "lawyerBuddyConfig.panels.models.providerApiKeyRequired",
     )).toBeNull();
   });
 
@@ -149,7 +149,7 @@ describe("model provider drafts", () => {
       target: { value: "anthropic" },
     });
     fireEvent.click(screen.getByRole("button", {
-      name: "pilotDeckConfig.panels.models.fetchApiModels",
+      name: "lawyerBuddyConfig.panels.models.fetchApiModels",
     }));
 
     await waitFor(() => expect(mocks.fetchProviderModels).toHaveBeenCalledWith({
@@ -220,7 +220,7 @@ describe("model provider connection status", () => {
     );
 
     expect(screen.getByLabelText(
-      "pilotDeckConfig.panels.models.pending",
+      "lawyerBuddyConfig.panels.models.pending",
     )).toBeTruthy();
 
     rerender(
@@ -240,7 +240,7 @@ describe("model provider connection status", () => {
     );
 
     expect(screen.queryByLabelText(
-      "pilotDeckConfig.panels.models.pending",
+      "lawyerBuddyConfig.panels.models.pending",
     )).toBeNull();
   });
 });

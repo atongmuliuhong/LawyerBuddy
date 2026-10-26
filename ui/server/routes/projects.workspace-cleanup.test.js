@@ -25,7 +25,7 @@ let parentDir;
 let siblingFile;
 
 beforeEach(async () => {
-  baseDir = await fs.mkdtemp(path.join(os.tmpdir(), 'pilotdeck-clone-cleanup-'));
+  baseDir = await fs.mkdtemp(path.join(os.tmpdir(), 'lawyerbuddy-clone-cleanup-'));
   parentDir = path.join(baseDir, 'dev');
   siblingFile = path.join(parentDir, 'other-project', 'important.txt');
   await fs.mkdir(path.dirname(siblingFile), { recursive: true });

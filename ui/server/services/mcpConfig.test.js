@@ -14,11 +14,11 @@ describe('MCP config writable paths', () => {
   let previousDesktop;
 
   beforeEach(() => {
-    root = mkdtempSync(join(tmpdir(), 'pilotdeck-ui-mcp-config-'));
+    root = mkdtempSync(join(tmpdir(), 'lawyerbuddy-ui-mcp-config-'));
     previousPilotHome = process.env.PILOT_HOME;
-    previousDesktop = process.env.PILOTDECK_DESKTOP;
+    previousDesktop = process.env.LAWYERBUDDY_DESKTOP;
     process.env.PILOT_HOME = join(root, 'pilot-home');
-    process.env.PILOTDECK_DESKTOP = '1';
+    process.env.LAWYERBUDDY_DESKTOP = '1';
   });
 
   afterEach(() => {
@@ -28,15 +28,15 @@ describe('MCP config writable paths', () => {
       process.env.PILOT_HOME = previousPilotHome;
     }
     if (previousDesktop === undefined) {
-      delete process.env.PILOTDECK_DESKTOP;
+      delete process.env.LAWYERBUDDY_DESKTOP;
     } else {
-      process.env.PILOTDECK_DESKTOP = previousDesktop;
+      process.env.LAWYERBUDDY_DESKTOP = previousDesktop;
     }
     rmSync(root, { recursive: true, force: true });
   });
 
   it('disables project MCP config for desktop runtime roots', async () => {
-    const runtimeRoot = join(root, 'Program Files', 'PilotDeck', 'resources', 'runtime');
+    const runtimeRoot = join(root, 'Program Files', 'LawyerBuddy', 'resources', 'runtime');
 
     const config = await readMcpConfigFile('project', runtimeRoot);
 
@@ -71,6 +71,6 @@ describe('MCP config writable paths', () => {
       projectRoot,
     );
 
-    expect(config.path).toBe(join(projectRoot, '.pilotdeck', 'mcp.json'));
+    expect(config.path).toBe(join(projectRoot, '.lawyerbuddy', 'mcp.json'));
   });
 });

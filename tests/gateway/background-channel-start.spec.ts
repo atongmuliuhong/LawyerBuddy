@@ -4,12 +4,12 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-import { startPilotDeckServer } from "../../src/cli/pilotdeckServer.js";
+import { startLawyerBuddyServer } from "../../src/cli/lawyerbuddyServer.js";
 import type { ChannelAdapter } from "../../src/adapters/index.js";
 import type { Gateway } from "../../src/gateway/index.js";
 
-test("startPilotDeckServer listens before a background channel finishes starting", async (t) => {
-  const pilotHome = await mkdtemp(join(tmpdir(), "pilotdeck-channel-start-"));
+test("startLawyerBuddyServer listens before a background channel finishes starting", async (t) => {
+  const pilotHome = await mkdtemp(join(tmpdir(), "lawyerbuddy-channel-start-"));
   const previousPilotHome = process.env.PILOT_HOME;
   process.env.PILOT_HOME = pilotHome;
   t.after(async () => {
@@ -26,7 +26,7 @@ test("startPilotDeckServer listens before a background channel finishes starting
     start: async () => new Promise(() => undefined),
   };
 
-  const server = await startPilotDeckServer({
+  const server = await startLawyerBuddyServer({
     gateway: {} as Gateway,
     port: 0,
     channels: [stuckChannel],
@@ -41,7 +41,7 @@ test("startPilotDeckServer listens before a background channel finishes starting
 });
 
 test("overlapping hot starts and a stop of one channel never run two instances at once", async (t) => {
-  const pilotHome = await mkdtemp(join(tmpdir(), "pilotdeck-channel-hot-start-"));
+  const pilotHome = await mkdtemp(join(tmpdir(), "lawyerbuddy-channel-hot-start-"));
   const previousPilotHome = process.env.PILOT_HOME;
   process.env.PILOT_HOME = pilotHome;
   t.after(async () => {
@@ -74,7 +74,7 @@ test("overlapping hot starts and a stop of one channel never run two instances a
     },
   });
 
-  const server = await startPilotDeckServer({ gateway: {} as Gateway, port: 0 });
+  const server = await startLawyerBuddyServer({ gateway: {} as Gateway, port: 0 });
   t.after(async () => {
     await server.close();
   });

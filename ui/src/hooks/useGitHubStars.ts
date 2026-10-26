@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const CACHE_KEY = 'PILOTDECK_GITHUB_STARS';
-const DISMISS_KEY = 'PILOTDECK_HIDE_GITHUB_STAR';
+const CACHE_KEY = 'LAWYERBUDDY_GITHUB_STARS';
+const DISMISS_KEY = 'LAWYERBUDDY_HIDE_GITHUB_STAR';
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
 type CachedStars = {

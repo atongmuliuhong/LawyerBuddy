@@ -1,6 +1,6 @@
-import type { PilotDeckHookEvent } from "./events.js";
+import type { LawyerBuddyHookEvent } from "./events.js";
 
-export type PilotDeckHookCommand =
+export type LawyerBuddyHookCommand =
   | {
       type: "command";
       command: string;
@@ -47,12 +47,12 @@ export type PilotDeckHookCommand =
       statusMessage?: string;
     };
 
-export type PilotDeckHookMatcher = {
+export type LawyerBuddyHookMatcher = {
   matcher?: string;
-  hooks: PilotDeckHookCommand[];
+  hooks: LawyerBuddyHookCommand[];
   pluginName?: string;
   pluginId?: string;
   pluginRoot?: string;
 };
 
-export type PilotDeckHooksSettings = Partial<Record<PilotDeckHookEvent, PilotDeckHookMatcher[]>>;
+export type LawyerBuddyHooksSettings = Partial<Record<LawyerBuddyHookEvent, LawyerBuddyHookMatcher[]>>;

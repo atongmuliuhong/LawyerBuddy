@@ -7,8 +7,8 @@ import type {
   ChatMessage,
   ChatRunMode,
   ClaudeWorkStatus,
-  PilotDeckWorkStatus,
-  PilotDeckPermissionSuggestion,
+  LawyerBuddyWorkStatus,
+  LawyerBuddyPermissionSuggestion,
   SessionPermissionGrantResult,
   SessionRuntimeState,
 } from '../chat/types/types';
@@ -73,7 +73,7 @@ type MessagesPaneV2Props = {
   onFileOpen?: (filePath: string, diffInfo?: unknown) => void;
   onShowSettings?: () => void;
   onGrantSessionToolPermission?: (
-    suggestion: PilotDeckPermissionSuggestion,
+    suggestion: LawyerBuddyPermissionSuggestion,
   ) => SessionPermissionGrantResult | null | undefined;
   autoExpandTools?: boolean;
   showThinking?: boolean;
@@ -82,7 +82,7 @@ type MessagesPaneV2Props = {
   isAssistantWorking?: boolean;
   sessionRuntimeState?: SessionRuntimeState;
   activeRunId?: string | null;
-  workingStatus?: ClaudeWorkStatus | PilotDeckWorkStatus | null;
+  workingStatus?: ClaudeWorkStatus | LawyerBuddyWorkStatus | null;
   runMode?: ChatRunMode;
   planModeActive?: boolean;
   sessionStore?: SessionStore;
@@ -1551,7 +1551,7 @@ function activityToLiveStep(activity: ChatMessage): ProcessTraceStep {
 
 function getLiveStatusStep(
   activities: ChatMessage[],
-  workingStatus: ClaudeWorkStatus | PilotDeckWorkStatus | null | undefined,
+  workingStatus: ClaudeWorkStatus | LawyerBuddyWorkStatus | null | undefined,
   hasAssistantContent: boolean,
   hasPendingToolUse: boolean,
   t: (key: string, options?: Record<string, unknown>) => string,

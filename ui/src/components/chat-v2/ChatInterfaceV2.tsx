@@ -26,7 +26,7 @@ import {
 } from '../chat/constants/thinkingModeAvailability';
 import { thinkingModeToConfig } from '../chat/constants/thinkingModes';
 import { useSessionStore } from '../../stores/useSessionStore';
-import { getDraftInputStorageKey, getPilotDeckSettings, safeLocalStorage } from '../chat/utils/chatStorage';
+import { getDraftInputStorageKey, getLawyerBuddySettings, safeLocalStorage } from '../chat/utils/chatStorage';
 import { buildAttachmentPathNote } from '../chat/utils/attachmentNotes';
 import {
   createUserTurnRunId,
@@ -212,9 +212,9 @@ function ChatInterfaceV2({
     allMessagesLoaded,
     isLoadingAllMessages,
     claudeStatus,
-    pilotDeckStatus,
+    lawyerBuddyStatus,
     setClaudeStatus,
-    setPilotDeckStatus,
+    setLawyerBuddyStatus,
     createDiff,
     scrollContainerRef,
     scrollToBottom,
@@ -243,7 +243,7 @@ function ChatInterfaceV2({
       if (!id || id !== (selectedSession?.id ?? currentSessionId) || !selectedProject) return;
       resetStreamingState();
       sessionStore.clearRealtime(id);
-      void sessionStore.refreshFromServer(id, { provider: 'pilotdeck', projectName: selectedProject.name, projectPath: selectedProject.fullPath || selectedProject.path || '', ...sessionRequestParams, afterRestore: true });
+      void sessionStore.refreshFromServer(id, { provider: 'lawyerbuddy', projectName: selectedProject.name, projectPath: selectedProject.fullPath || selectedProject.path || '', ...sessionRequestParams, afterRestore: true });
     };
     window.addEventListener(REVIEW_RESTORED_EVENT, restored);
     return () => window.removeEventListener(REVIEW_RESTORED_EVENT, restored);
@@ -368,7 +368,7 @@ function ChatInterfaceV2({
     setCanAbortSession,
     setIsAborting,
     setClaudeStatus,
-    setPilotDeckStatus,
+    setLawyerBuddyStatus,
     setIsUserScrolledUp,
     pendingPermissionRequests,
     setPendingPermissionRequests,
@@ -396,7 +396,7 @@ function ChatInterfaceV2({
     if (shouldRefreshSessionOnReconnect({ isLoading, processingSessions, sessionId: selectedSession.id })) {
       await refreshSessionAfterReconnect(() =>
         sessionStore.refreshFromServer(selectedSession.id, {
-          provider: 'pilotdeck',
+          provider: 'lawyerbuddy',
           projectName: selectedProject.name,
           projectPath: selectedProject.fullPath || selectedProject.path || '',
           ...sessionRequestParams,
@@ -425,7 +425,7 @@ function ChatInterfaceV2({
   ]);
 
   useChatRealtimeHandlers({
-    provider: 'pilotdeck',
+    provider: 'lawyerbuddy',
     selectedProject,
     selectedSession,
     currentSessionId,
@@ -437,7 +437,7 @@ function ChatInterfaceV2({
     setCanAbortSession,
     setIsAborting,
     setClaudeStatus,
-    setPilotDeckStatus,
+    setLawyerBuddyStatus,
     setTokenBudget,
     setPendingPermissionRequests,
     pendingViewSessionRef,
@@ -652,7 +652,7 @@ function ChatInterfaceV2({
       runId,
       userVisibleInput: editedText,
       modelSelection: { ...modelSelection },
-      toolsSettings: getPilotDeckSettings(),
+      toolsSettings: getLawyerBuddySettings(),
       runMode,
       permissionMode: effectivePermissionMode,
       basePermissionMode: permissionMode,
@@ -759,7 +759,7 @@ function ChatInterfaceV2({
         />
       )}
       input={input}
-      placeholder={t('composer.placeholder', { defaultValue: 'Tell PilotDeck what you want to get done…' })}
+      placeholder={t('composer.placeholder', { defaultValue: 'Tell LawyerBuddy what you want to get done…' })}
       textareaRef={textareaRef}
       inputHighlightRef={inputHighlightRef}
       renderInputWithMentions={renderInputWithMentions}
@@ -870,7 +870,7 @@ function ChatInterfaceV2({
               <MessageSquare className="h-4 w-4" strokeWidth={1.8} />
             </div>
             <p className="text-[13px] font-medium text-neutral-700 dark:text-neutral-300">
-              {t('workspace.emptyTitle', { defaultValue: 'Ask PilotDeck about this project' })}
+              {t('workspace.emptyTitle', { defaultValue: 'Ask LawyerBuddy about this project' })}
             </p>
             <p className="mt-1 max-w-56 text-[12px] leading-5 text-neutral-400 dark:text-neutral-500">
               {t('workspace.emptyDescription', {
@@ -926,7 +926,7 @@ function ChatInterfaceV2({
           loadAllMessages={loadAllMessages}
           allMessagesLoaded={allMessagesLoaded}
           isLoadingAllMessages={isLoadingAllMessages}
-          provider={'pilotdeck' as Provider}
+          provider={'lawyerbuddy' as Provider}
           selectedProject={selectedProject}
           selectedSession={selectedSession}
           createDiff={createDiff}
@@ -940,7 +940,7 @@ function ChatInterfaceV2({
           isAssistantWorking={isLoading}
           sessionRuntimeState={sessionRuntimeState}
           activeRunId={activeRunId}
-          workingStatus={claudeStatus || pilotDeckStatus}
+          workingStatus={claudeStatus || lawyerBuddyStatus}
           runMode={runMode}
           planModeActive={effectivePermissionMode === 'plan'}
           sessionStore={sessionStore}

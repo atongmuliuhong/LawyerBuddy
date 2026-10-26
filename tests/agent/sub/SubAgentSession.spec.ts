@@ -27,14 +27,14 @@ import {
   createDefaultPermissionContext,
 } from "../../../src/permission/index.js";
 import { createBashTool } from "../../../src/tool/builtin/bash.js";
-import type { PilotDeckCommandRunner } from "../../../src/tool/builtin/bash/commandRunner.js";
+import type { LawyerBuddyCommandRunner } from "../../../src/tool/builtin/bash/commandRunner.js";
 import { createExecuteCodeTool } from "../../../src/tool/builtin/executeCode.js";
 import { ToolRuntime } from "../../../src/tool/execution/ToolRuntime.js";
 import {
   ToolRegistry,
-  type PilotDeckSubagentForkApi,
-  type PilotDeckToolDefinition,
-  type PilotDeckToolRuntimeContext,
+  type LawyerBuddySubagentForkApi,
+  type LawyerBuddyToolDefinition,
+  type LawyerBuddyToolRuntimeContext,
 } from "../../../src/tool/index.js";
 import type { CanonicalMessage } from "../../../src/model/index.js";
 import { loadPilotConfig } from "../../../src/pilot/index.js";
@@ -65,13 +65,13 @@ type TestableAgentLoop = {
   buildSubagentForkApi(
     input: AgentLoopInput,
     messages: CanonicalMessage[],
-  ): PilotDeckSubagentForkApi;
+  ): LawyerBuddySubagentForkApi;
 };
 
 function createNoopTool(
   name: string,
-  isReadOnly: PilotDeckToolDefinition["isReadOnly"],
-): PilotDeckToolDefinition {
+  isReadOnly: LawyerBuddyToolDefinition["isReadOnly"],
+): LawyerBuddyToolDefinition {
   return {
     name,
     description: `${name} test tool`,
@@ -155,7 +155,7 @@ function parentConfig(): AgentRuntimeConfig {
 
 function createSubagentForkHarness(router: AgentRouterRuntime): {
   events: AgentEvent[];
-  fork: PilotDeckSubagentForkApi;
+  fork: LawyerBuddySubagentForkApi;
 } {
   const events: AgentEvent[] = [];
   const loop = new AgentLoop(parentConfig(), {
@@ -199,7 +199,7 @@ function sessionFor(
   return new SubAgentSession(options) as unknown as TestableSubAgentSession;
 }
 
-function runtimeContext(config: AgentRuntimeConfig): PilotDeckToolRuntimeContext {
+function runtimeContext(config: AgentRuntimeConfig): LawyerBuddyToolRuntimeContext {
   return {
     sessionId: "child-session",
     turnId: "child-turn",
@@ -212,9 +212,9 @@ function runtimeContext(config: AgentRuntimeConfig): PilotDeckToolRuntimeContext
 }
 
 function writePilotConfig(raw: string): string {
-  const pilotHome = mkdtempSync(join(tmpdir(), "pilotdeck-subagent-config-"));
+  const pilotHome = mkdtempSync(join(tmpdir(), "lawyerbuddy-subagent-config-"));
   tempPilotHomes.push(pilotHome);
-  writeFileSync(join(pilotHome, "pilotdeck.yaml"), raw, "utf8");
+  writeFileSync(join(pilotHome, "lawyerbuddy.yaml"), raw, "utf8");
   return pilotHome;
 }
 
@@ -632,7 +632,7 @@ test("configured subagent default remains a router baseline, not a router overri
 
 test("read-only subagent evaluates bash safety from the real command", async () => {
   const commands: string[] = [];
-  const runner: PilotDeckCommandRunner = {
+  const runner: LawyerBuddyCommandRunner = {
     async run(command) {
       commands.push(command);
       return {
@@ -685,7 +685,7 @@ test("read-only execute_code checks the real code instead of crashing on registr
       id: "write-code",
       name: "execute_code",
       input: {
-        code: "from pilotdeck_tools import write_file\nwrite_file('blocked.txt', 'no')",
+        code: "from lawyerbuddy_tools import write_file\nwrite_file('blocked.txt', 'no')",
       },
     },
     runtimeContext(config),

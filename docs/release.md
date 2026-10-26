@@ -1,8 +1,8 @@
-# PilotDeck releases and desktop builds
+# LawyerBuddy releases and desktop builds
 
-PilotDeck keeps Web and desktop sources on `main`. The desktop application is a
+LawyerBuddy keeps Web and desktop sources on `main`. The desktop application is a
 thin Electron shell around the same gateway and Web UI; desktop-specific runtime
-behavior is enabled only when Electron sets `PILOTDECK_DESKTOP=1`.
+behavior is enabled only when Electron sets `LAWYERBUDDY_DESKTOP=1`.
 
 ## Cron upgrade compatibility
 
@@ -85,13 +85,13 @@ files. Changes limited to `docs/` or root README files skip the release unless
 Only the new `vYYYY.MM.DD[-rN]` tags are considered; historical `desktop-v` tags
 are not used as a baseline, so the first unified release builds automatically.
 
-Build scripts use `PILOTDECK_RELEASE_DATE`, `PILOTDECK_RELEASE_REVISION`,
-`PILOTDECK_RELEASE_VERSION`, `PILOTDECK_RELEASE_TAG`, and
-`PILOTDECK_RELEASE_BUILD_TIME` for release metadata. Desktop runtime environment
+Build scripts use `LAWYERBUDDY_RELEASE_DATE`, `LAWYERBUDDY_RELEASE_REVISION`,
+`LAWYERBUDDY_RELEASE_VERSION`, `LAWYERBUDDY_RELEASE_TAG`, and
+`LAWYERBUDDY_RELEASE_BUILD_TIME` for release metadata. Desktop runtime environment
 variables remain separate from these build-time inputs.
 
 Publishing and packaged repository metadata use the repository running the
-workflow. Upstream builds publish to `OpenBMB/PilotDeck`; fork builds publish to
+workflow. Upstream builds publish to `OpenBMB/LawyerBuddy`; fork builds publish to
 their own repository.
 
 Desktop updates read the Latest release manifest directly. The Web About page
@@ -101,7 +101,7 @@ updates retain their supported Git deployment policy in [Web updates](web-update
 ## Desktop updates
 
 The client reads `release.json` from the GitHub Release explicitly marked
-**Latest** in its packaged repository (or `PILOTDECK_UPDATE_REPOSITORY` override).
+**Latest** in its packaged repository (or `LAWYERBUDDY_UPDATE_REPOSITORY` override).
 The release workflow marks each completed release Latest. The client validates
 the manifest's tag, numeric version, repository, source commit format, asset
 names, sizes and checksums. That version is compared numerically
@@ -147,7 +147,7 @@ a failed stop aborts installation and retains process records for recovery.
 
 Release checks, manifests, update feeds and payload downloads share the
 `electron-updater` network session. It reads the user's `proxy.url` and
-`proxy.noProxy`; proxy environment variables (`PILOTDECK_PROXY`, `https_proxy`,
+`proxy.noProxy`; proxy environment variables (`LAWYERBUDDY_PROXY`, `https_proxy`,
 `HTTPS_PROXY`, `http_proxy`, `HTTP_PROXY`, in that order) take precedence.
 Loopback traffic always bypasses the proxy for the local Mac updater. Proxy
 settings refresh before checking and remain fixed during an active update.
@@ -207,19 +207,19 @@ Windows installer does not require a signing certificate. GitHub's automatic
 
 ```bash
 pnpm install --frozen-lockfile
-pnpm --filter pilotdeck-desktop test
+pnpm --filter lawyerbuddy-desktop test
 # Run the command matching the Mac host architecture:
-pnpm --filter pilotdeck-desktop dist:mac:arm64
-pnpm --filter pilotdeck-desktop dist:mac:x64
+pnpm --filter lawyerbuddy-desktop dist:mac:arm64
+pnpm --filter lawyerbuddy-desktop dist:mac:x64
 # Run the following on Windows:
-pnpm --filter pilotdeck-desktop dist:win
+pnpm --filter lawyerbuddy-desktop dist:win
 # On native Ubuntu 22.04 hosts with matching architectures:
-pnpm --filter pilotdeck-desktop dist:linux:x64
-pnpm --filter pilotdeck-desktop dist:linux:arm64
+pnpm --filter lawyerbuddy-desktop dist:linux:x64
+pnpm --filter lawyerbuddy-desktop dist:linux:arm64
 ```
 
 Local macOS builds can use ad-hoc signing. Set
-`PILOTDECK_DESKTOP_REQUIRE_SIGNING=1` to enforce production signing locally.
+`LAWYERBUDDY_DESKTOP_REQUIRE_SIGNING=1` to enforce production signing locally.
 
 When a root or UI dependency used by the desktop runtime changes, update
 `apps/desktop/runtime/package.json`, then refresh its dedicated lockfile with:
@@ -245,8 +245,8 @@ After compiling the desktop main process, run the real Electron networking
 check with the installed development Electron binary:
 
 ```sh
-pnpm --filter pilotdeck-desktop compile
-pnpm --filter pilotdeck-desktop exec electron scripts/verify-update-network.cjs
+pnpm --filter lawyerbuddy-desktop compile
+pnpm --filter lawyerbuddy-desktop exec electron scripts/verify-update-network.cjs
 node apps/desktop/scripts/verify-installer.cjs
 ```
 

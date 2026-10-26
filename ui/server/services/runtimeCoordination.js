@@ -1,15 +1,15 @@
 import { getModelConfigurationState } from './modelConfigurationState.js';
 
-const CONFIGURATION_MESSAGE = 'pilotdeck:configuration-state';
-const GATEWAY_STATE_MESSAGE = 'pilotdeck:gateway-state';
-const GATEWAY_RETRY_MESSAGE = 'pilotdeck:retry-gateway';
+const CONFIGURATION_MESSAGE = 'lawyerbuddy:configuration-state';
+const GATEWAY_STATE_MESSAGE = 'lawyerbuddy:gateway-state';
+const GATEWAY_RETRY_MESSAGE = 'lawyerbuddy:retry-gateway';
 
 export function createRuntimeCoordination({
   processLike = process,
   env = process.env,
   readConfigurationState = getModelConfigurationState,
 } = {}) {
-  const supervised = env.PILOTDECK_RUNTIME_SUPERVISED === '1'
+  const supervised = env.LAWYERBUDDY_RUNTIME_SUPERVISED === '1'
     && typeof processLike.send === 'function';
   let gateway = supervised ? { state: 'stopped' } : { state: 'unmanaged' };
   let configuration = null;

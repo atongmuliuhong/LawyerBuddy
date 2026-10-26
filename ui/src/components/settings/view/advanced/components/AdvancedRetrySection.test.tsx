@@ -1,10 +1,10 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import AdvancedRetrySection from './AdvancedRetrySection';
-import type { PilotDeckConfig } from '../../modelPool/types';
+import type { LawyerBuddyConfig } from '../../modelPool/types';
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 afterEach(cleanup);
-const config = { schemaVersion: 1, agent: { model: 'selected/model' }, model: { providers: { first: { models: { model: {} }, retry: { requestMaxRetries: 7 } }, selected: { models: { model: {} }, retry: { requestMaxRetries: 2 } } } } } as PilotDeckConfig;
+const config = { schemaVersion: 1, agent: { model: 'selected/model' }, model: { providers: { first: { models: { model: {} }, retry: { requestMaxRetries: 7 } }, selected: { models: { model: {} }, retry: { requestMaxRetries: 2 } } } } } as LawyerBuddyConfig;
 it('edits only the current main model provider, even when another provider is listed first', async () => {
   const save = vi.fn().mockResolvedValue(true);
   render(<AdvancedRetrySection config={config} onSave={save} saving={false} />);

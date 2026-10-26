@@ -4,12 +4,12 @@ const mock = await vi.hoisted(async () => {
     const { tmpdir } = await import('node:os');
     const { join } = await import('node:path');
     const previousHome = process.env.PILOT_HOME;
-    const home = mkdtempSync(join(tmpdir(), 'pilotdeck-sending-'));
+    const home = mkdtempSync(join(tmpdir(), 'lawyerbuddy-sending-'));
     process.env.PILOT_HOME = home;
     return { gateway: null, home, previousHome };
 });
 vi.mock('./services/gatewayConnectionCache.js', () => ({ createGatewayConnectionCache: () => ({ get: async () => mock.gateway, invalidate: () => {} }) }));
-import { enqueueInputViaGateway, getInputQueueStateViaGateway, serializeQueuedInputForStorage, runChatViaGateway } from './pilotdeck-bridge.js';
+import { enqueueInputViaGateway, getInputQueueStateViaGateway, serializeQueuedInputForStorage, runChatViaGateway } from './lawyerbuddy-bridge.js';
 import { rm } from 'node:fs/promises';
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return { promise, resolve }; };
 const item = id => ({ id, runId: id, command: 'fixture', displayText: id, options: { projectPath: '/tmp/sending-project' } });
@@ -84,7 +84,7 @@ it.each([false, true])('acknowledges a retry after execution without dispatching
     let enqueue = enqueueInputViaGateway;
     if (restart) {
         vi.resetModules();
-        enqueue = (await import('./pilotdeck-bridge.js')).enqueueInputViaGateway;
+        enqueue = (await import('./lawyerbuddy-bridge.js')).enqueueInputViaGateway;
     }
     const retry = await enqueue(sid, first, writer);
     expect(retry).toMatchObject({ok: true, state: {items: []}});
@@ -97,7 +97,7 @@ it.each([false, true])('acknowledges a retry after execution without dispatching
 it('assigns a real ID before startup failure without acknowledging the input', async () => {
     const frames = [];
     const result = await runChatViaGateway('fixture', { projectPath: '/tmp/sending-project', runId: 'failed-start' },
-        { send: frame => frames.push(frame) }, 'pilotdeck', {
+        { send: frame => frames.push(frame) }, 'lawyerbuddy', {
             getGateway: async () => { throw new Error('Gateway unavailable'); },
         });
     expect(frames.find(frame => frame.kind === 'session_created')?.newSessionId).toBe(result.sessionKey);

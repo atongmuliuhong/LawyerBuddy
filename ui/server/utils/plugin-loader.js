@@ -7,7 +7,7 @@ import { prepareCliSpawn } from './processSpawn.js';
 // 与 src/pilot/paths.ts 保持一致：优先使用 PILOT_HOME，Windows 下默认放到 D 盘。
 const PILOT_HOME_DIR =
   process.env.PILOT_HOME ||
-  (process.platform === 'win32' ? 'D:\\lawbuddy\\runtime\\home' : path.join(os.homedir(), '.pilotdeck'));
+  (process.platform === 'win32' ? 'D:\\lawbuddy\\runtime\\home' : path.join(os.homedir(), '.lawyerbuddy'));
 const PLUGINS_DIR = path.join(PILOT_HOME_DIR, 'plugins');
 const PLUGINS_CONFIG_PATH = path.join(PILOT_HOME_DIR, 'plugins.json');
 

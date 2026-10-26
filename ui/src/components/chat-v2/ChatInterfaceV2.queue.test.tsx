@@ -103,8 +103,8 @@ const createChatSessionState = (overrides: Record<string, unknown> = {}) => ({
   canAbortSession: true, setCanAbortSession: vi.fn(), isAborting: false, setIsAborting: vi.fn(),
   setIsUserScrolledUp: vi.fn(), tokenBudget: null, setTokenBudget: vi.fn(), visibleMessageCount: 0,
   visibleMessages: [], loadEarlierMessages: vi.fn(), loadAllMessages: vi.fn(), allMessagesLoaded: true,
-  isLoadingAllMessages: false, claudeStatus: null, pilotDeckStatus: null, setClaudeStatus: vi.fn(),
-  setPilotDeckStatus: vi.fn(), createDiff: vi.fn(), scrollContainerRef: { current: null },
+  isLoadingAllMessages: false, claudeStatus: null, lawyerBuddyStatus: null, setClaudeStatus: vi.fn(),
+  setLawyerBuddyStatus: vi.fn(), createDiff: vi.fn(), scrollContainerRef: { current: null },
   scrollToBottom: vi.fn(), handleScroll: vi.fn(),
   ...overrides,
 });
@@ -133,7 +133,7 @@ describe('ChatInterfaceV2 queue integration', () => {
     });
 
     render(<ChatInterfaceV2 {...({
-      selectedProject: { name: 'PilotDeck', path: '/workspace/PilotDeck', fullPath: '/workspace/PilotDeck' },
+      selectedProject: { name: 'LawyerBuddy', path: '/workspace/LawyerBuddy', fullPath: '/workspace/LawyerBuddy' },
       selectedSession: { id: 'web:s_queue' },
       ws: { readyState: WebSocket.OPEN },
       sendMessage: vi.fn(),
@@ -142,7 +142,7 @@ describe('ChatInterfaceV2 queue integration', () => {
 
     expect(queueMocks.useSessionInputQueue).toHaveBeenCalledWith(expect.objectContaining({
       sessionId: 'web:s_queue',
-      projectPath: '/workspace/PilotDeck',
+      projectPath: '/workspace/LawyerBuddy',
     }));
     expect(screen.getByRole('region', { name: 'Queued messages' })).toBeTruthy();
     expect(screen.getByText('Keep the main queue')).toBeTruthy();
@@ -159,9 +159,9 @@ describe('ChatInterfaceV2 queue integration', () => {
       selectedProject: null,
       selectedSession: null,
       workspaceBinding: {
-        name: 'pilotdeck',
-        displayName: 'PilotDeck',
-        fullPath: '/workspace/PilotDeck',
+        name: 'lawyerbuddy',
+        displayName: 'LawyerBuddy',
+        fullPath: '/workspace/LawyerBuddy',
       },
       projects: [],
       ws: null,
@@ -169,7 +169,7 @@ describe('ChatInterfaceV2 queue integration', () => {
     } as any)} />);
 
     expect(screen.getByRole('heading', {
-      name: 'What do you want us to build in PilotDeck?',
+      name: 'What do you want us to build in LawyerBuddy?',
     })).toBeTruthy();
   });
 

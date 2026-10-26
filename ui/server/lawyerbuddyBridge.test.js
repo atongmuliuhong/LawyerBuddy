@@ -27,25 +27,25 @@ import {
     serializeQueuedInputForStorage,
     syncLocalActiveRunFromSnapshot,
     uiFilesToAttachments,
-} from './pilotdeck-bridge.js';
+} from './lawyerbuddy-bridge.js';
 
 describe('model block identity', () => {
     it('preserves absolute snapshots and explicit end boundaries for parent and child streams', () => {
         const timeline = { version: 1, turnId: 'child-turn', id: 'thought', order: 2, revision: 8 };
         const streamBoundary = { turnId: 'child-turn', through: 2, revision: 9 };
         expect(gatewayEventToFrames({ type: 'assistant_block', runId: 'parent', blockId: 'thought',
-            kind: 'thinking', text: 'complete', timeline }, 'session', 'pilotdeck')[0])
+            kind: 'thinking', text: 'complete', timeline }, 'session', 'lawyerbuddy')[0])
             .toMatchObject({ timeline, kind: 'thinking', content: 'complete', isFinal: true });
         expect(gatewayEventToFrames({ type: 'agent_status', runId: 'parent', event: 'subagent_thinking_delta',
-            timeline, streamState: 'closed', detail: { subagentId: 'child', text: 'complete' } }, 'session', 'pilotdeck')[0])
+            timeline, streamState: 'closed', detail: { subagentId: 'child', text: 'complete' } }, 'session', 'lawyerbuddy')[0])
             .toMatchObject({ timeline, streamState: 'closed', subagentId: 'child', content: 'complete' });
         expect(gatewayEventToFrames({ type: 'agent_status', runId: 'parent', event: 'subagent_stream_end',
-            streamBoundary, detail: { subagentId: 'child' } }, 'session', 'pilotdeck')[0])
+            streamBoundary, detail: { subagentId: 'child' } }, 'session', 'lawyerbuddy')[0])
             .toMatchObject({ streamBoundary, kind: 'stream_end', subagentId: 'child' });
     });
     it('preserves model block identity on both live output kinds', () => {
         for (const type of ['assistant_text_delta', 'assistant_thinking_delta']) {
-            expect(gatewayEventToFrames({ type, runId: 'turn-1', text: 'same', blockId: `${type}:1` }, 'session', 'pilotdeck'))
+            expect(gatewayEventToFrames({ type, runId: 'turn-1', text: 'same', blockId: `${type}:1` }, 'session', 'lawyerbuddy'))
                 .toEqual([expect.objectContaining({ blockId: `${type}:1`, runId: 'turn-1', content: 'same' })]);
         }
     });
@@ -92,7 +92,7 @@ describe('queued input persistence', () => {
     });
 
     it('stores uploaded images by path and restores their data URL on dispatch', async () => {
-        const root = await mkdtemp(join(tmpdir(), 'pilotdeck-queue-image-'));
+        const root = await mkdtemp(join(tmpdir(), 'lawyerbuddy-queue-image-'));
         const imagePath = join(root, 'image.png');
         try {
             await writeFile(imagePath, Buffer.from('queued-image'));
@@ -421,7 +421,7 @@ describe('activity snapshot ordering', () => {
         const returned = scheduleQueuedDispatchAfterActivityCheck(
             state,
             { send: vi.fn() },
-            'pilotdeck',
+            'lawyerbuddy',
             {
                 getGateway: async () => ({
                     getActiveTurnSnapshot: () => snapshot.promise,
@@ -464,14 +464,14 @@ describe('activity snapshot ordering', () => {
         const result = resumeInputQueueState(
             state,
             writer,
-            'pilotdeck',
+            'lawyerbuddy',
             { scheduleDispatch },
         );
 
         expect(result).toMatchObject({ ok: true });
         expect(state.queuePaused).toBe(false);
         expect(scheduleDispatch).toHaveBeenCalledOnce();
-        expect(scheduleDispatch).toHaveBeenCalledWith(state, writer, 'pilotdeck');
+        expect(scheduleDispatch).toHaveBeenCalledWith(state, writer, 'lawyerbuddy');
     });
 });
 
@@ -520,9 +520,9 @@ describe('web attachment conversion', () => {
             images: [], attachments: [], displayAttachments: [preview],
             uploadedAttachments: [{ uploadId: 'u', attachmentIds: ['a'] }],
         } };
-        expect(queuedUserFrame(item, 'web:session', 'run-1', 'pilotdeck').attachments).toEqual([preview]);
+        expect(queuedUserFrame(item, 'web:session', 'run-1', 'lawyerbuddy').attachments).toEqual([preview]);
         expect(uiFilesToAttachments(item.options.attachments)).toBeUndefined();
-        expect(queuedUserFrame({ ...item, options: { attachments: [preview] } }, 'web:session', 'run-1', 'pilotdeck').attachments)
+        expect(queuedUserFrame({ ...item, options: { attachments: [preview] } }, 'web:session', 'run-1', 'lawyerbuddy').attachments)
             .toEqual([preview]);
     });
     it('marks uploaded files with the web channel key', () => {
@@ -568,7 +568,7 @@ describe('gatewayEventToFrames agent status errors', () => {
             type: 'steer_unapplied',
             itemId: 'queue-1',
             reason: 'turn_ended',
-        }, 'web:s_test', 'pilotdeck')).toEqual([]);
+        }, 'web:s_test', 'lawyerbuddy')).toEqual([]);
     });
 
     it('renders applied guidance as a user message with its queue identity', () => {
@@ -579,7 +579,7 @@ describe('gatewayEventToFrames agent status errors', () => {
                 role: 'user',
                 content: [{ type: 'text', text: 'Use HTML instead' }],
             },
-        }, 'web:s_test', 'pilotdeck');
+        }, 'web:s_test', 'lawyerbuddy');
 
         expect(frames).toHaveLength(1);
         expect(frames[0]).toMatchObject({
@@ -605,7 +605,7 @@ describe('gatewayEventToFrames agent status errors', () => {
                 'data:image/jpeg;base64,def',
                 { name: 'missing-data.png' },
             ],
-        }, 'web:s_test', 'pilotdeck');
+        }, 'web:s_test', 'lawyerbuddy');
 
         expect(frames[0].images).toEqual([
             'data:image/png;base64,abc',
@@ -617,16 +617,16 @@ describe('gatewayEventToFrames agent status errors', () => {
         const frames = gatewayEventToFrames({
             type: 'tool_result_detail_available',
             toolCallId: 'call-large',
-            resultPath: '/tmp/pilotdeck/tool-result.txt',
+            resultPath: '/tmp/lawyerbuddy/tool-result.txt',
             fullText: 'x'.repeat(100000),
-        }, 'web:s_test', 'pilotdeck');
+        }, 'web:s_test', 'lawyerbuddy');
 
         expect(frames).toHaveLength(1);
         expect(frames[0]).toMatchObject({
             kind: 'tool_result',
             toolId: 'call-large',
-            content: 'Full tool result persisted at /tmp/pilotdeck/tool-result.txt',
-            resultPath: '/tmp/pilotdeck/tool-result.txt',
+            content: 'Full tool result persisted at /tmp/lawyerbuddy/tool-result.txt',
+            resultPath: '/tmp/lawyerbuddy/tool-result.txt',
         });
         expect(frames[0].fullText).toBeUndefined();
     });
@@ -637,7 +637,7 @@ describe('gatewayEventToFrames agent status errors', () => {
             toolCallId: 'call-large',
             ok: true,
             resultPreview: `head\n${'x'.repeat(50000)}\ntail`,
-        }, 'web:s_test', 'pilotdeck');
+        }, 'web:s_test', 'lawyerbuddy');
 
         expect(frames).toHaveLength(1);
         expect(frames[0].kind).toBe('tool_result');
@@ -656,7 +656,7 @@ describe('gatewayEventToFrames agent status errors', () => {
                 userHint: 'Increase max output tokens.',
                 visible: true,
             },
-        }, 'web:s_test', 'pilotdeck');
+        }, 'web:s_test', 'lawyerbuddy');
 
         expect(frames).toHaveLength(1);
         expect(frames[0]).toMatchObject({
@@ -679,7 +679,7 @@ describe('gatewayEventToFrames agent status errors', () => {
                 userHintI18n: { key: 'chat:agentStatus.modelRequestFailed.actions.settingsDefault' },
                 visible: true,
             },
-        }, 'web:s_test', 'pilotdeck');
+        }, 'web:s_test', 'lawyerbuddy');
 
         expect(frames).toHaveLength(1);
         expect(frames[0]).toMatchObject({
@@ -706,7 +706,7 @@ describe('gatewayEventToFrames agent status errors', () => {
                 scope: 'turn',
                 source: 'web_bridge',
             },
-        }, 'web:s_test', 'pilotdeck');
+        }, 'web:s_test', 'lawyerbuddy');
 
         expect(frames).toHaveLength(1);
         expect(frames[0]).toMatchObject({
@@ -738,7 +738,7 @@ describe('gatewayEventToFrames agent status errors', () => {
                     source: 'compact',
                 },
             },
-        }, 'web:s_test', 'pilotdeck');
+        }, 'web:s_test', 'lawyerbuddy');
 
         expect(frames).toHaveLength(1);
         expect(frames[0]).toMatchObject({
@@ -769,8 +769,8 @@ describe('gatewayEventToFrames agent status errors', () => {
             },
         };
 
-        const first = gatewayEventToFrames(event, 'web:s_test', 'pilotdeck')[0];
-        const replayed = gatewayEventToFrames(event, 'web:s_test', 'pilotdeck')[0];
+        const first = gatewayEventToFrames(event, 'web:s_test', 'lawyerbuddy')[0];
+        const replayed = gatewayEventToFrames(event, 'web:s_test', 'lawyerbuddy')[0];
 
         expect(first.id).toBe('compact_boundary:web:s_test:run-1:compact-1');
         expect(replayed.id).toBe(first.id);
@@ -785,7 +785,7 @@ describe('gatewayEventToFrames agent status errors', () => {
                 subagentId: 'child-parent-run-test',
                 subagentType: 'general-purpose',
             },
-        }, 'web:s_test', 'pilotdeck');
+        }, 'web:s_test', 'lawyerbuddy');
 
         expect(frames.find((frame) => frame.kind === 'agent_activity')).toMatchObject({
             runId: 'subagent:child-parent-run-test',
@@ -806,7 +806,7 @@ describe('gatewayEventToFrames agent status errors', () => {
                 aborted: true,
                 durationMs: 100,
             },
-        }, 'web:s_test', 'pilotdeck');
+        }, 'web:s_test', 'lawyerbuddy');
 
         expect(frames.find((frame) => frame.kind === 'agent_activity')).toMatchObject({
             parentRunId: 'run-parent',
@@ -822,23 +822,23 @@ describe('gatewayEventToFrames agent status errors', () => {
             type: 'agent_status',
             event: 'gateway_unavailable',
             detail: {
-                message: 'PilotDeck gateway is unavailable.',
+                message: 'LawyerBuddy gateway is unavailable.',
                 code: 'gateway_unavailable',
                 severity: 'error',
                 visible: true,
-                userHint: 'Start or restart the PilotDeck gateway, then retry this message.',
+                userHint: 'Start or restart the LawyerBuddy gateway, then retry this message.',
                 scope: 'preflight',
                 source: 'web_bridge',
             },
-        }, 'web:s_test', 'pilotdeck');
+        }, 'web:s_test', 'lawyerbuddy');
 
         expect(frames).toHaveLength(1);
         expect(frames[0]).toMatchObject({
             kind: 'error',
             terminal: true,
-            content: 'PilotDeck gateway is unavailable.',
+            content: 'LawyerBuddy gateway is unavailable.',
             code: 'gateway_unavailable',
-            userHint: 'Start or restart the PilotDeck gateway, then retry this message.',
+            userHint: 'Start or restart the LawyerBuddy gateway, then retry this message.',
         });
     });
 });
@@ -848,7 +848,7 @@ describe('isGatewayUnavailableError', () => {
         expect(isGatewayUnavailableError(new Error('Gateway WebSocket is not connected.'))).toBe(true);
         expect(isGatewayUnavailableError(new Error('Gateway WebSocket closed.'))).toBe(true);
         expect(isGatewayUnavailableError(new Error('Gateway closed during hello: auth_failed'))).toBe(true);
-        expect(isGatewayUnavailableError(new Error('[pilotdeck-bridge] gateway connect failed after 60000ms'))).toBe(true);
+        expect(isGatewayUnavailableError(new Error('[lawyerbuddy-bridge] gateway connect failed after 60000ms'))).toBe(true);
     });
 
     it('does not classify generic bridge failures as gateway unavailable', () => {
@@ -904,7 +904,7 @@ describe('Always-On turn notification forwarding', () => {
             type: 'error',
             code: 'gateway_disconnected',
             message: 'The gateway connection was lost.',
-        }, 'cron:task-1', 'pilotdeck')[0]).toMatchObject({
+        }, 'cron:task-1', 'lawyerbuddy')[0]).toMatchObject({
             kind: 'error',
             terminal: true,
         });
@@ -919,7 +919,7 @@ describe('Always-On turn notification forwarding', () => {
                 code: 'session_busy',
                 visible: true,
             },
-        }, 'cron:task-1', 'pilotdeck')[0]).toMatchObject({
+        }, 'cron:task-1', 'lawyerbuddy')[0]).toMatchObject({
             kind: 'error',
             code: 'session_busy',
             terminal: false,
@@ -929,7 +929,7 @@ describe('Always-On turn notification forwarding', () => {
             type: 'error',
             code: 'session_busy',
             message: 'The session already has an active turn.',
-        }, 'cron:task-1', 'pilotdeck')[0]).toMatchObject({
+        }, 'cron:task-1', 'lawyerbuddy')[0]).toMatchObject({
             kind: 'error',
             code: 'session_busy',
             terminal: false,
@@ -947,16 +947,16 @@ describe('dialog model preference frames', () => {
 
     it('distinguishes accepted choices from routed execution models', () => {
         const sessionId = 'web:s';
-        const accepted = gatewayEventToFrames({ type: 'input_accepted', runId: 'run-1', modelSelection: { mode: 'auto' } }, sessionId, 'pilotdeck');
-        expect(accepted).toEqual([{ type: 'model-selection-saved', sessionId, provider: 'pilotdeck', runId: 'run-1', selection: { mode: 'auto' } }]);
-        const running = gatewayEventToFrames({ type: 'model_selection_changed', runId: 'run-1', provider: 'chosen', model: 'routed', source: 'router' }, sessionId, 'pilotdeck');
+        const accepted = gatewayEventToFrames({ type: 'input_accepted', runId: 'run-1', modelSelection: { mode: 'auto' } }, sessionId, 'lawyerbuddy');
+        expect(accepted).toEqual([{ type: 'model-selection-saved', sessionId, provider: 'lawyerbuddy', runId: 'run-1', selection: { mode: 'auto' } }]);
+        const running = gatewayEventToFrames({ type: 'model_selection_changed', runId: 'run-1', provider: 'chosen', model: 'routed', source: 'router' }, sessionId, 'lawyerbuddy');
         expect(running[0]).toMatchObject({ type: 'model-selection-changed', modelProvider: 'chosen', model: 'routed', runId: 'run-1' });
     });
 });
 
 
 it('carries the actual model on assistant text deltas', () => {
-  const frames = gatewayEventToFrames({ type: 'assistant_text_delta', text: 'Hello', model: 'qwen3.8-27b', runId: 'run-model' }, 'web:model', 'pilotdeck');
+  const frames = gatewayEventToFrames({ type: 'assistant_text_delta', text: 'Hello', model: 'qwen3.8-27b', runId: 'run-model' }, 'web:model', 'lawyerbuddy');
   expect(frames[0]).toMatchObject({ kind: 'stream_delta', model: 'qwen3.8-27b', content: 'Hello', runId: 'run-model' });
 });
 

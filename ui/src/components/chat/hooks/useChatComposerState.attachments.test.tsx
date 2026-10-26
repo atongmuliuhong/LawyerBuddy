@@ -54,7 +54,7 @@ describe('useChatComposerState attachment submission', () => {
       isLoading: true, canAbortSession: true, tokenBudget: null, sendMessage: vi.fn(), enqueuePreparedInput,
       pendingViewSessionRef: { current: null }, scrollToBottom: vi.fn(), addMessage: vi.fn(),
       clearMessages: vi.fn(), rewindMessages: vi.fn(), setIsLoading: vi.fn(), setCanAbortSession: vi.fn(),
-      setIsAborting: vi.fn(), setClaudeStatus: vi.fn(), setPilotDeckStatus: vi.fn(), setIsUserScrolledUp: vi.fn(),
+      setIsAborting: vi.fn(), setClaudeStatus: vi.fn(), setLawyerBuddyStatus: vi.fn(), setIsUserScrolledUp: vi.fn(),
       pendingPermissionRequests: [], setPendingPermissionRequests: vi.fn(),
     };
     let view = renderHook(() => useChatComposerState(options));
@@ -98,7 +98,7 @@ describe('useChatComposerState attachment submission', () => {
       canAbortSession: queued, tokenBudget: null, sendMessage, enqueuePreparedInput,
       pendingViewSessionRef: { current: null }, scrollToBottom: vi.fn(), addMessage: vi.fn(),
       clearMessages: vi.fn(), rewindMessages: vi.fn(), setIsLoading: vi.fn(), setCanAbortSession: vi.fn(),
-      setIsAborting: vi.fn(), setClaudeStatus: vi.fn(), setPilotDeckStatus: vi.fn(), setIsUserScrolledUp: vi.fn(),
+      setIsAborting: vi.fn(), setClaudeStatus: vi.fn(), setLawyerBuddyStatus: vi.fn(), setIsUserScrolledUp: vi.fn(),
       pendingPermissionRequests: [], setPendingPermissionRequests: vi.fn(),
     }), { initialProps: { modelSelection: initialChoice as import('./useChatProviderState').ChatModelSelection } });
     act(() => {
@@ -143,7 +143,7 @@ describe('useChatComposerState attachment submission', () => {
       isLoading: queued, canAbortSession: queued, tokenBudget: null, sendMessage, enqueuePreparedInput,
       pendingViewSessionRef: { current: null }, scrollToBottom: vi.fn(), addMessage,
       clearMessages: vi.fn(), rewindMessages: vi.fn(), setIsLoading: vi.fn(), setCanAbortSession: vi.fn(),
-      setIsAborting: vi.fn(), setClaudeStatus: vi.fn(), setPilotDeckStatus: vi.fn(), setIsUserScrolledUp: vi.fn(),
+      setIsAborting: vi.fn(), setClaudeStatus: vi.fn(), setLawyerBuddyStatus: vi.fn(), setIsUserScrolledUp: vi.fn(),
       pendingPermissionRequests: [], setPendingPermissionRequests: vi.fn(),
     };
     const { result } = renderHook(() => useChatComposerState(options));
@@ -201,7 +201,7 @@ describe('useChatComposerState attachment submission', () => {
       setCanAbortSession: vi.fn(),
       setIsAborting: vi.fn(),
       setClaudeStatus: vi.fn(),
-      setPilotDeckStatus: vi.fn(),
+      setLawyerBuddyStatus: vi.fn(),
       setIsUserScrolledUp: vi.fn(),
       pendingPermissionRequests: [],
       setPendingPermissionRequests: vi.fn(),
@@ -261,7 +261,7 @@ describe('useChatComposerState attachment submission', () => {
       setCanAbortSession,
       setIsAborting: vi.fn(),
       setClaudeStatus: vi.fn(),
-      setPilotDeckStatus: vi.fn(),
+      setLawyerBuddyStatus: vi.fn(),
       setIsUserScrolledUp: vi.fn(),
       pendingPermissionRequests: [],
       setPendingPermissionRequests: vi.fn(),
@@ -340,7 +340,7 @@ describe('useChatComposerState attachment submission', () => {
       setCanAbortSession: vi.fn(),
       setIsAborting: vi.fn(),
       setClaudeStatus: vi.fn(),
-      setPilotDeckStatus: vi.fn(),
+      setLawyerBuddyStatus: vi.fn(),
       setIsUserScrolledUp: vi.fn(),
       pendingPermissionRequests: [],
       setPendingPermissionRequests: vi.fn(),
@@ -395,7 +395,7 @@ describe('useChatComposerState attachment submission', () => {
       onSessionActivityBump,
       pendingViewSessionRef: { current: null }, scrollToBottom: vi.fn(), addMessage,
       clearMessages: vi.fn(), rewindMessages: vi.fn(), setIsLoading: vi.fn(), setCanAbortSession: vi.fn(),
-      setIsAborting: vi.fn(), setClaudeStatus: vi.fn(), setPilotDeckStatus: vi.fn(), setIsUserScrolledUp: vi.fn(),
+      setIsAborting: vi.fn(), setClaudeStatus: vi.fn(), setLawyerBuddyStatus: vi.fn(), setIsUserScrolledUp: vi.fn(),
       pendingPermissionRequests: [], setPendingPermissionRequests: vi.fn(),
     };
     const { result } = renderHook(() => useChatComposerState(options));

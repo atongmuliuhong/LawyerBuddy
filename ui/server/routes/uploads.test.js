@@ -9,8 +9,8 @@ const gateway = vi.hoisted(() => ({
   listProjects: vi.fn(async () => ({ projects: [] })),
 }));
 
-vi.mock('../pilotdeck-bridge.js', () => ({
-  getPilotDeckGateway: vi.fn(async () => gateway),
+vi.mock('../lawyerbuddy-bridge.js', () => ({
+  getLawyerBuddyGateway: vi.fn(async () => gateway),
 }));
 
 const nativeFetch = globalThis.fetch;
@@ -64,7 +64,7 @@ describe('upload routes', () => {
   }, 20_000);
 
   it('serves a verified uploaded image without placing it in a queue frame', async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'pilotdeck-preview-'));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'lawyerbuddy-preview-'));
     temporaryRoots.push(root);
     process.env.PILOT_HOME = await fs.realpath(root);
     const { app, store } = await createUploadsApp();
@@ -124,7 +124,7 @@ describe('upload routes', () => {
   });
 
   it('accepts controlled attachment uploads for the General conversation key', async () => {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'pilotdeck-general-upload-'));
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'lawyerbuddy-general-upload-'));
     temporaryRoots.push(root);
     process.env.PILOT_HOME = path.join(root, 'pilot-home');
     await fs.mkdir(process.env.PILOT_HOME);

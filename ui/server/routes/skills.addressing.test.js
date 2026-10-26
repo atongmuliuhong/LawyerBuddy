@@ -9,8 +9,8 @@ const mocks = vi.hoisted(() => ({
   remove: vi.fn(),
   import: vi.fn(),
 }));
-vi.mock('../pilotdeck-bridge.js', () => ({
-  getPilotDeckGateway: async () => ({
+vi.mock('../lawyerbuddy-bridge.js', () => ({
+  getLawyerBuddyGateway: async () => ({
     skillsList: mocks.list,
     skillRead: mocks.read,
     skillWrite: mocks.write,

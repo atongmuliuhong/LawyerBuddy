@@ -7,7 +7,7 @@ const options = { stdio: ['ignore', 'pipe', 'pipe', 'ipc'] };
 test('Windows Job supervisor survives guardian termination and certifies descendant cleanup', { skip: process.platform !== 'win32', timeout: 120000 }, async () => {
   const child = spawnManaged(process.execPath, ['-e', 'process.send(process.pid);setInterval(()=>{},1000)'], options);
   child.stderr.on('data', data => process.stderr.write(data));
-  const scope = child[Symbol.for('pilotdeck.processScope')];
+  const scope = child[Symbol.for('lawyerbuddy.processScope')];
   try {
     const [pid] = await waitForManagedEvent(child, child, 'message');
     const { job } = JSON.parse(readFileSync(scope.file, 'utf8'));
@@ -74,7 +74,7 @@ test('business background launches and cancellation keep native command semantic
 
 // This must fail promptly on the real failure, including on Windows bootstrap.
 test('a failed command reports its failure instead of waiting indefinitely for IPC', { timeout: 120000 }, async () => {
-  const child = spawnManaged('pilotdeck-nonexistent-test-command', [], options);
+  const child = spawnManaged('lawyerbuddy-nonexistent-test-command', [], options);
   try {
     await assert.rejects(waitForManagedEvent(child, child, 'message'), /exited before message|startup failed/);
   } finally { await stopProcessTree(child, { forceMs: 10000 }); child.stdout.destroy(); child.stderr.destroy(); }

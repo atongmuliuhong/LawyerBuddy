@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  usePilotDeckConfig,
+  useLawyerBuddyConfig,
   type ConfigSaveOptions,
   type ConfigSaveResult,
-} from "../../../../hooks/usePilotDeckConfig";
+} from "../../../../hooks/useLawyerBuddyConfig";
 import { FieldSaveModeProvider } from "../../shared/components/Inputs";
 import { ConfigSaveError } from "../../shared/view";
-import type { PilotDeckConfig } from "./types";
+import type { LawyerBuddyConfig } from "./types";
 import { configToYamlString, safeParseYaml } from "./utils/configYaml";
 import ModelsSection from "./components/ModelsSection";
 import { buildModelRefOptions, ensureModelRefConfigured } from "./utils/modelRefs";
@@ -26,7 +26,7 @@ export default function ModelPoolSections({ title: _title }: ModelPoolSectionsPr
     acceptServerConfig,
     loading,
     error,
-  } = usePilotDeckConfig();
+  } = useLawyerBuddyConfig();
   const parsedConfig = useMemo(() => safeParseYaml(raw), [raw]);
   const [savingModel, setSavingModel] = useState(false);
   const [contextDraft, setContextDraft] = useState("");
@@ -35,7 +35,7 @@ export default function ModelPoolSections({ title: _title }: ModelPoolSectionsPr
   }, [parsedConfig?.agent?.maxContextTokens]);
 
   const onFormChange = async (
-    next: PilotDeckConfig,
+    next: LawyerBuddyConfig,
     options?: ConfigSaveOptions,
   ): Promise<ConfigSaveResult> => {
     try {
@@ -53,7 +53,7 @@ export default function ModelPoolSections({ title: _title }: ModelPoolSectionsPr
   if (loading) {
     return (
       <div className="model-pool-page-content">
-        <div className="provider-empty">{t("pilotDeckConfig.loading")}</div>
+        <div className="provider-empty">{t("lawyerBuddyConfig.loading")}</div>
       </div>
     );
   }
@@ -71,8 +71,8 @@ export default function ModelPoolSections({ title: _title }: ModelPoolSectionsPr
       <ConfigSaveError error={error} />
       <section className="general-card model-pool-default" data-model-reference="agent.model" tabIndex={-1}>
         <GeneralSettingRow
-          title={t("pilotDeckConfig.panels.agents.mainModel.label")}
-          detail={t("pilotDeckConfig.panels.agents.mainModel.description")}
+          title={t("lawyerBuddyConfig.panels.agents.mainModel.label")}
+          detail={t("lawyerBuddyConfig.panels.agents.mainModel.description")}
           htmlFor="pool-main-model"
         >
           <GeneralSelectControl id="pool-main-model" disabled={savingModel}
@@ -88,12 +88,12 @@ export default function ModelPoolSections({ title: _title }: ModelPoolSectionsPr
             }}
           />
         </GeneralSettingRow>
-        <GeneralSettingRow title={t("pilotDeckConfig.panels.agents.mainModel.contextLimit")}
-          detail={t("pilotDeckConfig.panels.agents.mainModel.contextDescription")} htmlFor="pool-context-limit">
+        <GeneralSettingRow title={t("lawyerBuddyConfig.panels.agents.mainModel.contextLimit")}
+          detail={t("lawyerBuddyConfig.panels.agents.mainModel.contextDescription")} htmlFor="pool-context-limit">
           <div className="general-select-wrap">
             <input id="pool-context-limit" type="number" min="1" step="1"
               className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-              placeholder={t("pilotDeckConfig.panels.agents.mainModel.contextDefault")} disabled={savingModel}
+              placeholder={t("lawyerBuddyConfig.panels.agents.mainModel.contextDefault")} disabled={savingModel}
               value={contextDraft} onChange={event => setContextDraft(event.target.value)}
               onKeyDown={event => { if (event.key === "Enter") event.currentTarget.blur(); }}
               onBlur={async event => {

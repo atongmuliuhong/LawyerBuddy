@@ -20,12 +20,12 @@ const assets = files.map((file) => ({
 
 const manifest = {
   schemaVersion: 1,
-  version: requiredEnv("PILOTDECK_RELEASE_VERSION"),
-  tag: requiredEnv("PILOTDECK_RELEASE_TAG"),
-  date: requiredEnv("PILOTDECK_RELEASE_DATE"),
-  buildTime: requiredEnv("PILOTDECK_RELEASE_BUILD_TIME"),
-  sourceSha: requiredEnv("PILOTDECK_COMMIT_SHA"),
-  repository: requiredEnv("PILOTDECK_UPDATE_REPOSITORY"),
+  version: requiredEnv("LAWYERBUDDY_RELEASE_VERSION"),
+  tag: requiredEnv("LAWYERBUDDY_RELEASE_TAG"),
+  date: requiredEnv("LAWYERBUDDY_RELEASE_DATE"),
+  buildTime: requiredEnv("LAWYERBUDDY_RELEASE_BUILD_TIME"),
+  sourceSha: requiredEnv("LAWYERBUDDY_COMMIT_SHA"),
+  repository: requiredEnv("LAWYERBUDDY_UPDATE_REPOSITORY"),
   assets,
 };
 

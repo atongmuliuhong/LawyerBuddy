@@ -22,28 +22,28 @@ describe('workspace file identity', () => {
 
   it('normalizes slash and case differences for a Windows workspace identity', () => {
     expect(getWorkspaceFileIdentity(
-      'C:\\Work\\PilotDeck\\Docs\\Report.xlsx',
-      'c:\\work\\pilotdeck',
+      'C:\\Work\\LawyerBuddy\\Docs\\Report.xlsx',
+      'c:\\work\\lawyerbuddy',
     )).toBe(getWorkspaceFileIdentity(
       'docs/report.xlsx',
-      'c:\\work\\pilotdeck',
+      'c:\\work\\lawyerbuddy',
     ));
   });
 
   it('normalizes Windows file URL pathnames and UNC path casing', () => {
     expect(getWorkspaceFileIdentity(
-      '/C:/Work/PilotDeck/Docs/Report.xlsx',
-      'c:\\work\\pilotdeck',
+      '/C:/Work/LawyerBuddy/Docs/Report.xlsx',
+      'c:\\work\\lawyerbuddy',
     )).toBe(getWorkspaceFileIdentity(
       'docs/report.xlsx',
-      'c:\\work\\pilotdeck',
+      'c:\\work\\lawyerbuddy',
     ));
     expect(getWorkspaceFileIdentity(
-      '\\\\server\\share\\pilotdeck\\Docs\\Report.xlsx',
-      '\\\\Server\\Share\\PilotDeck',
+      '\\\\server\\share\\lawyerbuddy\\Docs\\Report.xlsx',
+      '\\\\Server\\Share\\LawyerBuddy',
     )).toBe(getWorkspaceFileIdentity(
       'docs/report.xlsx',
-      '\\\\Server\\Share\\PilotDeck',
+      '\\\\Server\\Share\\LawyerBuddy',
     ));
   });
 
@@ -54,7 +54,7 @@ describe('workspace file identity', () => {
   });
 
   it('compares Windows paths and descendants case-insensitively', () => {
-    const workspaceRoot = 'C:\\Work\\PilotDeck';
+    const workspaceRoot = 'C:\\Work\\LawyerBuddy';
     expect(isWorkspacePathAtOrBelow(
       'docs/reports/Annual.xlsx',
       'Docs/Reports',
@@ -78,12 +78,12 @@ describe('getWorkspaceRelativePath', () => {
 
   it('normalizes Windows paths and compares drive paths case-insensitively', () => {
     expect(getWorkspaceRelativePath(
-      'C:\\Work\\PilotDeck\\docs\\report.docx',
-      'c:\\work\\pilotdeck',
+      'C:\\Work\\LawyerBuddy\\docs\\report.docx',
+      'c:\\work\\lawyerbuddy',
     )).toBe('docs/report.docx');
     expect(getWorkspaceRelativePath(
-      '/C:/Work/PilotDeck/docs/report.docx',
-      'c:\\work\\pilotdeck',
+      '/C:/Work/LawyerBuddy/docs/report.docx',
+      'c:\\work\\lawyerbuddy',
     )).toBe('docs/report.docx');
   });
 

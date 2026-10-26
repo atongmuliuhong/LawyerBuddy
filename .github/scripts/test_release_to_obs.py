@@ -66,7 +66,7 @@ class ProductionTests(unittest.TestCase):
             result = production.website_manifest(self.release)
             self.assertEqual(set(result), {"tag", "published_at", "assets"})
             self.assertEqual(result["assets"][0], {"name": "installer.exe", "size": 9,
-                "url": f"https://{production.BUCKET}.obs.cn-north-4.myhuaweicloud.com/PilotDeck/{tag}/installer.exe"})
+                "url": f"https://{production.BUCKET}.obs.cn-north-4.myhuaweicloud.com/LawyerBuddy/{tag}/installer.exe"})
         for tag in ("v2026.99.99-r2", "v2026.10.20/../", "v2026.10.20-r0"):
             self.release["tag_name"] = tag
             with self.assertRaises((RuntimeError, ValueError)):
@@ -131,7 +131,7 @@ class ProductionTests(unittest.TestCase):
                 aws.run("upload", [])
             popen.assert_not_called()
         with self.assertRaises(RuntimeError):
-            production.credentials("", "n00069-minicpm-5-0-pilotdeck")
+            production.credentials("", "n00069-minicpm-5-0-lawyerbuddy")
 
 
 if __name__ == "__main__":

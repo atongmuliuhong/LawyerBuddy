@@ -1,4 +1,4 @@
-// Isolated native smoke host: no real PilotDeck runtime, profile or user files.
+// Isolated native smoke host: no real LawyerBuddy runtime, profile or user files.
 const { app, BrowserWindow, ipcMain, Menu, nativeTheme, screen } = require('electron');
 const path = require('node:path');
 const fs = require('node:fs');
@@ -9,9 +9,9 @@ const { WindowsCaptionMenu } = require('../../dist/windowsCaptionMenu');
 const { linuxCaptionEntries, linuxCaptionAction } = require('../../dist/linuxCaptionMenu');
 const { normalizeMenuState, emptyMenuState, commandEnabled } = require('../../dist/desktopCommands');
 const { desktopAboutInfo, presentDesktopAbout } = require('../../dist/desktopAbout');
-const profile = process.env.PILOTDECK_CHROME_PROFILE || fs.mkdtempSync(path.join(os.tmpdir(), 'pilotdeck-chrome-'));
+const profile = process.env.LAWYERBUDDY_CHROME_PROFILE || fs.mkdtempSync(path.join(os.tmpdir(), 'lawyerbuddy-chrome-'));
 app.setPath('userData', profile);
-app.setName('PilotDeck Chrome Test');
+app.setName('LawyerBuddy Chrome Test');
 let window;
 let loaded = false;
 let state = { ...emptyMenuState };
@@ -22,7 +22,7 @@ let captionMenu;
 let aboutDialogs = [], copiedVersion = '', openedWebsite = '';
 function menuTemplate() {
   return buildApplicationMenu(process.platform, appearance.language, undefined, {
-    state, dispatch: command => { if (commandEnabled(command, state)) window.webContents.send('pilotdeck:command', command); },
+    state, dispatch: command => { if (commandEnabled(command, state)) window.webContents.send('lawyerbuddy:command', command); },
     help: action => {
       if (action === 'about') void presentDesktopAbout({ language: appearance.language, appVersion: '0.1.0-test',
         metadata: { version: '2026.930.0-test', buildTime: '2026-09-30T04:00:00Z', commitSha: 'abc123fixture' },
@@ -36,7 +36,7 @@ function menuTemplate() {
 function refresh() {
   Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate()));
   if ((process.platform === 'win32' || process.platform === 'linux') && window) window.setMenuBarVisibility(false);
-  if (process.platform === 'linux' && window && !window.isDestroyed()) window.webContents.send('pilotdeck:application-menu-updated');
+  if (process.platform === 'linux' && window && !window.isDestroyed()) window.webContents.send('lawyerbuddy:application-menu-updated');
 }
 function publish() {
   if (!window) return;
@@ -47,30 +47,30 @@ function publish() {
     color: palette.caption,
     symbolColor: palette.symbol, height: WINDOWS_CAPTION_HEIGHT,
   });
-  window.webContents.send('pilotdeck:window-state', { fullscreen, dark: nativeTheme.shouldUseDarkColors, palette });
+  window.webContents.send('lawyerbuddy:window-state', { fullscreen, dark: nativeTheme.shouldUseDarkColors, palette });
 }
-ipcMain.on('pilotdeck:get-appearance', e => { e.returnValue = appearance; });
-ipcMain.on('pilotdeck:get-window-state', e => { e.returnValue = { fullscreen: window.isFullScreen(), dark: nativeTheme.shouldUseDarkColors, palette: windowPalette(nativeTheme.shouldUseDarkColors, process.platform, appearance.lightAppearance) }; });
-ipcMain.handle('pilotdeck:set-appearance', (_e, value) => { appearance = value; nativeTheme.themeSource = value.themeMode; publish(); refresh(); });
-ipcMain.handle('pilotdeck:menu-state', (_e, value) => { state = normalizeMenuState(value); refresh(); });
-ipcMain.handle('pilotdeck:get-runtime-info', () => null);
-ipcMain.handle('pilotdeck:about-info', () => desktopAboutInfo({ language: appearance.language, appVersion: '0.1.0-test',
+ipcMain.on('lawyerbuddy:get-appearance', e => { e.returnValue = appearance; });
+ipcMain.on('lawyerbuddy:get-window-state', e => { e.returnValue = { fullscreen: window.isFullScreen(), dark: nativeTheme.shouldUseDarkColors, palette: windowPalette(nativeTheme.shouldUseDarkColors, process.platform, appearance.lightAppearance) }; });
+ipcMain.handle('lawyerbuddy:set-appearance', (_e, value) => { appearance = value; nativeTheme.themeSource = value.themeMode; publish(); refresh(); });
+ipcMain.handle('lawyerbuddy:menu-state', (_e, value) => { state = normalizeMenuState(value); refresh(); });
+ipcMain.handle('lawyerbuddy:get-runtime-info', () => null);
+ipcMain.handle('lawyerbuddy:about-info', () => desktopAboutInfo({ language: appearance.language, appVersion: '0.1.0-test',
   metadata: { version: '2026.930.0-test', buildTime: '2026-09-30T04:00:00Z', commitSha: 'abc123fixture' },
   platform: process.platform, arch: process.arch, osRelease: os.release(), versions: process.versions }));
 
-ipcMain.handle('pilotdeck:update-check', () => { checks++; return { current: { version: '0.1.0-test' }, latest: null, hasUpdate: false, canDownload: false, checkUnavailable: false }; });
-ipcMain.handle('pilotdeck:update-status', () => ({ state: 'idle', progress: 0 }));
-ipcMain.handle('pilotdeck:show-menu', (_e, request) => {
+ipcMain.handle('lawyerbuddy:update-check', () => { checks++; return { current: { version: '0.1.0-test' }, latest: null, hasUpdate: false, canDownload: false, checkUnavailable: false }; });
+ipcMain.handle('lawyerbuddy:update-status', () => ({ state: 'idle', progress: 0 }));
+ipcMain.handle('lawyerbuddy:show-menu', (_e, request) => {
   menuRequests.push(request || { id: 'all' });
   captionMenu ||= new WindowsCaptionMenu(window, menuTemplate, items => Menu.buildFromTemplate(items), () => screen.getCursorScreenPoint());
   return captionMenu.show(request);
 });
-ipcMain.handle('pilotdeck:linux-menu-items', (_e, id) => {
+ipcMain.handle('lawyerbuddy:linux-menu-items', (_e, id) => {
   if (process.platform !== 'linux') return [];
   menuRequests.push({ id });
   return linuxCaptionEntries(menuTemplate(), id);
 });
-ipcMain.handle('pilotdeck:linux-menu-activate', (_e, request) => {
+ipcMain.handle('lawyerbuddy:linux-menu-activate', (_e, request) => {
   if (process.platform !== 'linux') return false;
   const item = linuxCaptionAction(menuTemplate(), request?.id, request?.index);
   if (!item) return false;

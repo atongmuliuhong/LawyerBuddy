@@ -1,4 +1,4 @@
-export type PilotDeckExtensionContributionKind =
+export type LawyerBuddyExtensionContributionKind =
   | "command"
   | "hook"
   | "tool"

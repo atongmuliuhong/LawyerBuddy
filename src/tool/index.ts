@@ -1,57 +1,57 @@
 export type {
-  PilotDeckPermissionAuditRecord,
-  PilotDeckToolAuditRecord,
-  PilotDeckToolAuditRecorder,
+  LawyerBuddyPermissionAuditRecord,
+  LawyerBuddyToolAuditRecord,
+  LawyerBuddyToolAuditRecorder,
 } from "./audit/ToolAuditRecorder.js";
 export { ToolRuntime } from "./execution/ToolRuntime.js";
 export { validateToolInput } from "./execution/validateToolInput.js";
 export {
   normalizeToolError,
-  PilotDeckToolRuntimeError,
+  LawyerBuddyToolRuntimeError,
   toolError,
-  type PilotDeckToolError,
-  type PilotDeckToolErrorCode,
+  type LawyerBuddyToolError,
+  type LawyerBuddyToolErrorCode,
 } from "./protocol/errors.js";
 export {
   applyResultSizeLimit,
   contentToText,
   estimateResultContentBytes,
   toCanonicalToolResultBlock,
-  type PilotDeckToolErrorResult,
-  type PilotDeckToolResult,
-  type PilotDeckToolResultSizeMetadata,
-  type PilotDeckToolSuccessResult,
+  type LawyerBuddyToolErrorResult,
+  type LawyerBuddyToolResult,
+  type LawyerBuddyToolResultSizeMetadata,
+  type LawyerBuddyToolSuccessResult,
 } from "./protocol/result.js";
 export type {
-  PilotDeckJsonSchema,
-  PilotDeckToolInputSchema,
-  PilotDeckToolValidationIssue,
-  PilotDeckToolValidationResult,
+  LawyerBuddyJsonSchema,
+  LawyerBuddyToolInputSchema,
+  LawyerBuddyToolValidationIssue,
+  LawyerBuddyToolValidationResult,
 } from "./protocol/schema.js";
 export type {
-  PilotDeckToolCall,
-  PilotDeckToolAvailability,
-  PilotDeckToolAvailabilityContext,
-  PilotDeckToolDefinition,
-  PilotDeckToolExecutionOutput,
-  PilotDeckToolSupplementalMessage,
-  PilotDeckFileUpdateNotification,
-  PilotDeckFileUpdateNotifier,
-  PilotDeckPlanTodoStateHandle,
-  PilotDeckPlanTodoStateSnapshot,
-  PilotDeckToolFileHistorySink,
-  PilotDeckToolKind,
-  PilotDeckToolModelClient,
-  PilotDeckToolProgressEvent,
-  PilotDeckToolProgressSink,
-  PilotDeckTodoItem,
-  PilotDeckReadFileStateEntry,
-  PilotDeckReadFileStateMap,
-  PilotDeckToolResultContent,
-  PilotDeckToolRuntimeContext,
-  PilotDeckSubagentForkApi,
-  PilotDeckWriteSnapshotEntry,
-  PilotDeckWriteSnapshotMap,
+  LawyerBuddyToolCall,
+  LawyerBuddyToolAvailability,
+  LawyerBuddyToolAvailabilityContext,
+  LawyerBuddyToolDefinition,
+  LawyerBuddyToolExecutionOutput,
+  LawyerBuddyToolSupplementalMessage,
+  LawyerBuddyFileUpdateNotification,
+  LawyerBuddyFileUpdateNotifier,
+  LawyerBuddyPlanTodoStateHandle,
+  LawyerBuddyPlanTodoStateSnapshot,
+  LawyerBuddyToolFileHistorySink,
+  LawyerBuddyToolKind,
+  LawyerBuddyToolModelClient,
+  LawyerBuddyToolProgressEvent,
+  LawyerBuddyToolProgressSink,
+  LawyerBuddyTodoItem,
+  LawyerBuddyReadFileStateEntry,
+  LawyerBuddyReadFileStateMap,
+  LawyerBuddyToolResultContent,
+  LawyerBuddyToolRuntimeContext,
+  LawyerBuddySubagentForkApi,
+  LawyerBuddyWriteSnapshotEntry,
+  LawyerBuddyWriteSnapshotMap,
 } from "./protocol/types.js";
 export {
   ToolRegistry,
@@ -62,11 +62,11 @@ export { createBuiltinRegistry, type CreateBuiltinRegistryOptions } from "./regi
 export {
   filterAvailableTools,
   type FilterAvailableToolsResult,
-  type PilotDeckUnavailableToolDiagnostic,
+  type LawyerBuddyUnavailableToolDiagnostic,
 } from "./registry/filterAvailableTools.js";
 export { ConcurrentToolScheduler } from "./scheduler/ConcurrentToolScheduler.js";
 export { SequentialToolScheduler } from "./scheduler/SequentialToolScheduler.js";
-export type { PilotDeckToolScheduler } from "./scheduler/ToolScheduler.js";
+export type { LawyerBuddyToolScheduler } from "./scheduler/ToolScheduler.js";
 export {
   BUILTIN_SUBAGENTS,
   createAgentTool,
@@ -106,9 +106,9 @@ export {
   type BashOutputState,
   type BashInput,
   type CreateBashToolOptions,
-  type PilotDeckCommandOptions,
-  type PilotDeckCommandResult,
-  type PilotDeckCommandRunner,
+  type LawyerBuddyCommandOptions,
+  type LawyerBuddyCommandResult,
+  type LawyerBuddyCommandRunner,
 } from "./builtin/bash.js";
 export {
   ASK_USER_QUESTION_HEADER_MAX,
@@ -121,12 +121,12 @@ export {
 } from "./builtin/askUserQuestion.js";
 export {
   InMemoryElicitationChannel,
-  type PilotDeckElicitationAnswer,
-  type PilotDeckElicitationChannel,
-  type PilotDeckElicitationOption,
-  type PilotDeckElicitationQuestion,
-  type PilotDeckElicitationRequest,
-} from "./elicitation/PilotDeckElicitationChannel.js";
+  type LawyerBuddyElicitationAnswer,
+  type LawyerBuddyElicitationChannel,
+  type LawyerBuddyElicitationOption,
+  type LawyerBuddyElicitationQuestion,
+  type LawyerBuddyElicitationRequest,
+} from "./elicitation/LawyerBuddyElicitationChannel.js";
 export { validateHtmlPreview } from "./elicitation/validateHtmlPreview.js";
 export {
   createWebFetchTool,
@@ -184,12 +184,12 @@ export {
   buildMcpToolWireName,
   createMcpTool,
   type CreateMcpToolOptions,
-  type PilotDeckMcpToolAdapter,
+  type LawyerBuddyMcpToolAdapter,
 } from "./builtin/mcpTool.js";
 export {
   createListMcpResourcesTool,
   createReadMcpResourceTool,
-  type PilotDeckMcpResourceAdapter,
+  type LawyerBuddyMcpResourceAdapter,
 } from "./builtin/mcpResources.js";
 export { createStructuredOutputTool, type StructuredOutputInput } from "./builtin/structuredOutput.js";
 export {

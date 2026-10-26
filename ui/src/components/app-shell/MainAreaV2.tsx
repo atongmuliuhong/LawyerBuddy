@@ -156,7 +156,7 @@ const ACTIVE_TOOL_BUTTON_CLASS =
   'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-950/70 dark:text-blue-200 dark:hover:bg-blue-900/70';
 
 const ALWAYS_ON_EVENT_BADGE_POLL_INTERVAL_MS = 15_000;
-const ALWAYS_ON_LAST_VIEWED_MARKER_KEY = 'pilotdeck:always-on-last-viewed-marker';
+const ALWAYS_ON_LAST_VIEWED_MARKER_KEY = 'lawyerbuddy:always-on-last-viewed-marker';
 const ALWAYS_ON_EVENT_BADGE_LIMIT = 200;
 
 const BADGE_EVENT_PHASES = new Set<AlwaysOnDashboardEvent['phase']>([
@@ -368,7 +368,7 @@ function MainAreaV2Content(props: MainAreaV2Props) {
     <div className="pd-workspace-content flex h-full min-w-0 flex-col bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
       <header className="workspace-header relative z-[80] shrink-0 overflow-visible">
         {isSidebarCollapsed ? (
-          // Just the "expand sidebar" affordance — the PilotDeck logo lives
+          // Just the "expand sidebar" affordance — the LawyerBuddy logo lives
           // in the sidebar header, so showing a duplicate badge here when
           // the sidebar is collapsed feels redundant.
           <button

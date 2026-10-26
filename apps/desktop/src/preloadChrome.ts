@@ -10,13 +10,13 @@ export function installWindowChrome(
   if (platform !== 'darwin' && platform !== 'win32' && platform !== 'linux') return;
   const install = () => {
     const root = document.documentElement;
-    const appearance = ipc.sendSync('pilotdeck:get-appearance');
+    const appearance = ipc.sendSync('lawyerbuddy:get-appearance');
     if (appearance?.language === 'en' || appearance?.language === 'zh-CN') {
       root.lang = appearance.language;
     }
     root.dataset.desktopPlatform = platform;
     const host = document.createElement('div');
-    host.id = 'pilotdeck-window-caption';
+    host.id = 'lawyerbuddy-window-caption';
     const shadow = host.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
     style.textContent = `
@@ -58,7 +58,7 @@ export function installWindowChrome(
       buttons.forEach(button => button.setAttribute('aria-expanded', String(button.dataset.menu === id)));
     };
     const linuxPopup = platform === 'linux' ? createLinuxCaptionPopup(root, buttons, ipc, setActiveMenu) : null;
-    if (!linuxPopup) ipc.on('pilotdeck:caption-menu', (_event, id: string | null) => setActiveMenu(id ?? undefined));
+    if (!linuxPopup) ipc.on('lawyerbuddy:caption-menu', (_event, id: string | null) => setActiveMenu(id ?? undefined));
     const openMenu = async (button?: HTMLButtonElement, toggle = false, focusFirst = false) => {
       const id = button?.dataset.menu ?? 'all';
       if (linuxPopup) { await linuxPopup.open(button?.dataset.menu ?? WINDOWS_MENUS[0].id, toggle, focusFirst); return; }
@@ -66,11 +66,11 @@ export function installWindowChrome(
       const serial = ++requestSerial;
       setActiveMenu(id);
       try {
-        if (button) await ipc.invoke('pilotdeck:show-menu', { id, buttons: buttons.map(item => {
+        if (button) await ipc.invoke('lawyerbuddy:show-menu', { id, buttons: buttons.map(item => {
           const rect = item.getBoundingClientRect();
           return { id: item.dataset.menu, x: rect.x, y: rect.y, width: rect.width, height: rect.height };
         }) });
-        else await ipc.invoke('pilotdeck:show-menu');
+        else await ipc.invoke('lawyerbuddy:show-menu');
       } catch (error) { console.warn('Could not open application menu', error); }
       finally { if (serial === requestSerial) setActiveMenu(); }
     };
@@ -149,8 +149,8 @@ export function installWindowChrome(
       root.toggleAttribute('data-desktop-dark', state.dark);
       update();
     };
-    ipc.on('pilotdeck:window-state', (_event, state) => applyState(state));
-    applyState(ipc.sendSync('pilotdeck:get-window-state'));
+    ipc.on('lawyerbuddy:window-state', (_event, state) => applyState(state));
+    applyState(ipc.sendSync('lawyerbuddy:get-window-state'));
   };
   if (document.readyState === 'loading') window.addEventListener('DOMContentLoaded', install, { once: true });
   else install();

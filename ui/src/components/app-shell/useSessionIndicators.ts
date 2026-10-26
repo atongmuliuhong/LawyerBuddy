@@ -61,7 +61,7 @@ export function useSessionIndicators({scope, viewedSessionId, subscribe, sendMes
   sendMessage: (message: any) => unknown;
   isConnected: boolean;
 }) {
-  const key = `pilotdeck-session-read-v1:${scope}`;
+  const key = `lawyerbuddy-session-read-v1:${scope}`;
   const store = useMemo(() => {
     let storage: Storage | undefined;
     try { storage = window.localStorage; } catch { /* Unavailable storage must not break chat. */ }

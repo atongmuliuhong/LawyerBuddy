@@ -1,10 +1,10 @@
-import type { PilotDeckToolDefinition } from "../protocol/types.js";
+import type { LawyerBuddyToolDefinition } from "../protocol/types.js";
 
 export type StructuredOutputInput = {
   value: unknown;
 };
 
-export function createStructuredOutputTool(): PilotDeckToolDefinition<StructuredOutputInput> {
+export function createStructuredOutputTool(): LawyerBuddyToolDefinition<StructuredOutputInput> {
   return {
     name: "structured_output",
     aliases: ["StructuredOutput"],

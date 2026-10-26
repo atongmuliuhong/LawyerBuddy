@@ -14,45 +14,45 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { parse as parseYaml } from 'yaml';
 import {
     applyConfigToProcessEnv,
-    buildDefaultPilotDeckConfig,
+    buildDefaultLawyerBuddyConfig,
     buildMemoryLlmOptions,
     buildRuntimeEnv,
     configRevision,
-    normalizePilotDeckConfig,
-    readPilotDeckConfigFile,
+    normalizeLawyerBuddyConfig,
+    readLawyerBuddyConfigFile,
     resolveConfiguredProviderApiKey,
     resolveModel,
     sanitizeProviderCredentials,
-    serializePilotDeckConfigResponse,
-    updatePilotDeckConfig,
-    validatePilotDeckConfig,
-    writePilotDeckConfig,
-} from './pilotdeckConfig.js';
+    serializeLawyerBuddyConfigResponse,
+    updateLawyerBuddyConfig,
+    validateLawyerBuddyConfig,
+    writeLawyerBuddyConfig,
+} from './lawyerbuddyConfig.js';
 
 const tempDirs = [];
 
 afterEach(() => {
     vi.unstubAllEnvs();
-    delete process.env.PILOTDECK_CONFIG_PATH;
+    delete process.env.LAWYERBUDDY_CONFIG_PATH;
     for (const dir of tempDirs.splice(0)) {
         rmSync(dir, { recursive: true, force: true });
     }
 });
 
-function useTempConfig(contents, filename = 'pilotdeck.yaml') {
-    const dir = mkdtempSync(join(tmpdir(), 'pilotdeck-config-test-'));
+function useTempConfig(contents, filename = 'lawyerbuddy.yaml') {
+    const dir = mkdtempSync(join(tmpdir(), 'lawyerbuddy-config-test-'));
     tempDirs.push(dir);
     const configPath = join(dir, filename);
     if (contents !== null) {
         writeFileSync(configPath, contents, 'utf8');
     }
-    process.env.PILOTDECK_CONFIG_PATH = configPath;
+    process.env.LAWYERBUDDY_CONFIG_PATH = configPath;
     return configPath;
 }
 
-describe('readPilotDeckConfigFile fallback behavior', () => {
+describe('readLawyerBuddyConfigFile fallback behavior', () => {
     it('uses built-in Office preview by default', () => {
-        expect(buildDefaultPilotDeckConfig().webui.officePreview).toEqual({
+        expect(buildDefaultLawyerBuddyConfig().webui.officePreview).toEqual({
             service: 'builtin',
             binaryPath: '',
         });
@@ -61,7 +61,7 @@ describe('readPilotDeckConfigFile fallback behavior', () => {
     it('returns defaults when the config file is missing', () => {
         const configPath = useTempConfig(null);
 
-        const record = readPilotDeckConfigFile();
+        const record = readLawyerBuddyConfigFile();
 
         expect(record.exists).toBe(false);
         expect(record.configPath).toBe(configPath);
@@ -75,7 +75,7 @@ describe('readPilotDeckConfigFile fallback behavior', () => {
     it('reads and normalizes valid YAML', () => {
         useTempConfig('schemaVersion: 1\nmodel:\n  providers: {}\n');
 
-        const record = readPilotDeckConfigFile();
+        const record = readLawyerBuddyConfigFile();
 
         expect(record.exists).toBe(true);
         expect(record.parseError).toBeNull();
@@ -88,7 +88,7 @@ describe('readPilotDeckConfigFile fallback behavior', () => {
         const raw = 'schemaVersion: 1\nmodel:\n  providers: [\n';
         useTempConfig(raw);
 
-        const record = readPilotDeckConfigFile();
+        const record = readLawyerBuddyConfigFile();
 
         expect(record.exists).toBe(true);
         expect(record.raw).toBe(raw);
@@ -101,9 +101,9 @@ describe('readPilotDeckConfigFile fallback behavior', () => {
     it('changes the revision for secret-only disk edits while keeping the response masked', () => {
         const configPath = useTempConfig('schemaVersion: 1\nadapters:\n  feishu:\n    appSecret: super-secret-a\n');
 
-        const first = serializePilotDeckConfigResponse(readPilotDeckConfigFile());
+        const first = serializeLawyerBuddyConfigResponse(readLawyerBuddyConfigFile());
         writeFileSync(configPath, 'schemaVersion: 1\nadapters:\n  feishu:\n    appSecret: super-secret-b\n');
-        const second = serializePilotDeckConfigResponse(readPilotDeckConfigFile());
+        const second = serializeLawyerBuddyConfigResponse(readLawyerBuddyConfigFile());
 
         expect(first.revision).toMatch(/^[a-f0-9]{64}$/);
         expect(first.raw).toBe(second.raw);
@@ -126,7 +126,7 @@ describe('readPilotDeckConfigFile fallback behavior', () => {
         ].join('\n');
         const configPath = useTempConfig(raw);
 
-        await updatePilotDeckConfig((config) => {
+        await updateLawyerBuddyConfig((config) => {
             config.adapters = { ...(config.adapters ?? {}), weixin: { enabled: true } };
         }, { paths: [['adapters']], settleMs: 0 });
 
@@ -134,13 +134,13 @@ describe('readPilotDeckConfigFile fallback behavior', () => {
         expect(saved).toContain('# hand-maintained config');
         expect(saved).toContain('            apiKey: REDACTED');
         expect(saved).toContain('                demo: {}');
-        expect(readPilotDeckConfigFile().parseError).toBeNull();
+        expect(readLawyerBuddyConfigFile().parseError).toBeNull();
     });
 
     it('replaces a null YAML parent before setting a targeted child path', async () => {
         const configPath = useTempConfig('schemaVersion: 1\nadapters:\n');
 
-        await updatePilotDeckConfig((config) => {
+        await updateLawyerBuddyConfig((config) => {
             config.adapters = { wecom: { enabled: true } };
         }, { paths: [['adapters', 'wecom']], settleMs: 0 });
 
@@ -153,7 +153,7 @@ describe('readPilotDeckConfigFile fallback behavior', () => {
         const raw = 'schemaVersion: 1\nmodel:\n    providers: [\n';
         const configPath = useTempConfig(raw);
 
-        await expect(updatePilotDeckConfig((config) => {
+        await expect(updateLawyerBuddyConfig((config) => {
             config.adapters = { weixin: { enabled: true } };
         }, { paths: [['adapters']], settleMs: 0 })).rejects.toMatchObject({
             code: 'INVALID_CONFIG_YAML',
@@ -167,7 +167,7 @@ describe('readPilotDeckConfigFile fallback behavior', () => {
         const completed = 'schemaVersion: 1\ncustomEnv:\n    VALUE: external\n';
         const configPath = useTempConfig(initial);
 
-        const saving = updatePilotDeckConfig((config) => {
+        const saving = updateLawyerBuddyConfig((config) => {
             config.adapters = { weixin: { enabled: true } };
         }, { paths: [['adapters']], settleMs: 30, maxAttempts: 3 });
         setTimeout(() => writeFileSync(configPath, 'schemaVersion: 1\ncustomEnv: [\n', 'utf8'), 5);
@@ -184,19 +184,19 @@ describe('readPilotDeckConfigFile fallback behavior', () => {
         const configPath = useTempConfig('schemaVersion: 1\n');
         const dir = dirname(configPath);
 
-        await writePilotDeckConfig({ schemaVersion: 1, customEnv: { UPDATED: 'yes' } });
+        await writeLawyerBuddyConfig({ schemaVersion: 1, customEnv: { UPDATED: 'yes' } });
 
-        expect(readPilotDeckConfigFile().config.customEnv.UPDATED).toBe('yes');
+        expect(readLawyerBuddyConfigFile().config.customEnv.UPDATED).toBe('yes');
         expect(readdirSync(dir).filter(name => name.endsWith('.tmp'))).toEqual([]);
     });
 
     it('rejects a write when the disk changed after it was read', async () => {
         const configPath = useTempConfig('schemaVersion: 1\ncustomEnv:\n  VALUE: first\n');
-        const loaded = readPilotDeckConfigFile();
+        const loaded = readLawyerBuddyConfigFile();
         const externalRaw = 'schemaVersion: 1\ncustomEnv:\n  VALUE: external\n';
         writeFileSync(configPath, externalRaw, 'utf8');
 
-        await expect(writePilotDeckConfig({
+        await expect(writeLawyerBuddyConfig({
             schemaVersion: 1,
             customEnv: { VALUE: 'stale' },
         }, {
@@ -209,11 +209,11 @@ describe('readPilotDeckConfigFile fallback behavior', () => {
 
     it('rechecks the revision after the final pre-write callback', async () => {
         const configPath = useTempConfig('schemaVersion: 1\ncustomEnv:\n  VALUE: first\n');
-        const loaded = readPilotDeckConfigFile();
+        const loaded = readLawyerBuddyConfigFile();
         const externalRaw = 'schemaVersion: 1\ncustomEnv:\n  VALUE: external\n';
         const onWriteCommitted = vi.fn();
 
-        await expect(writePilotDeckConfig({
+        await expect(writeLawyerBuddyConfig({
             schemaVersion: 1,
             customEnv: { VALUE: 'stale' },
         }, {
@@ -227,18 +227,18 @@ describe('readPilotDeckConfigFile fallback behavior', () => {
     });
 
     it('atomically updates a symlink target without replacing the symlink', async () => {
-        const dir = mkdtempSync(join(tmpdir(), 'pilotdeck-config-symlink-test-'));
+        const dir = mkdtempSync(join(tmpdir(), 'lawyerbuddy-config-symlink-test-'));
         tempDirs.push(dir);
         const managedDir = join(dir, 'managed');
         mkdirSync(managedDir);
-        const targetPath = join(managedDir, 'pilotdeck.yaml');
-        const configPath = join(dir, 'pilotdeck.yaml');
+        const targetPath = join(managedDir, 'lawyerbuddy.yaml');
+        const configPath = join(dir, 'lawyerbuddy.yaml');
         writeFileSync(targetPath, 'schemaVersion: 1\ncustomEnv:\n  VALUE: first\n', 'utf8');
         symlinkSync(targetPath, configPath);
-        process.env.PILOTDECK_CONFIG_PATH = configPath;
+        process.env.LAWYERBUDDY_CONFIG_PATH = configPath;
 
-        const loaded = readPilotDeckConfigFile();
-        await writePilotDeckConfig({
+        const loaded = readLawyerBuddyConfigFile();
+        await writeLawyerBuddyConfig({
             schemaVersion: 1,
             customEnv: { VALUE: 'updated' },
         }, {
@@ -254,7 +254,7 @@ describe('readPilotDeckConfigFile fallback behavior', () => {
 describe('optional feature defaults', () => {
     it('keeps advanced features and message channels off for a new user', () => {
         useTempConfig(null);
-        expect(readPilotDeckConfigFile().config).toMatchObject({
+        expect(readLawyerBuddyConfigFile().config).toMatchObject({
             memory: { enabled: false },
             router: { enabled: false },
             tools: { webSearch: { enabled: false } },
@@ -275,13 +275,13 @@ describe('optional feature defaults', () => {
             alwaysOn: { projects: { '/test-project': { enabled } } },
             adapters: { feishu: { enabled, appId: 'app' }, weixin: { enabled }, wecom: { enabled, token: 'bot' } },
         };
-        const normalized = normalizePilotDeckConfig(configured);
+        const normalized = normalizeLawyerBuddyConfig(configured);
         expect(normalized).toMatchObject(configured);
-        expect(normalizePilotDeckConfig(normalized)).toEqual(normalized);
+        expect(normalizeLawyerBuddyConfig(normalized)).toEqual(normalized);
     });
 
     it('preserves legacy configured sections without an enabled flag', () => {
-        const normalized = normalizePilotDeckConfig({
+        const normalized = normalizeLawyerBuddyConfig({
             memory: { model: 'test/model' },
             router: { scenarios: { default: 'test/model' } },
             tools: { webSearch: { provider: 'tavily', apiKey: 'search-key' } },
@@ -292,7 +292,7 @@ describe('optional feature defaults', () => {
     });
 });
 
-describe('validatePilotDeckConfig gateway validation', () => {
+describe('validateLawyerBuddyConfig gateway validation', () => {
     it('uses catalog default URLs for memory and runtime settings', () => {
         const config = {
             agent: { model: 'deepseek/model-a' },
@@ -311,8 +311,8 @@ describe('validatePilotDeckConfig gateway validation', () => {
 
         expect(buildMemoryLlmOptions(config).baseUrl).toBe('https://api.deepseek.com/v1');
         expect(buildRuntimeEnv(config)).toMatchObject({
-            PILOTDECK_API_BASE_URL: 'https://api.deepseek.com/v1',
-            PILOTDECK_MEMORY_BASE_URL: 'https://api.deepseek.com/v1',
+            LAWYERBUDDY_API_BASE_URL: 'https://api.deepseek.com/v1',
+            LAWYERBUDDY_MEMORY_BASE_URL: 'https://api.deepseek.com/v1',
         });
     });
 
@@ -333,8 +333,8 @@ describe('validatePilotDeckConfig gateway validation', () => {
         };
 
         expect(buildRuntimeEnv(config)).toMatchObject({
-            PILOTDECK_API_KEY: 'sk-from-env',
-            PILOTDECK_MEMORY_API_KEY: 'sk-from-env',
+            LAWYERBUDDY_API_KEY: 'sk-from-env',
+            LAWYERBUDDY_MEMORY_API_KEY: 'sk-from-env',
         });
         expect(buildRuntimeEnv(config)).not.toHaveProperty('OPENAI_API_KEY');
         expect(buildMemoryLlmOptions(config).apiKey).toBe('sk-from-env');
@@ -377,10 +377,10 @@ describe('validatePilotDeckConfig gateway validation', () => {
             applyConfigToProcessEnv(openaiConfig);
             expect(process.env.OPENAI_API_KEY).toBe('openai-from-env');
             expect(process.env.ANTHROPIC_API_KEY).toBe('anthropic-from-env');
-            expect(process.env.PILOTDECK_API_KEY).toBe('openai-from-config');
+            expect(process.env.LAWYERBUDDY_API_KEY).toBe('openai-from-config');
 
             applyConfigToProcessEnv(anthropicConfig);
-            expect(process.env.PILOTDECK_API_KEY).toBe('anthropic-from-env');
+            expect(process.env.LAWYERBUDDY_API_KEY).toBe('anthropic-from-env');
         } finally {
             for (const key of Object.keys(process.env)) {
                 if (!(key in originalEnv)) delete process.env[key];
@@ -391,7 +391,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
 
     it('accepts an omitted URL for catalog providers', () => {
         for (const providerId of ['openai', 'minimax']) {
-            const validation = validatePilotDeckConfig({
+            const validation = validateLawyerBuddyConfig({
                 agent: { model: `${providerId}/gpt-test` },
                 model: {
                     providers: {
@@ -412,7 +412,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
 
     it('accepts an omitted API key when the catalog environment key is available', () => {
         vi.stubEnv('ANTHROPIC_API_KEY', 'anthropic-from-env');
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             agent: { model: 'ollama/qwen' },
             model: {
                 providers: {
@@ -436,7 +436,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
 
     it('rejects an omitted API key when the catalog environment key is unavailable', () => {
         vi.stubEnv('ANTHROPIC_API_KEY', '');
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             agent: { model: 'anthropic/claude' },
             model: {
                 providers: {
@@ -460,7 +460,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
             url: 'https://proxy.example/v1',
             models: { 'gpt-test': {} },
         };
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             agent: { model: 'openai/gpt-test' },
             model: { providers: { openai: provider } },
         });
@@ -478,7 +478,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
             apiKey: '${PROXY_API_KEY}',
             models: { 'gpt-test': {} },
         };
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             agent: { model: 'openai/gpt-test' },
             model: { providers: { openai: provider } },
         });
@@ -488,7 +488,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     });
 
     it('migrates the legacy interactive spreadsheet mode to built-in preview', () => {
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             webui: {
                 officePreview: {
                     service: 'libreoffice',
@@ -505,7 +505,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     });
 
     it('migrates the legacy print spreadsheet mode to LibreOffice preview', () => {
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             webui: {
                 officePreview: {
                     service: 'libreoffice',
@@ -522,7 +522,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     });
 
     it('migrates the legacy disabled Office service to built-in preview', () => {
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             webui: {
                 officePreview: {
                     service: 'none',
@@ -535,7 +535,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     });
 
     it('rejects unsupported Office preview services', () => {
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             webui: {
                 officePreview: {
                     service: 'unexpected',
@@ -550,14 +550,14 @@ describe('validatePilotDeckConfig gateway validation', () => {
     });
 
     it('rejects non-object gateway config', () => {
-        const validation = validatePilotDeckConfig({ gateway: true });
+        const validation = validateLawyerBuddyConfig({ gateway: true });
 
         expect(validation.valid).toBe(false);
         expect(validation.errors).toContain('gateway: gateway config must be an object.');
     });
 
     it('rejects unsupported gateway bindAddress', () => {
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             gateway: {
                 bindAddress: '0.0.0.0',
             },
@@ -568,7 +568,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     });
 
     it('warns when gateway.tokenPath is configured', () => {
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             gateway: {
                 tokenPath: '/tmp/token',
             },
@@ -581,7 +581,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     });
 
     it('accepts valid gateway config', () => {
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             gateway: {
                 bindAddress: '127.0.0.1',
             },
@@ -592,7 +592,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     });
 
     it('accepts Ollama providers without an apiKey', () => {
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             agent: { model: 'ollama/qwen3:0.6b' },
             model: {
                 providers: {
@@ -612,7 +612,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     });
 
     it('accepts null model definitions as empty objects', () => {
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             agent: { model: 'ollama/qwen3:0.6b' },
             model: {
                 providers: {
@@ -634,7 +634,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     });
 
     it('still treats absent model keys as missing', () => {
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             agent: { model: 'ollama/missing-model' },
             model: {
                 providers: {
@@ -675,7 +675,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     });
 
     it('warns instead of failing when agent.subagents.default references a missing provider', () => {
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             agent: {
                 model: 'ollama/qwen3:0.6b',
                 subagents: { default: 'missing/qwen3:0.6b' },
@@ -700,7 +700,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     });
 
     it('warns instead of failing when agent.subagents.default references a missing model', () => {
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             agent: {
                 model: 'ollama/qwen3:0.6b',
                 subagents: { default: 'ollama/missing-model' },
@@ -725,7 +725,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     });
 
     it('rejects agent.model when the configured model is missing', () => {
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             agent: { model: 'ollama/missing-model' },
             model: {
                 providers: {
@@ -767,7 +767,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     });
 
     it('rejects incomplete providers even when they are not the active agent model', () => {
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             agent: { model: '_placeholder/_placeholder' },
             model: {
                 providers: {
@@ -797,7 +797,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     it('keeps the bootstrap provider when an unrelated setting is saved before onboarding', async () => {
         useTempConfig(null);
 
-        const result = await writePilotDeckConfig({
+        const result = await writeLawyerBuddyConfig({
             agent: { model: '_placeholder/_placeholder' },
             model: {
                 providers: {
@@ -820,7 +820,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     it('keeps the bootstrap provider while a real provider is configured but not selected', async () => {
         useTempConfig(null);
 
-        const result = await writePilotDeckConfig({
+        const result = await writeLawyerBuddyConfig({
             agent: { model: '_placeholder/_placeholder' },
             model: {
                 providers: {
@@ -864,7 +864,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
                 },
             },
         };
-        const result = await writePilotDeckConfig(previousConfig, { previousConfig });
+        const result = await writeLawyerBuddyConfig(previousConfig, { previousConfig });
 
         expect(result.config.model.providers).toHaveProperty('ollama');
         expect(result.config.model.providers).not.toHaveProperty('provider1');
@@ -873,7 +873,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     it('removes bootstrap providers and rewrites their references after selecting a real model', async () => {
         useTempConfig(null);
 
-        const result = await writePilotDeckConfig({
+        const result = await writeLawyerBuddyConfig({
             agent: {
                 model: 'ollama/qwen3:0.6b',
                 subagents: { default: '_placeholder/_placeholder' },
@@ -940,7 +940,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     it('resets a placeholder subagent default when writing config', async () => {
         const configPath = useTempConfig(null);
 
-        const result = await writePilotDeckConfig({
+        const result = await writeLawyerBuddyConfig({
             agent: {
                 model: 'ollama/qwen3:0.6b',
                 subagents: { default: '_placeholder/_placeholder' },
@@ -972,7 +972,7 @@ describe('validatePilotDeckConfig gateway validation', () => {
     });
 });
 
-describe('validatePilotDeckConfig router settings', () => {
+describe('validateLawyerBuddyConfig router settings', () => {
     const base = {
         agent: { model: 'openai/gpt-test' },
         model: {
@@ -988,7 +988,7 @@ describe('validatePilotDeckConfig router settings', () => {
     };
 
     function withRouter(router) {
-        return validatePilotDeckConfig({ ...base, router });
+        return validateLawyerBuddyConfig({ ...base, router });
     }
 
     it('accepts pricing units and keeps a missing unit backward compatible', () => {
@@ -1083,7 +1083,7 @@ describe('validatePilotDeckConfig router settings', () => {
     });
 });
 
-describe('validatePilotDeckConfig web search settings', () => {
+describe('validateLawyerBuddyConfig web search settings', () => {
     const base = {
         agent: { model: 'openai/gpt-test' },
         model: {
@@ -1099,7 +1099,7 @@ describe('validatePilotDeckConfig web search settings', () => {
     };
 
     it('rejects an unknown provider and non-HTTP endpoint through common config validation', () => {
-        const validation = validatePilotDeckConfig({
+        const validation = validateLawyerBuddyConfig({
             ...base,
             tools: { webSearch: { provider: 'zai', endpoint: 'ftp://example.test/search' } },
         });
@@ -1112,7 +1112,7 @@ describe('validatePilotDeckConfig web search settings', () => {
 
     it('accepts all supported built-in search providers', () => {
         for (const provider of ['glm', 'tavily', 'custom', 'serper', 'brave']) {
-            const validation = validatePilotDeckConfig({
+            const validation = validateLawyerBuddyConfig({
                 ...base,
                 tools: { webSearch: { provider, ...(provider === 'custom' ? { endpoint: 'https://search.example.test' } : {}) } },
             });
@@ -1130,12 +1130,12 @@ describe('model thinking settings', () => {
     });
     it('accepts the three states and manually configured effort subsets', () => {
         for (const state of ['default', 'enabled', 'disabled']) {
-            expect(validatePilotDeckConfig(config({ state, efforts: ['low', 'medium', 'xhigh'], format: 'qwen-local' })).valid).toBe(true);
+            expect(validateLawyerBuddyConfig(config({ state, efforts: ['low', 'medium', 'xhigh'], format: 'qwen-local' })).valid).toBe(true);
         }
     });
     it('rejects invalid effort and incompatible formats before saving', () => {
         for (const thinking of [{state:'both'}, {efforts:['ultra']}, {format:'anthropic'}]) {
-            const result = validatePilotDeckConfig(config(thinking));
+            const result = validateLawyerBuddyConfig(config(thinking));
             expect(result.valid).toBe(false);
             expect(result.errors.join(' ')).toContain('thinking');
         }

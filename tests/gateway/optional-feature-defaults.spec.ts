@@ -59,8 +59,8 @@ tools: { webSearch: { region: cn } }
 `, true],
 ] as const) {
   test(`${name}: catalog, router execution and search availability agree`, async (t) => {
-    const home = await mkdtemp(join(tmpdir(), 'pilotdeck-feature-defaults-'));
-    await writeFile(join(home, 'pilotdeck.yaml'), BASE + extra);
+    const home = await mkdtemp(join(tmpdir(), 'lawyerbuddy-feature-defaults-'));
+    await writeFile(join(home, 'lawyerbuddy.yaml'), BASE + extra);
     await mkdir(join(home, 'skills'));
     const requests: CanonicalModelRequest[] = [];
     const completions: CanonicalModelRequest[] = [];
@@ -68,7 +68,7 @@ tools: { webSearch: { region: cn } }
       pilotHome: home,
       projectRoot: home,
       builtinSkillsRoot: join(home, 'skills'),
-      env: { ...process.env, PILOT_HOME: home, PILOTDECK_CONFIG_PATH: join(home, 'pilotdeck.yaml'), PILOT_AGENT_MODEL: undefined, TAVILY_API_KEY: 'present-but-not-opt-in' },
+      env: { ...process.env, PILOT_HOME: home, LAWYERBUDDY_CONFIG_PATH: join(home, 'lawyerbuddy.yaml'), PILOT_AGENT_MODEL: undefined, TAVILY_API_KEY: 'present-but-not-opt-in' },
       __testModelFactory(snapshot) {
         assert.notEqual(snapshot.config.memory?.enabled, true);
         for (const channel of ['feishu', 'weixin', 'wecom'] as const) {

@@ -39,7 +39,7 @@ describe('MessageRowV2 generated file presentation', () => {
       <MessageRowV2
         message={message}
         prevMessage={null}
-        provider="pilotdeck"
+        provider="lawyerbuddy"
         selectedProject={{
           name: 'office',
           displayName: 'office',

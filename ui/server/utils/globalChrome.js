@@ -26,7 +26,7 @@ function _caller() {
 const LOCK_FILE_NAME = 'chrome-cdp.lock';
 
 function getUserDataDir() {
-  const configDir = process.env.PILOTDECK_CONFIG_DIR ?? join(homedir(), '.pilotdeck');
+  const configDir = process.env.LAWYERBUDDY_CONFIG_DIR ?? join(homedir(), '.lawyerbuddy');
   return join(configDir, 'browser-use-profile');
 }
 

@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { describe, it, expect, vi } from 'vitest';
 import { listProcesses, spawnManaged, stopProcessTree, runManagedCommand } from './processTree.js';
-const KEY = Symbol.for('pilotdeck.processScope');
+const KEY = Symbol.for('lawyerbuddy.processScope');
 const id = (pid, birth = 'original', group = pid, parent = 1) => ({ pid, birth, group, parent });
 const simulation = (entries, inspect, extra = {}) => ({ scope: {}, records: () => entries, inspect,
   closeScope: vi.fn(), cleanup: vi.fn(), signal: vi.fn(), graceMs: 1, forceMs: 1, ...extra });
@@ -51,7 +51,7 @@ describe('managed process identities', () => {
       .rejects.toMatchObject({ reason: 'processStopFailed' });
   });
   it('waits for the original Windows Job holder after native termination', async () => {
-    const directory = mkdtempSync(path.join(os.tmpdir(), 'pilotdeck-job-test-'));
+    const directory = mkdtempSync(path.join(os.tmpdir(), 'lawyerbuddy-job-test-'));
     try {
       const stopped = path.join(directory, 'stopped'); writeFileSync(stopped, 'stopped');
       const options = simulation([{ parent: null, state: 'active', identity: id(123), job: { stopped, holderIdentity: id(456) } }], async () => [id(456)], { platform: 'win32' });
@@ -60,7 +60,7 @@ describe('managed process identities', () => {
     } finally { rmSync(directory, { recursive: true, force: true }); }
   });
   it('accepts native Job termination without touching a reused holder PID', async () => {
-    const directory = mkdtempSync(path.join(os.tmpdir(), 'pilotdeck-job-test-'));
+    const directory = mkdtempSync(path.join(os.tmpdir(), 'lawyerbuddy-job-test-'));
     try {
       const stopped = path.join(directory, 'stopped'); writeFileSync(stopped, 'stopped');
       const options = simulation([{ parent: null, state: 'active', identity: id(123), job: { stopped, holderIdentity: id(456) } }], async () => [id(456, 'replacement')], { platform: 'win32' });

@@ -704,7 +704,7 @@ export default function McpServersSection({
 
       {pendingRemoval ? (
         <ConfirmDialog destructive busy={Boolean(savingScope)} title={t("mcpConfig.removeTitle")}
-          confirmLabel={t("pilotDeckConfig.actions.remove")}
+          confirmLabel={t("lawyerBuddyConfig.actions.remove")}
           onCancel={() => setPendingRemoval(null)} onConfirm={() => void confirmRemoval()}>
           {t(pendingRemoval.scope === "global" ? "mcpConfig.removeGlobalDescription" : "mcpConfig.removeProjectDescription", {
             server: pendingRemoval.server.name,

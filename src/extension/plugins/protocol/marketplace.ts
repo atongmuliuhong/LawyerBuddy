@@ -1,14 +1,14 @@
-import type { PilotDeckMarketplaceReference } from "./manifest.js";
+import type { LawyerBuddyMarketplaceReference } from "./manifest.js";
 
-export type PilotDeckPluginMarketplaceStatus = "resolved" | "deferred";
+export type LawyerBuddyPluginMarketplaceStatus = "resolved" | "deferred";
 
-export type PilotDeckMarketplaceResolution = {
-  status: PilotDeckPluginMarketplaceStatus;
-  reference: PilotDeckMarketplaceReference;
+export type LawyerBuddyMarketplaceResolution = {
+  status: LawyerBuddyPluginMarketplaceStatus;
+  reference: LawyerBuddyMarketplaceReference;
   reason?: string;
 };
 
-export function resolveMarketplaceReference(reference: PilotDeckMarketplaceReference): PilotDeckMarketplaceResolution {
+export function resolveMarketplaceReference(reference: LawyerBuddyMarketplaceReference): LawyerBuddyMarketplaceResolution {
   if (reference.source === "git" || reference.source === "zip" || reference.source === "mcpb") {
     return {
       status: "deferred",

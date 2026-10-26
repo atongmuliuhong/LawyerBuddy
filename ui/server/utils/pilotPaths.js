@@ -1,14 +1,14 @@
 /**
  * Pure-JS port of the path helpers from `src/pilot/paths.ts`.
  *
- * Lets `ui/server/` resolve `~/.pilotdeck` and encode project IDs the
+ * Lets `ui/server/` resolve `~/.lawyerbuddy` and encode project IDs the
  * same way the gateway server does, WITHOUT pulling `dist/src/pilot/`
  * into the express bridge. Keeping the math here means the UI server
  * can run from source without needing the TypeScript output to exist
  * on disk first.
  *
  * Keep this in sync with `src/pilot/paths.ts` — both must round-trip
- * identically or `~/.pilotdeck/projects/<id>/.cwd` markers written by
+ * identically or `~/.lawyerbuddy/projects/<id>/.cwd` markers written by
  * the bridge will not be found by `gateway.listProjects()` and vice
  * versa.
  */
@@ -19,16 +19,16 @@ import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, statS
 
 export const DEFAULT_DATA_ROOT =
     process.env.LAWYERBUDDY_DATA_ROOT?.trim() ||
-    (process.platform === 'win32' ? 'D:\\lawbuddy\\runtime' : resolve(homedir(), '.pilotdeck'));
+    (process.platform === 'win32' ? 'D:\\lawbuddy\\runtime' : resolve(homedir(), '.lawyerbuddy'));
 
 export const DEFAULT_PILOT_HOME =
     process.env.LAWYERBUDDY_DATA_ROOT?.trim() || process.platform === 'win32'
         ? resolve(DEFAULT_DATA_ROOT, 'home')
-        : '~/.pilotdeck';
+        : '~/.lawyerbuddy';
 
 /** Keep in sync with src/pilot/paths.ts; repair existing project metadata on browse. */
 export function ensurePilotProjectGitIgnore(projectRoot, createDirectory = true) {
-    const directory = resolve(projectRoot, '.pilotdeck');
+    const directory = resolve(projectRoot, '.lawyerbuddy');
     if (!createDirectory && !existsSync(directory)) return;
     try {
         mkdirSync(directory, { recursive: true });
@@ -38,7 +38,7 @@ export function ensurePilotProjectGitIgnore(projectRoot, createDirectory = true)
         catch (error) { if (error.code !== 'ENOENT') throw error; }
         const lastRule = content.split(/\r?\n/).map(line => line.trim()).filter(line => line && !line.startsWith('#')).at(-1);
         if (lastRule === '*') return;
-        appendFileSync(ignorePath, `${content && !content.endsWith('\n') ? '\n' : ''}# PilotDeck internal files\n*\n`, 'utf8');
+        appendFileSync(ignorePath, `${content && !content.endsWith('\n') ? '\n' : ''}# LawyerBuddy internal files\n*\n`, 'utf8');
     } catch (error) {
         if (!['EACCES', 'EPERM', 'EROFS'].includes(error.code)) throw error;
     }
@@ -51,9 +51,9 @@ function normalizeHomePath(p) {
 }
 
 /**
- * Resolve the active PilotDeck home directory. Honors `PILOT_HOME` so
+ * Resolve the active LawyerBuddy home directory. Honors `PILOT_HOME` so
  * tests / multi-instance setups can isolate state. Defaults to
- * `~/.pilotdeck`.
+ * `~/.lawyerbuddy`.
  *
  * @param {Record<string, string | undefined>} [env] Environment to read.
  * @returns {string} Absolute path.
@@ -63,11 +63,11 @@ export function resolvePilotHome(env = process.env) {
 }
 
 export function isDesktopRuntimeProjectPath(projectRoot, env = process.env) {
-    if (!projectRoot || env.PILOTDECK_DESKTOP !== '1') return false;
+    if (!projectRoot || env.LAWYERBUDDY_DESKTOP !== '1') return false;
     const normalized = normalize(resolve(projectRoot));
     if (
-        env.PILOTDECK_DESKTOP_RUNTIME_ROOT &&
-        normalized === normalize(resolve(env.PILOTDECK_DESKTOP_RUNTIME_ROOT))
+        env.LAWYERBUDDY_DESKTOP_RUNTIME_ROOT &&
+        normalized === normalize(resolve(env.LAWYERBUDDY_DESKTOP_RUNTIME_ROOT))
     ) {
         return true;
     }
@@ -82,7 +82,7 @@ export function isVirtualProjectPath(projectRoot, pilotHome = resolvePilotHome()
 
 /**
  * Encode an absolute project path into the on-disk project ID used under
- * `~/.pilotdeck/projects/<id>/`.
+ * `~/.lawyerbuddy/projects/<id>/`.
  *
  * This is the legacy lossy encoding. New UI-created projects use
  * `createCollisionResistantProjectId()` only when this id is already claimed
@@ -111,7 +111,7 @@ export function createCollisionResistantProjectId(projectRoot) {
  * unregistered workspaces.
  *
  * @param {string} projectRoot Absolute filesystem path.
- * @param {string} [pilotHome] Active PilotDeck home directory.
+ * @param {string} [pilotHome] Active LawyerBuddy home directory.
  * @returns {string} Project directory name under `<pilotHome>/projects`.
  */
 export function resolveProjectStorageId(projectRoot, pilotHome = resolvePilotHome()) {

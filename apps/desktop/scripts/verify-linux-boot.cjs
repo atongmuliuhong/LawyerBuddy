@@ -13,10 +13,10 @@ assert.equal(process.platform, 'linux');
 assert.ok(display === 'x11' ? process.env.DISPLAY : process.env.WAYLAND_DISPLAY,
   `Missing ${display} display socket`);
 
-const root = fs.mkdtempSync(path.join(os.tmpdir(), `pilotdeck-${display}-smoke-`));
+const root = fs.mkdtempSync(path.join(os.tmpdir(), `lawyerbuddy-${display}-smoke-`));
 const configHome = path.join(root, 'config');
-const runtimeLog = path.join(configHome, 'pilotdeck-desktop', 'logs', 'runtime.log');
-const child = spawn('/usr/bin/pilotdeck-desktop', [
+const runtimeLog = path.join(configHome, 'lawyerbuddy-desktop', 'logs', 'runtime.log');
+const child = spawn('/usr/bin/lawyerbuddy-desktop', [
   `--ozone-platform=${display}`, '--disable-gpu', '--no-sandbox',
 ], {
   env: { ...process.env, XDG_CONFIG_HOME: configHome, PILOT_HOME: path.join(root, 'pilot-home') },
@@ -37,16 +37,16 @@ async function waitForReady() {
     if (exited) throw new Error(`Electron exited before startup:\n${output}`);
     if (fs.existsSync(runtimeLog)) {
       const log = fs.readFileSync(runtimeLog, 'utf8');
-      const url = log.match(/PilotDeck Web UI ready: (http:\/\/127\.0\.0\.1:\d+)/)?.[1];
+      const url = log.match(/LawyerBuddy Web UI ready: (http:\/\/127\.0\.0\.1:\d+)/)?.[1];
       if (url) {
         const response = await fetch(url).catch(() => null);
         if (response?.ok) return url;
       }
-      if (log.includes('PilotDeck failed to start')) throw new Error(log.slice(-6000));
+      if (log.includes('LawyerBuddy failed to start')) throw new Error(log.slice(-6000));
     }
     await pause(250);
   }
-  throw new Error(`Timed out waiting for PilotDeck UI:\n${output}\n${fs.existsSync(runtimeLog) ? fs.readFileSync(runtimeLog, 'utf8').slice(-6000) : 'No runtime log'}`);
+  throw new Error(`Timed out waiting for LawyerBuddy UI:\n${output}\n${fs.existsSync(runtimeLog) ? fs.readFileSync(runtimeLog, 'utf8').slice(-6000) : 'No runtime log'}`);
 }
 
 async function stop() {
@@ -88,7 +88,7 @@ async function main() {
     if (display === 'x11') {
       const { execFileSync } = require('node:child_process');
       const windows = execFileSync('xwininfo', ['-root', '-tree'], { encoding: 'utf8' });
-      assert.match(windows, /PilotDeck/, 'X11 window was not created');
+      assert.match(windows, /LawyerBuddy/, 'X11 window was not created');
     }
     console.log(`PASS: installed Linux package started on ${display} and served ${url}`);
   } finally {

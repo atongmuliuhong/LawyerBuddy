@@ -1,5 +1,5 @@
 /**
- * Unified session messages endpoint (PilotDeck-only).
+ * Unified session messages endpoint (LawyerBuddy-only).
  *
  * GET /api/sessions/:sessionId/messages?projectName=&projectPath=&limit=&offset=
  *
@@ -9,7 +9,7 @@
  * `dist/src/web/server/` — that coupled `ui/server/` to compiled
  * artifacts and meant `src/` edits were silently invisible until a
  * `npm run build`. Going through the gateway WebSocket means the
- * standalone `pilotdeck server` process owns the read path and we pick
+ * standalone `lawyerbuddy server` process owns the read path and we pick
  * up its in-flight session writes automatically.
  *
  * @module routes/messages
@@ -17,12 +17,12 @@
 
 import express from 'express';
 import {
-  getPilotDeckGateway,
+  getLawyerBuddyGateway,
   gatewayEventToFrames,
   isGatewayUnavailableError,
-  withPilotDeckGatewayReadRetry,
-} from '../pilotdeck-bridge.js';
-import { createNormalizedMessage } from '../pilotdeck-message.js';
+  withLawyerBuddyGatewayReadRetry,
+} from '../lawyerbuddy-bridge.js';
+import { createNormalizedMessage } from '../lawyerbuddy-message.js';
 
 const router = express.Router();
 const REPO_ROOT = process.cwd();
@@ -42,7 +42,7 @@ router.get('/:sessionId/messages', async (req, res) => {
       : null;
     const offset = parseInt(req.query.offset || '0', 10);
 
-    const result = await withPilotDeckGatewayReadRetry((gateway) => gateway.readSessionMessages({
+    const result = await withLawyerBuddyGatewayReadRetry((gateway) => gateway.readSessionMessages({
       sessionKey: sessionId,
       projectKey: projectPath,
       limit: limit ?? undefined,
@@ -65,7 +65,7 @@ router.get('/:sessionId/messages', async (req, res) => {
     return res.json({
       messages,
       ...(result.stream ? { stream: { active: result.stream.active, runId: result.stream.runId,
-        messages: result.stream.events.flatMap(event => gatewayEventToFrames(event, sessionId, 'pilotdeck')),
+        messages: result.stream.events.flatMap(event => gatewayEventToFrames(event, sessionId, 'lawyerbuddy')),
       } } : {}),
       total: totalKnown,
       hasMore,
@@ -79,7 +79,7 @@ router.get('/:sessionId/messages', async (req, res) => {
       return res.status(503).json({
         error: {
           code: 'gateway_unavailable',
-          message: 'PilotDeck Gateway is restarting. Retry shortly.',
+          message: 'LawyerBuddy Gateway is restarting. Retry shortly.',
         },
       });
     }
@@ -99,7 +99,7 @@ router.post('/:sessionId/fork', async (req, res) => {
       return res.status(400).json({ error: 'fromEntryId is required' });
     }
 
-    const gateway = await getPilotDeckGateway();
+    const gateway = await getLawyerBuddyGateway();
     const result = await gateway.forkSession({
       sessionKey: sessionId,
       projectKey: projectPath,
@@ -132,7 +132,7 @@ router.get('/:sessionId/subagent/:subagentId/messages', async (req, res) => {
     const { sessionId, subagentId } = req.params;
     const projectPath = String(req.query.projectPath || req.query.projectName || REPO_ROOT);
 
-    const result = await withPilotDeckGatewayReadRetry((gateway) => gateway.readSubagentMessages({
+    const result = await withLawyerBuddyGatewayReadRetry((gateway) => gateway.readSubagentMessages({
       sessionKey: sessionId,
       subagentId,
       projectKey: projectPath,
@@ -162,7 +162,7 @@ router.get('/:sessionId/subagent/:subagentId/messages', async (req, res) => {
       return res.status(503).json({
         error: {
           code: 'gateway_unavailable',
-          message: 'PilotDeck Gateway is restarting. Retry shortly.',
+          message: 'LawyerBuddy Gateway is restarting. Retry shortly.',
         },
       });
     }
@@ -185,7 +185,7 @@ function mapWebMessageToNormalized(message, sessionId) {
     ...(message.timeline ? { timeline: message.timeline, isFinal: true } : {}),
     sessionId,
     timestamp: message.createdAt,
-    provider: message.provider || 'pilotdeck',
+    provider: message.provider || 'lawyerbuddy',
     ...(message.entryId ? { entryId: message.entryId } : {}),
     ...(turnId ? { turnId, runId: turnId } : {}),
     ...(Number.isFinite(message.sequence) ? { sequence: message.sequence } : {}),

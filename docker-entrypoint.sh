@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PILOT_HOME="${PILOT_HOME:-/root/.pilotdeck}"
-CONFIG_FILE="$PILOT_HOME/pilotdeck.yaml"
+PILOT_HOME="${PILOT_HOME:-/root/.lawyerbuddy}"
+CONFIG_FILE="$PILOT_HOME/lawyerbuddy.yaml"
 
 mkdir -p \
   "$PILOT_HOME/projects" \
@@ -12,17 +12,17 @@ mkdir -p \
   "$PILOT_HOME/memory"
 
 if [ -d "$CONFIG_FILE" ]; then
-  echo "[pilotdeck-docker] ERROR: $CONFIG_FILE is a directory, not a config file." >&2
-  echo "[pilotdeck-docker] If you intended to mount a YAML config, create the host file first or remove the bind mount and use PILOTDECK_* env vars." >&2
+  echo "[lawyerbuddy-docker] ERROR: $CONFIG_FILE is a directory, not a config file." >&2
+  echo "[lawyerbuddy-docker] If you intended to mount a YAML config, create the host file first or remove the bind mount and use LAWYERBUDDY_* env vars." >&2
   exit 1
 fi
 
 # ── Generate config from env vars if no config file is mounted ────────
 if [ ! -f "$CONFIG_FILE" ]; then
-  MODEL="${PILOTDECK_MODEL:-openrouter/deepseek/deepseek-v4-flash}"
-  LIGHT_MODEL="${PILOTDECK_LIGHT_MODEL:-openrouter/qwen/qwen3-8b}"
-  API_KEY="${PILOTDECK_API_KEY:-}"
-  API_URL="${PILOTDECK_API_URL:-https://openrouter.ai/api/v1}"
+  MODEL="${LAWYERBUDDY_MODEL:-openrouter/deepseek/deepseek-v4-flash}"
+  LIGHT_MODEL="${LAWYERBUDDY_LIGHT_MODEL:-openrouter/qwen/qwen3-8b}"
+  API_KEY="${LAWYERBUDDY_API_KEY:-}"
+  API_URL="${LAWYERBUDDY_API_URL:-https://openrouter.ai/api/v1}"
 
   # Derive provider name from model string (e.g. "openrouter/deepseek/deepseek-v4-flash" -> "openrouter")
   PROVIDER="${MODEL%%/*}"
@@ -32,7 +32,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
   LIGHT_MODEL_ID="${LIGHT_MODEL#*/}"
 
   if [ -z "$API_KEY" ]; then
-    echo "[pilotdeck-docker] No model credential supplied; starting the Web UI for onboarding."
+    echo "[lawyerbuddy-docker] No model credential supplied; starting the Web UI for onboarding."
   else
 
   # Router section shared by both same-provider and cross-provider branches
@@ -107,8 +107,8 @@ ${ROUTER_SECTION}
 YAML
   else
     # Different providers — declare both
-    LIGHT_API_URL="${PILOTDECK_LIGHT_API_URL:-${API_URL}}"
-    LIGHT_API_KEY="${PILOTDECK_LIGHT_API_KEY:-${API_KEY}}"
+    LIGHT_API_URL="${LAWYERBUDDY_LIGHT_API_URL:-${API_URL}}"
+    LIGHT_API_KEY="${LAWYERBUDDY_LIGHT_API_KEY:-${API_KEY}}"
     cat > "$CONFIG_FILE" <<YAML
 schemaVersion: 1
 agent:
@@ -137,22 +137,22 @@ ${ROUTER_SECTION}
 YAML
   fi
 
-  echo "[pilotdeck-docker] Generated config at $CONFIG_FILE (provider=$PROVIDER, model=$MODEL, light=$LIGHT_MODEL)"
+  echo "[lawyerbuddy-docker] Generated config at $CONFIG_FILE (provider=$PROVIDER, model=$MODEL, light=$LIGHT_MODEL)"
   fi
 fi
 
 # ── Forward proxy env vars ────────────────────────────────────────────
-if [ -n "${PILOTDECK_PROXY:-}" ]; then
-  export http_proxy="$PILOTDECK_PROXY"
-  export https_proxy="$PILOTDECK_PROXY"
-  export HTTP_PROXY="$PILOTDECK_PROXY"
-  export HTTPS_PROXY="$PILOTDECK_PROXY"
-  echo "[pilotdeck-docker] Proxy set to $PILOTDECK_PROXY"
+if [ -n "${LAWYERBUDDY_PROXY:-}" ]; then
+  export http_proxy="$LAWYERBUDDY_PROXY"
+  export https_proxy="$LAWYERBUDDY_PROXY"
+  export HTTP_PROXY="$LAWYERBUDDY_PROXY"
+  export HTTPS_PROXY="$LAWYERBUDDY_PROXY"
+  echo "[lawyerbuddy-docker] Proxy set to $LAWYERBUDDY_PROXY"
 fi
 
-echo "[pilotdeck-docker] Starting PilotDeck Web UI; Gateway will start after model configuration is ready..."
-echo "[pilotdeck-docker] Config: $CONFIG_FILE"
-echo "[pilotdeck-docker] UI will be available at http://0.0.0.0:${SERVER_PORT:-3001}"
+echo "[lawyerbuddy-docker] Starting LawyerBuddy Web UI; Gateway will start after model configuration is ready..."
+echo "[lawyerbuddy-docker] Config: $CONFIG_FILE"
+echo "[lawyerbuddy-docker] UI will be available at http://0.0.0.0:${SERVER_PORT:-3001}"
 
 # ── Remove stale auth token so the bridge never uses a leftover value ──
 rm -f "$PILOT_HOME/server-token"
@@ -160,6 +160,6 @@ rm -f "$PILOT_HOME/server-token"
 # ── Start supervised runtime ──────────────────────────────────────────
 cd /app
 
-GATEWAY_PORT="${PILOTDECK_GATEWAY_PORT:-18789}"
-export PILOTDECK_GATEWAY_URL="${PILOTDECK_GATEWAY_URL:-ws://127.0.0.1:${GATEWAY_PORT}/ws}"
+GATEWAY_PORT="${LAWYERBUDDY_GATEWAY_PORT:-18789}"
+export LAWYERBUDDY_GATEWAY_URL="${LAWYERBUDDY_GATEWAY_URL:-ws://127.0.0.1:${GATEWAY_PORT}/ws}"
 exec node ui/server/webRuntimeSupervisor.js start-built

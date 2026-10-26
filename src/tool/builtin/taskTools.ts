@@ -14,39 +14,39 @@
 
 import type { BackgroundTaskRuntime } from "../../task/runtime/BackgroundTaskRuntime.js";
 import type {
-  PilotDeckBackgroundBashTask,
-  PilotDeckBackgroundTaskKind,
-  PilotDeckBackgroundTaskListFilter,
-  PilotDeckBackgroundTaskStatus,
+  LawyerBuddyBackgroundBashTask,
+  LawyerBuddyBackgroundTaskKind,
+  LawyerBuddyBackgroundTaskListFilter,
+  LawyerBuddyBackgroundTaskStatus,
 } from "../../task/protocol/types.js";
-import { PilotDeckToolRuntimeError } from "../protocol/errors.js";
+import { LawyerBuddyToolRuntimeError } from "../protocol/errors.js";
 import type {
-  PilotDeckToolDefinition,
-  PilotDeckToolExecutionOutput,
+  LawyerBuddyToolDefinition,
+  LawyerBuddyToolExecutionOutput,
 } from "../protocol/types.js";
 
 export type TaskCreateInput = {
   command: string;
   agentId?: string;
-  kind?: PilotDeckBackgroundTaskKind;
+  kind?: LawyerBuddyBackgroundTaskKind;
 };
 
 export type TaskCreateOutput = {
   taskId: string;
-  status: PilotDeckBackgroundTaskStatus;
+  status: LawyerBuddyBackgroundTaskStatus;
   pid?: number;
 };
 
 export type TaskListInput = {
   agentId?: string;
-  status?: PilotDeckBackgroundTaskStatus | PilotDeckBackgroundTaskStatus[];
-  kind?: PilotDeckBackgroundTaskKind;
+  status?: LawyerBuddyBackgroundTaskStatus | LawyerBuddyBackgroundTaskStatus[];
+  kind?: LawyerBuddyBackgroundTaskKind;
 };
 
 export type TaskListOutput = {
   tasks: Array<
     Pick<
-      PilotDeckBackgroundBashTask,
+      LawyerBuddyBackgroundBashTask,
       | "taskId"
       | "agentId"
       | "kind"
@@ -72,7 +72,7 @@ export type TaskOutputResult = {
   nextOffset: number;
   totalBytes: number;
   truncated: boolean;
-  status: PilotDeckBackgroundTaskStatus;
+  status: LawyerBuddyBackgroundTaskStatus;
   exitCode?: number | null;
 };
 
@@ -95,10 +95,10 @@ export type TaskStopInput = {
 
 export type TaskStopResult = {
   taskId: string;
-  status: PilotDeckBackgroundTaskStatus;
+  status: LawyerBuddyBackgroundTaskStatus;
 };
 
-const TERMINAL_TASK_STATUSES = new Set<PilotDeckBackgroundTaskStatus>([
+const TERMINAL_TASK_STATUSES = new Set<LawyerBuddyBackgroundTaskStatus>([
   "completed",
   "failed",
   "cancelled",
@@ -108,7 +108,7 @@ const MAX_TASK_WAIT_TIMEOUT_MS = 600_000;
 
 function ensureRuntime(runtime: BackgroundTaskRuntime | undefined): BackgroundTaskRuntime {
   if (!runtime) {
-    throw new PilotDeckToolRuntimeError(
+    throw new LawyerBuddyToolRuntimeError(
       "unsupported_tool",
       "task_* tools require a BackgroundTaskRuntime. Configure one via createBuiltinRegistry({ backgroundTasks: { runtime } }).",
     );
@@ -116,7 +116,7 @@ function ensureRuntime(runtime: BackgroundTaskRuntime | undefined): BackgroundTa
   return runtime;
 }
 
-function isTerminalTaskStatus(status: PilotDeckBackgroundTaskStatus): boolean {
+function isTerminalTaskStatus(status: LawyerBuddyBackgroundTaskStatus): boolean {
   return TERMINAL_TASK_STATUSES.has(status);
 }
 
@@ -158,7 +158,7 @@ function formatTaskWaitText(data: TaskWaitResult, requestedOffset: number): stri
 
 export function createTaskCreateTool(
   runtime?: BackgroundTaskRuntime,
-): PilotDeckToolDefinition<TaskCreateInput, TaskCreateOutput> {
+): LawyerBuddyToolDefinition<TaskCreateInput, TaskCreateOutput> {
   return {
     name: "task_create",
     aliases: ["TaskCreate"],
@@ -188,10 +188,10 @@ export function createTaskCreateTool(
     isReadOnly: () => false,
     isConcurrencySafe: () => true,
     isDestructive: () => true,
-    execute: async (input, context): Promise<PilotDeckToolExecutionOutput<TaskCreateOutput>> => {
+    execute: async (input, context): Promise<LawyerBuddyToolExecutionOutput<TaskCreateOutput>> => {
       const rt = ensureRuntime(runtime);
       const finishCommand = await context.fileHistory?.trackCommand?.({ background: true });
-      let task: PilotDeckBackgroundBashTask;
+      let task: LawyerBuddyBackgroundBashTask;
       try {
         task = await rt.start({
           command: input.command,
@@ -218,7 +218,7 @@ export function createTaskCreateTool(
 
 export function createTaskListTool(
   runtime?: BackgroundTaskRuntime,
-): PilotDeckToolDefinition<TaskListInput, TaskListOutput> {
+): LawyerBuddyToolDefinition<TaskListInput, TaskListOutput> {
   return {
     name: "task_list",
     aliases: ["TaskList"],
@@ -245,9 +245,9 @@ export function createTaskListTool(
     },
     isReadOnly: () => true,
     isConcurrencySafe: () => true,
-    execute: async (input): Promise<PilotDeckToolExecutionOutput<TaskListOutput>> => {
+    execute: async (input): Promise<LawyerBuddyToolExecutionOutput<TaskListOutput>> => {
       const rt = ensureRuntime(runtime);
-      const filter: PilotDeckBackgroundTaskListFilter = {
+      const filter: LawyerBuddyBackgroundTaskListFilter = {
         agentId: input.agentId,
         status: input.status,
         kind: input.kind,
@@ -296,7 +296,7 @@ function formatTaskListText(tasks: TaskListOutput["tasks"]): string {
 
 export function createTaskOutputTool(
   runtime?: BackgroundTaskRuntime,
-): PilotDeckToolDefinition<TaskOutputInput, TaskOutputResult> {
+): LawyerBuddyToolDefinition<TaskOutputInput, TaskOutputResult> {
   return {
     name: "task_output",
     aliases: ["TaskOutput"],
@@ -325,11 +325,11 @@ export function createTaskOutputTool(
     maxResultBytes: 200_000,
     isReadOnly: () => true,
     isConcurrencySafe: () => true,
-    execute: async (input): Promise<PilotDeckToolExecutionOutput<TaskOutputResult>> => {
+    execute: async (input): Promise<LawyerBuddyToolExecutionOutput<TaskOutputResult>> => {
       const rt = ensureRuntime(runtime);
       const task = rt.get(input.taskId);
       if (!task) {
-        throw new PilotDeckToolRuntimeError(
+        throw new LawyerBuddyToolRuntimeError(
           "invalid_tool_input",
           `Unknown taskId: ${input.taskId}`,
         );
@@ -355,7 +355,7 @@ export function createTaskOutputTool(
 
 export function createTaskWaitTool(
   runtime?: BackgroundTaskRuntime,
-): PilotDeckToolDefinition<TaskWaitInput, TaskWaitResult> {
+): LawyerBuddyToolDefinition<TaskWaitInput, TaskWaitResult> {
   return {
     name: "task_wait",
     aliases: ["TaskWait"],
@@ -409,11 +409,11 @@ export function createTaskWaitTool(
       }
       return { ok: true, input };
     },
-    execute: async (input, context): Promise<PilotDeckToolExecutionOutput<TaskWaitResult>> => {
+    execute: async (input, context): Promise<LawyerBuddyToolExecutionOutput<TaskWaitResult>> => {
       const rt = ensureRuntime(runtime);
       const task = rt.get(input.taskId);
       if (!task) {
-        throw new PilotDeckToolRuntimeError(
+        throw new LawyerBuddyToolRuntimeError(
           "invalid_tool_input",
           `Unknown taskId: ${input.taskId}`,
         );
@@ -424,13 +424,13 @@ export function createTaskWaitTool(
         abortSignal: context.abortSignal,
       });
       if (!waited) {
-        throw new PilotDeckToolRuntimeError(
+        throw new LawyerBuddyToolRuntimeError(
           "invalid_tool_input",
           `Unknown taskId: ${input.taskId}`,
         );
       }
       if (waited.outcome === "aborted") {
-        throw new PilotDeckToolRuntimeError(
+        throw new LawyerBuddyToolRuntimeError(
           "tool_aborted",
           `task_wait aborted before task ${input.taskId} finished.`,
         );
@@ -457,7 +457,7 @@ export function createTaskWaitTool(
 
 export function createTaskStopTool(
   runtime?: BackgroundTaskRuntime,
-): PilotDeckToolDefinition<TaskStopInput, TaskStopResult> {
+): LawyerBuddyToolDefinition<TaskStopInput, TaskStopResult> {
   return {
     name: "task_stop",
     aliases: ["TaskStop"],
@@ -481,11 +481,11 @@ export function createTaskStopTool(
     isReadOnly: () => false,
     isConcurrencySafe: () => true,
     isDestructive: () => true,
-    execute: async (input): Promise<PilotDeckToolExecutionOutput<TaskStopResult>> => {
+    execute: async (input): Promise<LawyerBuddyToolExecutionOutput<TaskStopResult>> => {
       const rt = ensureRuntime(runtime);
       const task = rt.get(input.taskId);
       if (!task) {
-        throw new PilotDeckToolRuntimeError(
+        throw new LawyerBuddyToolRuntimeError(
           "invalid_tool_input",
           `Unknown taskId: ${input.taskId}`,
         );

@@ -1,4 +1,4 @@
-export type PilotDeckToolErrorCode =
+export type LawyerBuddyToolErrorCode =
   | "tool_not_found"
   | "tool_unavailable"
   | "invalid_tool_input"
@@ -17,35 +17,35 @@ export type PilotDeckToolErrorCode =
   | "plan_mode_violation"
   | "ask_mode_violation";
 
-export type PilotDeckToolError = {
-  code: PilotDeckToolErrorCode;
+export type LawyerBuddyToolError = {
+  code: LawyerBuddyToolErrorCode;
   message: string;
   cause?: unknown;
   details?: Record<string, unknown>;
 };
 
-export class PilotDeckToolRuntimeError extends Error {
-  readonly code: PilotDeckToolErrorCode;
+export class LawyerBuddyToolRuntimeError extends Error {
+  readonly code: LawyerBuddyToolErrorCode;
   readonly details?: Record<string, unknown>;
 
-  constructor(code: PilotDeckToolErrorCode, message: string, details?: Record<string, unknown>) {
+  constructor(code: LawyerBuddyToolErrorCode, message: string, details?: Record<string, unknown>) {
     super(message);
-    this.name = "PilotDeckToolRuntimeError";
+    this.name = "LawyerBuddyToolRuntimeError";
     this.code = code;
     this.details = details;
   }
 }
 
 export function toolError(
-  code: PilotDeckToolErrorCode,
+  code: LawyerBuddyToolErrorCode,
   message: string,
   details?: Record<string, unknown>,
-): PilotDeckToolError {
+): LawyerBuddyToolError {
   return { code, message, details };
 }
 
-export function normalizeToolError(error: unknown): PilotDeckToolError {
-  if (error instanceof PilotDeckToolRuntimeError) {
+export function normalizeToolError(error: unknown): LawyerBuddyToolError {
+  if (error instanceof LawyerBuddyToolRuntimeError) {
     return toolError(error.code, error.message, error.details);
   }
 

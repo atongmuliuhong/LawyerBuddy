@@ -6,11 +6,11 @@ import {
   MemoryBundleValidationError,
 } from 'edgeclaw-memory-core';
 import {
-  readPilotDeckConfigFile,
-  updatePilotDeckConfig,
-} from '../services/pilotdeckConfig.js';
-import { reloadPilotDeckConfig } from '../services/pilotdeckConfigReloader.js';
-import { suppressNextWatchEvent } from '../services/pilotdeckConfigWatcher.js';
+  readLawyerBuddyConfigFile,
+  updateLawyerBuddyConfig,
+} from '../services/lawyerbuddyConfig.js';
+import { reloadLawyerBuddyConfig } from '../services/lawyerbuddyConfigReloader.js';
+import { suppressNextWatchEvent } from '../services/lawyerbuddyConfigWatcher.js';
 import {
   clearAllMemoryData,
   exportAllProjectsMemoryBundle,
@@ -72,11 +72,11 @@ function getGlobalMemorySettingsFromConfig(config) {
 }
 
 function getGlobalMemorySettings() {
-  return getGlobalMemorySettingsFromConfig(readPilotDeckConfigFile().config);
+  return getGlobalMemorySettingsFromConfig(readLawyerBuddyConfigFile().config);
 }
 
 async function saveGlobalMemorySettings(partial = {}) {
-  const saved = await updatePilotDeckConfig((config) => {
+  const saved = await updateLawyerBuddyConfig((config) => {
     const current = getGlobalMemorySettingsFromConfig(config);
     const configuredMemory = config?.memory && typeof config.memory === 'object'
       && !Array.isArray(config.memory);
@@ -95,7 +95,7 @@ async function saveGlobalMemorySettings(partial = {}) {
     paths: [['memory']],
     onWriteCommitted: suppressNextWatchEvent,
   });
-  await reloadPilotDeckConfig(saved.config);
+  await reloadLawyerBuddyConfig(saved.config);
   return getGlobalMemorySettingsFromConfig(saved.config);
 }
 
@@ -533,14 +533,14 @@ router.get('/dream-traces/:dreamTraceId', async (req, res) =>
 router.get('/export/current-project', async (req, res) =>
   withMemoryService(req, res, async ({ service }) => {
     const bundle = service.exportBundle();
-    sendBundleDownload(res, bundle, 'pilotdeck-memory-current-project');
+    sendBundleDownload(res, bundle, 'lawyerbuddy-memory-current-project');
   }),
 );
 
 router.get('/export/all-projects', async (_req, res) => {
   try {
     const bundle = await exportAllProjectsMemoryBundle();
-    sendBundleDownload(res, bundle, 'pilotdeck-memory-all-projects');
+    sendBundleDownload(res, bundle, 'lawyerbuddy-memory-all-projects');
   } catch (error) {
     res.status(500).json({
       error: error instanceof Error ? error.message : String(error),
@@ -575,7 +575,7 @@ router.post('/import/all-projects', async (req, res) => {
 router.get('/export', async (req, res) =>
   withMemoryService(req, res, async ({ service }) => {
     const bundle = service.exportBundle();
-    sendBundleDownload(res, bundle, 'pilotdeck-memory-current-project');
+    sendBundleDownload(res, bundle, 'lawyerbuddy-memory-current-project');
   }),
 );
 

@@ -1,3 +1,3 @@
 export type {
-  PilotDeckHookEvent as PilotDeckLifecycleHookEvent,
+  LawyerBuddyHookEvent as LawyerBuddyLifecycleHookEvent,
 } from "../../extension/hooks/protocol/events.js";

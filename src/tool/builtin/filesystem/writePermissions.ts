@@ -1,19 +1,19 @@
 import path from "node:path";
 import type { PermissionResult, PermissionRule } from "../../../permission/index.js";
-import type { PilotDeckToolRuntimeContext } from "../../protocol/types.js";
-import { resolvePilotDeckWorkspacePath } from "./pathSafety.js";
+import type { LawyerBuddyToolRuntimeContext } from "../../protocol/types.js";
+import { resolveLawyerBuddyWorkspacePath } from "./pathSafety.js";
 
 export function checkFilesystemWritePermission(
   toolName: "write_file" | "edit_file",
   inputPath: string,
-  context: PilotDeckToolRuntimeContext,
+  context: LawyerBuddyToolRuntimeContext,
 ): PermissionResult {
-  const workspaceResolved = resolvePilotDeckWorkspacePath(inputPath, context, { forWrite: true });
+  const workspaceResolved = resolveLawyerBuddyWorkspacePath(inputPath, context, { forWrite: true });
   if (workspaceResolved.ok) {
     return { type: "passthrough" };
   }
 
-  const outsideResolved = resolvePilotDeckWorkspacePath(inputPath, context, {
+  const outsideResolved = resolveLawyerBuddyWorkspacePath(inputPath, context, {
     forWrite: true,
     allowOutsideWorkspace: true,
   });

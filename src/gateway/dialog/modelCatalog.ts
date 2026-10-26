@@ -59,7 +59,7 @@ export function listModelCatalog(input: ModelCatalogListInput, env: NodeJS.Proce
 }
 
 /**
- * 在 pilotdeck.yaml 中声明但未填写 apiKey 的厂商会被运行时剔除。
+ * 在 lawyerbuddy.yaml 中声明但未填写 apiKey 的厂商会被运行时剔除。
  * 这里仍把它们的模型列进目录（available: false），让输入框的模型下拉
  * 能完整展示可选项，用户去设置里补 Key 后即可直接使用。
  */

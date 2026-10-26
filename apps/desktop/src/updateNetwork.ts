@@ -4,7 +4,7 @@ import { ElectronHttpExecutor } from "electron-updater/out/electronHttpExecutor"
 
 type ProxyConfig = { url?: string; noProxy?: string } | string | undefined;
 export function resolveUpdateProxy(config: ProxyConfig, env: NodeJS.ProcessEnv = process.env) {
-  const url = env.PILOTDECK_PROXY || env.https_proxy || env.HTTPS_PROXY || env.http_proxy || env.HTTP_PROXY
+  const url = env.LAWYERBUDDY_PROXY || env.https_proxy || env.HTTPS_PROXY || env.http_proxy || env.HTTP_PROXY
     || (typeof config === "string" ? config : config?.url);
   if (!url?.trim()) return { settings: { mode: "system" as const }, credentials: null };
   const proxy = new URL(url.trim());
